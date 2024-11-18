@@ -16,16 +16,17 @@ namespace GameServer.Services
         public UserService()
         {
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserLoginRequest>(this.OnLogin);
+            //First to subscribe the information
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserRegisterRequest>(this.OnRegister);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserCreateCharacterRequest>(this.OnCreateCharacter);
         }
-
 
         public void Init()
         {
 
         }
 
+        //Response the request from the Client
         void OnLogin(NetConnection<NetSession> sender, UserLoginRequest request)
         {
             Log.InfoFormat("UserLoginRequest: User:{0}  Pass:{1}", request.User, request.Passward);
@@ -69,16 +70,18 @@ namespace GameServer.Services
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);
         }
-
+        //Response the request from the Client
         void OnRegister(NetConnection<NetSession> sender, UserRegisterRequest request)
         {
+            //Printing What we are doing now in the Log
             Log.InfoFormat("UserRegisterRequest: User:{0}  Pass:{1}", request.User, request.Passward);
 
+            //Prepare the message sending to Client
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.userRegister = new UserRegisterResponse();
 
-
+            
             TUser user = DBService.Instance.Entities.Users.Where(u => u.Username == request.User).FirstOrDefault();
             if (user != null)
             {
@@ -97,7 +100,7 @@ namespace GameServer.Services
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);
         }
-
+        //Response the request from the Client
         private void OnCreateCharacter(NetConnection<NetSession> sender, UserCreateCharacterRequest request)
         {
             Log.InfoFormat("UserCreateCharacterRequest: Name:{0}  Class:{1}", request.Name, request.Class);

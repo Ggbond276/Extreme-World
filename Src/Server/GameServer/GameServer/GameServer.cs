@@ -21,11 +21,13 @@ namespace GameServer
         NetService network;
 
         public bool Init()
-        {
+        {   
             int Port = Properties.Settings.Default.ServerPort;
             network = new NetService();
             network.Init(Port);
+            //Start the DcService
             DBService.Instance.Init();
+            //Start the UserService
             UserService.Instance.Init();
             thread = new Thread(new ThreadStart(this.Update));
 
