@@ -10,6 +10,7 @@ using Common.Data;
 
 using Newtonsoft.Json;
 
+//这个类用来管理数据
 public class DataManager : Singleton<DataManager>
 {
     public string DataPath;
@@ -25,6 +26,8 @@ public class DataManager : Singleton<DataManager>
         Debug.LogFormat("DataManager > DataManager()");
     }
 
+    //(服务端无法使用协程函数 ， 所以只有客户端能使用协程函数加载数据)
+    //Load接口是提供给服务端使用的
     public void Load()
     {
         string json = File.ReadAllText(this.DataPath + "MapDefine.txt");
@@ -39,8 +42,7 @@ public class DataManager : Singleton<DataManager>
         json = File.ReadAllText(this.DataPath + "SpawnPointDefine.txt");
         this.SpawnPoints = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, SpawnPointDefine>>> (json);
     }
-
-
+    //LoadData接口时提供给客户端使用的
     public IEnumerator LoadData()
     {
         string json = File.ReadAllText(this.DataPath + "MapDefine.txt");

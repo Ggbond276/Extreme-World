@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Models
 {
+    //临时数据存储器用于存储用户信息 如果用户信息不改变就不用再向服务器拉取信息
+    //用于将服务器返回的用户信息记录到本地
     class User : Singleton<User>
     {
         SkillBridge.Message.NUserInfo userInfo;

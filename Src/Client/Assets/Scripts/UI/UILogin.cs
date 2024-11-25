@@ -16,16 +16,18 @@ public class UILogin : MonoBehaviour
     public Button LoginButton;
     #endregion
 
-    #region 以弹窗的形式告知用户服务端的响应情况
     private void Start()
     {
         UserService.Instance.OnLogin = this.OnLogin;
-    }
+    } 
+    
+    #region 以弹窗的形式告知用户服务端的响应情况
     void OnLogin(Result result, string message)
     {
         if (result == Result.Success)
         {
-            MessageBox.Show("登录成功，准备角色选择" + message, "提示", MessageBoxType.Information);
+            //MessageBox.Show("登录成功，准备角色选择" + message, "提示", MessageBoxType.Information);
+            SceneManager.Instance.LoadScene("CharSelect");
         }
         else
         {
@@ -50,5 +52,6 @@ public class UILogin : MonoBehaviour
         UserService.Instance.SendLogin(this.InputUsername.text, this.InputPassword.text);
     }
     #endregion
+
 
 }

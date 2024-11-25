@@ -14,11 +14,12 @@ public class UIRegister : MonoBehaviour
     public Button RegisterButton;
     #endregion
 
-    #region 以弹窗的形式告知用户注册情况
     private void Start()
     {
         UserService.Instance.OnRegister = this.OnRegister;
     }
+
+    #region 以弹窗的形式告知用户注册情况
     //Use pop-up windows to notify the registration results
     void OnRegister(SkillBridge.Message.Result result, string msg)
     {
