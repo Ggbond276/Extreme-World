@@ -16,7 +16,7 @@ namespace GameServer
 {
     class GameServer
     {
-        Thread thread;
+        Thread thread;                                                          
         bool running = false;
         NetService network;
 

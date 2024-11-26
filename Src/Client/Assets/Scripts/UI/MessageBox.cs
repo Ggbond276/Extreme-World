@@ -4,6 +4,7 @@ class MessageBox
 {
     static Object cacheObject = null;
 
+    //MessageBox中的Show方法
     public static UIMessageBox Show(string message, string title="", MessageBoxType type = MessageBoxType.Information, string btnOK = "", string btnCancel = "")
     {
         if(cacheObject==null)

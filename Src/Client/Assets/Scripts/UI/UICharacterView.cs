@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class UICharacterView : MonoBehaviour
 {
-    public GameObject[] Characters;
+    public GameObject[] Characters;  
     private int currentCharacter = 0;
+
     public int CurrentCharacter
     {
         get
@@ -18,22 +19,18 @@ public class UICharacterView : MonoBehaviour
             this.UpdateCharacter();
         }
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void UpdateCharacter()
+    //只显示索引表示的角色
+    private void UpdateCharacter()
     {
         for(int i = 0; i < 3; i++)
         {
-            Characters[i].SetActive(i == currentCharacter);
+            if(this.currentCharacter == i)
+            {
+                this.Characters[i].SetActive(true);//45
+            } else
+            {
+                this.Characters[i].SetActive(false);//48
+            }
         }
     }
 }
