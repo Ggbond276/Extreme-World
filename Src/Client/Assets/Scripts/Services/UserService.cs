@@ -21,16 +21,19 @@ namespace Services
         //connected is used to determine whether the client and the server are connected
         bool connected = false;
 
+        //构造的时候执行
         public UserService()
         {
             NetClient.Instance.OnConnect += OnGameServerConnect;
             NetClient.Instance.OnDisconnect += OnGameServerDisconnect;
+            //注册登录协议 接收服务端发送来的响应
             MessageDistributer.Instance.Subscribe<UserLoginResponse>(this.OnUserLogin);
+            //注册注册协议 接收服务端发送来的响应
             MessageDistributer.Instance.Subscribe<UserRegisterResponse>(this.OnUserRegister);
+            //注册角色创建协议 接收服务端发送来的响应
             MessageDistributer.Instance.Subscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
-            
         }
-
+        //销毁的时候执行
         public void Dispose()
         {
             MessageDistributer.Instance.Unsubscribe<UserLoginResponse>(this.OnUserLogin);
@@ -39,12 +42,16 @@ namespace Services
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
         }
+
+
+
         //Initialize the UserService component
         public void Init()
         {
 
         }
 
+        #region 连接到服务器 ConnectToServer()
         public void ConnectToServer()
         {
             Debug.Log("ConnectToServer() Start ");
@@ -52,7 +59,9 @@ namespace Services
             NetClient.Instance.Init("127.0.0.1", 8000);
             NetClient.Instance.Connect();
         }
+        #endregion
 
+        #region 检测是否连接到服务器 OnGameServerConnect(int result, string reason)
         void OnGameServerConnect(int result, string reason)
         {
             Log.InfoFormat("LoadingMesager::OnGameServerConnect :{0} reason:{1}", result, reason);
@@ -73,13 +82,17 @@ namespace Services
                 }
             }
         }
+        #endregion
 
+        #region 检查是否和服务器断开连接 OnGameServerDisconnect(int result, string reason)
         public void OnGameServerDisconnect(int result, string reason)
         {
             this.DisconnectNotify(result, reason);
             return;
         }
+        #endregion
 
+        #region 服务器断连的提示 DisconnectNotify(int result,string reason)
         bool DisconnectNotify(int result,string reason)
         {
             if (this.pendingMessage != null)
@@ -109,8 +122,9 @@ namespace Services
             }
             return false;
         }
+        #endregion
 
-        #region 接收UI层传来的登录信息并将登录信息传输给服务端
+        #region 接收UI层传来的登录信息并将登录信息传输给服务端 SendLogin(string user , string passward)
         //Send the user login information to the Server
         public void SendLogin(string user , string passward)
         {
@@ -140,6 +154,7 @@ namespace Services
         }
         #endregion
 
+        #region 记录当用户登录成功事从服务端返回的信息 OnUserLogin(object sender, UserLoginResponse response)
         void OnUserLogin(object sender, UserLoginResponse response)
         {
             Debug.LogFormat("OnLogin:{0} [{1}]", response.Result, response.Errormsg);
@@ -154,12 +169,13 @@ namespace Services
 
             }
         }
+        #endregion
 
-        #region 接收UI层传来的注册信息并将注册信息传输给服务端
+        #region 接收UI层传来的注册信息并将注册信息传输给服务端 SendRegister(string user, string psw)
         //Send the user registration information to the Server
         public void SendRegister(string user, string psw)
         {
-            #region 在日志中打印将注册信息发送给服务器
+            #region 在日志中打印将注册信息
             //To printing what we are doing now in the log
             Debug.LogFormat("UserRegisterRequest::user :{0} psw:{1}", user, psw);
             #endregion
@@ -194,6 +210,7 @@ namespace Services
         }
         #endregion
 
+        #region 记录当用户注册成功时从服务端返回的信息 OnUserRegister(object sender, UserRegisterResponse response)
         //After the registration is completed, send the response back to the UI Layer
         void OnUserRegister(object sender, UserRegisterResponse response)
         {
@@ -205,16 +222,24 @@ namespace Services
 
             }
         }
+        #endregion
 
+        #region 接收UI层传来的角色创建信息并将角色创建信息发送给服务端 SendCharacterCreate(string name, CharacterClass cls)
         public void SendCharacterCreate(string name, CharacterClass cls)
         {
+            #region 在日志中打印角色创建信息
             Debug.LogFormat("UserCreateCharacterRequest::name :{0} class:{1}", name, cls);
+            #endregion
+
+            #region 封装发送给服务器的信息
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.createChar = new UserCreateCharacterRequest();
             message.Request.createChar.Name = name;
             message.Request.createChar.Class = cls;
+            #endregion
 
+            #region 检查是否成功连接到服务器
             if (this.connected && NetClient.Instance.Connected)
             {
                 this.pendingMessage = null;
@@ -225,8 +250,11 @@ namespace Services
                 this.pendingMessage = message;
                 this.ConnectToServer();
             }
+            #endregion
         }
+        #endregion
 
+        #region 记录当用户角色创建成功时从服务端返回的信息 OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         void OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         {
             Debug.LogFormat("OnUserCreateCharacter:{0} [{1}]", response.Result, response.Errormsg);
@@ -240,10 +268,9 @@ namespace Services
             if (this.OnCharacterCreate != null)
             {
                 this.OnCharacterCreate(response.Result, response.Errormsg);
-
             }
         }
-
+        #endregion
 
     }
 }

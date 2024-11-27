@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SkillBridge.Message;
 using Services;
+using Models;
 public class UICharacterSelect : MonoBehaviour
 {
     //获取两个面板
@@ -13,7 +14,12 @@ public class UICharacterSelect : MonoBehaviour
     public InputField InputPlayerName;
     public Image[] titles;
     public Text[] names;
+    public GameObject uiCharInfo;
+    public Transform uiCharList;
+    public List<GameObject> uiChars = new List<GameObject>();
     private CharacterClass characterClass;
+    private int selectCharacterIdx = -134;
+
     void Start()
     {
         InitSelectCharacter(true);
@@ -25,6 +31,43 @@ public class UICharacterSelect : MonoBehaviour
     {
         SelectPanel.SetActive(true);
         CreatePanel.SetActive(false);
+
+        if (init)
+        {
+            foreach (var old in uiChars)
+            {
+                Destroy(old);
+            }
+            uiChars.Clear();
+
+            //这段代码用于根据用户的角色信息创建可选择的角色UI展示项及相关点击事件处理
+
+            //循环遍历User.Instance.Info.Player.Characters中的每一个元素
+            //User.Instance.Info.Player.Characters是存储用户角色信息的集合
+            for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
+            {
+                //创建一个用于展示角色信息的UI元素实例
+                //实例化一个名为uiCharInfo的对象
+                GameObject CharInfo = Instantiate(uiCharInfo, this.uiCharList);   
+                //获取刚实例化的UICharInfo组件
+                UICharInfo UICharInfo = CharInfo.GetComponent<UICharInfo>();
+                //将User.Instance.Info.Player.Characters中当前索引对应的角色信息赋值给charInfo的info属性
+                UICharInfo.info = User.Instance.Info.Player.Characters[i];
+                //获取刚实例化的游戏对象的button组件
+                Button button =CharInfo.GetComponent<Button>();
+                //记录当前循环的索引
+                int index = i;
+                //当按钮点击事件会调用OnClickSelectCharacater方法 并传入索引值
+                button.onClick.AddListener(() =>
+                {
+                    OnClickSelectCharacater(index);
+                });
+                //将实例化对象添加到uiChars中
+                uiChars.Add(CharInfo);
+                //设置实例化对象为可见
+                CharInfo.SetActive(true);
+            }
+        }
     }
     //在角色选择界面点击选择创建新角色
     public void OnClickCreateCharacter()
@@ -33,7 +76,17 @@ public class UICharacterSelect : MonoBehaviour
         CreatePanel.SetActive(true);
         UICharacterView.CurrentCharacter = 1;
     }
-
+    //在角色选择界面中点击选择角色
+    public void OnClickSelectCharacater(int index)
+    {
+        this.selectCharacterIdx = index;
+        SkillBridge.Message.NCharacterInfo cha = User.Instance.Info.Player.Characters[index];
+        Debug.LogFormat("Select Char: [{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
+        //设置当前的角色是cha
+        User.Instance.CurrentCharacter = cha;
+        //显示对应的3D角色试图
+        UICharacterView.CurrentCharacter = index;
+    }
 
 
 
@@ -52,7 +105,7 @@ public class UICharacterSelect : MonoBehaviour
         //显示角色的名字和显示角色的概括信息
         for (int i = 0; i < 3; i++)
         {
-            if (i == index)
+            if (i == index - 1)
             {
                 titles[i].gameObject.SetActive(true);
             }
@@ -61,7 +114,7 @@ public class UICharacterSelect : MonoBehaviour
                 titles[i].gameObject.SetActive(false);
             }
             //Data是用于读取表中的数据的
-            names[i].text = DataManager.Instance.Characters[i + 1].Name;
+            //names[i].text = DataManager.Instance.Characters[i + 1].Name;
         }
     }
     //在角色创建界面点击创建角色
