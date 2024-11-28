@@ -1262,7 +1262,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 510598970}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 750667374}
+        m_TargetAssemblyTypeName: UICharacterSelect, Assembly-CSharp
+        m_MethodName: OnClickEnterGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &510598970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2533,7 +2545,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1639743808}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.6184129
+  m_Size: 0.15288739
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3092,8 +3104,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000040270388, y: -0.00018310547}
-  m_SizeDelta: {x: 0, y: 2395.6577}
+  m_AnchoredPosition: {x: -0.000040270388, y: -0.0007}
+  m_SizeDelta: {x: 0, y: 9690.176}
   m_Pivot: {x: 0.000000063329935, y: 0.99999994}
 --- !u!114 &1311664384
 MonoBehaviour:

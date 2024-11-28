@@ -26,10 +26,10 @@ public class UICharacterView : MonoBehaviour
         {
             if(this.currentCharacter == i)
             {
-                this.Characters[i].SetActive(true);//45
+                this.Characters[i].SetActive(true);
             } else
             {
-                this.Characters[i].SetActive(false);//48
+                this.Characters[i].SetActive(false);
             }
         }
     }

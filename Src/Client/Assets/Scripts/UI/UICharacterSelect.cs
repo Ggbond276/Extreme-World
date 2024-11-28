@@ -18,7 +18,7 @@ public class UICharacterSelect : MonoBehaviour
     public Transform uiCharList;
     public List<GameObject> uiChars = new List<GameObject>();
     private CharacterClass characterClass;
-    private int selectCharacterIdx = -134;
+    private int selectCharacterIdx = -1;
 
     void Start()
     {
@@ -48,13 +48,13 @@ public class UICharacterSelect : MonoBehaviour
             {
                 //创建一个用于展示角色信息的UI元素实例
                 //实例化一个名为uiCharInfo的对象
-                GameObject CharInfo = Instantiate(uiCharInfo, this.uiCharList);   
+                GameObject CharInfo = Instantiate(uiCharInfo, this.uiCharList);
                 //获取刚实例化的UICharInfo组件
                 UICharInfo UICharInfo = CharInfo.GetComponent<UICharInfo>();
                 //将User.Instance.Info.Player.Characters中当前索引对应的角色信息赋值给charInfo的info属性
                 UICharInfo.info = User.Instance.Info.Player.Characters[i];
                 //获取刚实例化的游戏对象的button组件
-                Button button =CharInfo.GetComponent<Button>();
+                Button button = CharInfo.GetComponent<Button>();
                 //记录当前循环的索引
                 int index = i;
                 //当按钮点击事件会调用OnClickSelectCharacater方法 并传入索引值
@@ -79,15 +79,26 @@ public class UICharacterSelect : MonoBehaviour
     //在角色选择界面中点击选择角色
     public void OnClickSelectCharacater(int index)
     {
+        //获取选中角色的下标
         this.selectCharacterIdx = index;
+        //通过下标获取到对应的玩家信息
         SkillBridge.Message.NCharacterInfo cha = User.Instance.Info.Player.Characters[index];
+        //在日志中打印出玩家信息
         Debug.LogFormat("Select Char: [{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
         //设置当前的角色是cha
         User.Instance.CurrentCharacter = cha;
         //显示对应的3D角色试图
-        UICharacterView.CurrentCharacter = index;
+        UICharacterView.CurrentCharacter = (int)cha.Class - 1 ;
     }
-
+    //在角色创建界面点击进入游戏
+    public void OnClickEnterGame()
+    {
+        //判断有没有选择角色
+        if (selectCharacterIdx >= 0)
+        {
+            MessageBox.Show("进入游戏", "进入游戏", MessageBoxType.Confirm);
+        }
+    }
 
 
     //在角色创建界面点击返回按钮
