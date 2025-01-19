@@ -7,6 +7,7 @@ using Common;
 using Network;
 using SkillBridge.Message;
 using GameServer.Entities;
+using GameServer.Manager;
 
 namespace GameServer.Services
 {
@@ -15,10 +16,14 @@ namespace GameServer.Services
 
         public UserService()
         {
+            //消息分发器 消息分发器会将客户端传送来的信息分发给对应的消息处理方法
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserLoginRequest>(this.OnLogin);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserRegisterRequest>(this.OnRegister);
             MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserCreateCharacterRequest>(this.OnCreateCharacter);
+            MessageDistributer<NetConnection<NetSession>>.Instance.Subscribe<UserGameEnterRequest>(this.OnGameEnter);
         }
+
+
 
         public void Init()
         {
@@ -138,6 +143,38 @@ namespace GameServer.Services
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);
             #endregion 
+        }
+        //进入角色的方法
+        private void OnGameEnter(NetConnection<NetSession> sender, UserGameEnterRequest request)
+        {
+            #region 利用查找出的DB数据创建出相应的角色信息
+            //查找出相应的角色信息
+            TCharacter dbchar = sender.Session.User.Player.Characters.ElementAt(request.characterIdx);
+            //打印日志
+            Log.InfoFormat("UserGameEnterRequest : character : {0} : {1}  Map : {2} ", dbchar.ID, dbchar.Name, dbchar.MapID);
+            //使用查找出的角色信息 创建出相应的角色
+            Character character = CharacterManager.Instance.AddCharascter(dbchar);
+            #endregion
+
+            #region 将gameEnter的响应发送给客户端
+            //打包信息并发送
+            NetMessage message = new NetMessage();
+            message.Response = new NetMessageResponse();
+            message.Response.gameEnter = new UserGameEnterResponse();
+            message.Response.gameEnter.Result = Result.Success;
+            message.Response.gameEnter.Errormsg = "None";
+            #endregion
+
+            //理解这段代码在干什么
+            //使用PackageHandler将响应客户端的信息打包成字节流
+            byte[] data = PackageHandler.PackMessage(message);
+            //将响应信息发送出去
+            sender.SendData(data, 0, data.Length);
+            //更新临时会话中的角色信息
+            sender.Session.Character = character;   
+
+
+            MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
         }
     }
 }

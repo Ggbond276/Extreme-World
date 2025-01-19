@@ -11,6 +11,7 @@ using System.Threading;
 
 using Network;
 using GameServer.Services;
+using GameServer.Manager;
 
 namespace GameServer
 {
@@ -29,6 +30,9 @@ namespace GameServer
             DBService.Instance.Init();
             //Start the UserService
             UserService.Instance.Init();
+            //加载和初始化DataManager 和 MapManager
+            DataManager.Instance.Load();
+            MapManager.Instance.Init();
             thread = new Thread(new ThreadStart(this.Update));
 
             return true;

@@ -96,11 +96,10 @@ public class UICharacterSelect : MonoBehaviour
         //判断有没有选择角色
         if (selectCharacterIdx >= 0)
         {
-            MessageBox.Show("进入游戏", "进入游戏", MessageBoxType.Confirm);
+            //发送角色进入游戏请求给客户端    
+            UserService.Instance.SendGameEnter(selectCharacterIdx);
         }
     }
-
-
     //在角色创建界面点击返回按钮
     public void OnClickBack()
     {

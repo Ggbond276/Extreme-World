@@ -27,8 +27,7 @@ namespace GameServer.Entities
 
         }
 
-        public CharacterBase(CharacterType type, int tid, int level, Vector3Int pos, Vector3Int dir) :
-           base(pos, dir)
+        public CharacterBase(CharacterType type, int tid, int level, Vector3Int pos, Vector3Int dir) : base(pos, dir)
         {
             this.Info = new NCharacterInfo();
             this.Info.Type = type;

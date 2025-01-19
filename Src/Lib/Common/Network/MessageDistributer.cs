@@ -100,8 +100,10 @@ namespace Network
                 MessageHandler<Tm> handler = (MessageHandler<Tm>)messageHandlers[key];
                 if (handler != null)
                 {
+
+                   
                     try
-                    {
+                    { 
                         handler(sender, msg);
                     }
                     catch (System.Exception ex)
@@ -110,6 +112,8 @@ namespace Network
                         if (ThrowException)
                             throw ex;
                     }
+
+
                 }
                 else
                 {
