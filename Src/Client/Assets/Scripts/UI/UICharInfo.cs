@@ -10,6 +10,15 @@ public class UICharInfo : MonoBehaviour
 
     public Text charClass;
     public Text charName;
+    public Image highlight;
+    public bool Selected
+    {
+        get { return highlight.IsActive(); }
+        set
+        {
+            highlight.gameObject.SetActive(value);
+        }
+    }
 
     // Use this for initialization
     void Start()

@@ -10,7 +10,7 @@ public class UICharacterSelect : MonoBehaviour
     //获取两个面板
     public GameObject SelectPanel;
     public GameObject CreatePanel;
-    public UICharacterView UICharacterView;
+    public UICharacterView characterView;
     public InputField InputPlayerName;
     public Image[] titles;
     public Text[] names;
@@ -74,7 +74,7 @@ public class UICharacterSelect : MonoBehaviour
     {
         SelectPanel.SetActive(false);
         CreatePanel.SetActive(true);
-        UICharacterView.CurrentCharacter = 1;
+        characterView.CurrentCharacter = 1;
     }
     //在角色选择界面中点击选择角色
     public void OnClickSelectCharacater(int index)
@@ -88,7 +88,7 @@ public class UICharacterSelect : MonoBehaviour
         //设置当前的角色是cha
         User.Instance.CurrentCharacter = cha;
         //显示对应的3D角色试图
-        UICharacterView.CurrentCharacter = (int)cha.Class - 1 ;
+        characterView.CurrentCharacter = (int)cha.Class - 1 ;
     }
     //在角色创建界面点击进入游戏
     public void OnClickEnterGame()
@@ -111,7 +111,7 @@ public class UICharacterSelect : MonoBehaviour
     {
         characterClass = (CharacterClass)index;
         //显示选择到的角色 不显示没选择的角色
-        UICharacterView.CurrentCharacter = index - 1;
+        characterView.CurrentCharacter = index - 1;
         //显示角色的名字和显示角色的概括信息
         for (int i = 0; i < 3; i++)
         {
@@ -146,6 +146,29 @@ public class UICharacterSelect : MonoBehaviour
         else
         {
             MessageBox.Show(message, "错误", MessageBoxType.Error);
+        }
+    }
+
+    public void OnSelectCharacter(int idx)
+    {
+        this.selectCharacterIdx = idx;
+        var cha = User.Instance.Info.Player.Characters[idx];
+        Debug.LogFormat("Select Char:[{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
+        User.Instance.CurrentCharacter = cha;
+        characterView.CurrentCharacter = ((int)cha.Class - 1);
+
+        for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)
+        {
+            UICharInfo ci = this.uiChars[i].GetComponent<UICharInfo>();
+            ci.Selected = idx == i;
+        }
+    }
+    public void OnClickPlay()
+    {
+        if (selectCharacterIdx >= 0)
+        {
+            // 携带选中的角色的id将进入游戏的请求发送给服务端
+            UserService.Instance.SendGameEnter(selectCharacterIdx);
         }
     }
 

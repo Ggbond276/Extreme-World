@@ -282,6 +282,7 @@ namespace Services
         }
         #endregion
 
+        // 发送进入游戏请求
         public void SendGameEnter(int characterIdx)
         {
             //打印日志 告知现在进行的是角色进入游戏
@@ -294,7 +295,7 @@ namespace Services
             //发送请求给服务器
             NetClient.Instance.SendMessage(message);
         }
-
+        // 记录当进入游戏成功时从服务端返回的信息
         void OnGameEnter(object sender , UserGameEnterResponse response)
         {
             Debug.LogFormat("OnGameEnter : {0} [{1}]", response.Result, response.Errormsg);
@@ -304,7 +305,7 @@ namespace Services
 
             }
         }
-
+        // 发送离开游戏请求
         public void SendGameLeave()
         {
             Debug.LogFormat("UserGameLeaveRequest");
@@ -313,32 +314,32 @@ namespace Services
             message.Request.gameLeave = new UserGameLeaveRequest();
             NetClient.Instance.SendMessage(message);
         }
-
+        // 记录当离开游戏时从服务端返回的信息
         void OnGameLeave(object sender , UserGameLeaveResponse response)
         {
             //MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
         }
-
-
+        // 发送角色进入游戏请求
         public void SendCharacterEnter()
         {
 
         }
-
-        void OnCharacterEnter(object sender , MapCharacterEnterResponse response)
+        // 记录当角色成功进入游戏时服务端返回的请求
+       public  void OnCharacterEnter(object sender , MapCharacterEnterResponse response)
         {
             Debug.LogFormat("OnMapCharacterEnter : {0}", response.mapId);
             NCharacterInfo info = response.Characters[0];
             User.Instance.CurrentCharacter = info;
+            // 到这里主城就加载进来了
             SceneManager.Instance.LoadScene(DataManager.Instance.Maps[response.mapId].Resource);
         }
-
+        // 发送角色离开游戏请求
         public void SendCharacterLeave()
         {
 
         }
-
+        // 记录当角色离开游戏时从服务端返回的信息
         void OnCharacterLeave(object sender , MapCharacterLeaveResponse response)
         {
 

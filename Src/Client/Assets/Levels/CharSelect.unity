@@ -1883,7 +1883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SelectPanel: {fileID: 704303330}
   CreatePanel: {fileID: 389488210}
-  UICharacterView: {fileID: 99934322}
+  characterView: {fileID: 99934322}
   InputPlayerName: {fileID: 1815086368}
   titles:
   - {fileID: 465676852}
