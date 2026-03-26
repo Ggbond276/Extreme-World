@@ -30,7 +30,9 @@ public class DataManager : Singleton<DataManager>
     //Load接口是提供给服务端使用的
     public void Load()
     {
+        // 读取MapDefine.txt中的文本信息
         string json = File.ReadAllText(this.DataPath + "MapDefine.txt");
+        // 反序列化 解析这个字符串 让这个字符串变成一个索引表
         this.Maps = JsonConvert.DeserializeObject<Dictionary<int, MapDefine>>(json);
 
         json = File.ReadAllText(this.DataPath + "CharacterDefine.txt");

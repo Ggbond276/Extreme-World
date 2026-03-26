@@ -7,6 +7,7 @@ using System.IO;
 using SkillBridge.Message;
 using ProtoBuf;
 using Services;
+using Assets.Scripts.Services;
 
 public class LoadingManager : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class LoadingManager : MonoBehaviour
 
         #region 4.Æô¶¯UserService 
         //perfrom initialization operations related to user service functions
+        MapService.Instance.Init();
         UserService.Instance.Init();
         #endregion
 

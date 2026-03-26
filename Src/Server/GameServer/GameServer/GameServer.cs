@@ -28,11 +28,13 @@ namespace GameServer
             network.Init(Port);
             //Start the DcService
             DBService.Instance.Init();
+
+            DataManager.Instance.Load();
             //Start the UserService
             UserService.Instance.Init();
-            //加载和初始化DataManager 和 MapManager
-            DataManager.Instance.Load();
-            MapManager.Instance.Init();
+            //Start the MapService
+
+            MapService.Instance.Init();
             thread = new Thread(new ThreadStart(this.Update));
 
             return true;

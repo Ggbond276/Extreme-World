@@ -28,12 +28,15 @@ namespace GameServer.Manager
 
         internal void Load()
         {
+            // 地图定义
             string json = File.ReadAllText(this.DataPath + "MapDefine.txt");
             this.Maps = JsonConvert.DeserializeObject<Dictionary<int, MapDefine>>(json);
 
+            // 角色定义
             json = File.ReadAllText(this.DataPath + "CharacterDefine.txt");
             this.Characters = JsonConvert.DeserializeObject<Dictionary<int, CharacterDefine>>(json);
 
+            //
             json = File.ReadAllText(this.DataPath + "TeleporterDefine.txt");
             this.Teleporters = JsonConvert.DeserializeObject<Dictionary<int, TeleporterDefine>>(json);
 
