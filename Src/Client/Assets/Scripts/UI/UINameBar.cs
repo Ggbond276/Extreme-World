@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class UINameBar : MonoBehaviour {
 
-    public Text avaverName;
-
-
-
+    // 角色姓名显示框
+    public Text characterInfo;
+    
     public Character character;
 
 
@@ -17,14 +16,14 @@ public class UINameBar : MonoBehaviour {
     void Start () {
 		if(this.character!=null)
         {
-            
+            this.UpdateInfo();
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
         this.UpdateInfo();
-
+        // 为了让视线对其摄像机
         this.transform.forward = Camera.main.transform.forward;
 	}
 
@@ -32,11 +31,14 @@ public class UINameBar : MonoBehaviour {
     {
         if (this.character != null)
         {
-            string name = this.character.Name + " Lv." + this.character.Info.Level;
-            if(name != this.avaverName.text)
+            string info = this.character.Name + " Lv." + this.character.Info.Level;
+
+            if(info != this.characterInfo.text)
             {
-                this.avaverName.text = name;
+                this.characterInfo.text = info;
             }
+
+
         }
     }
 }

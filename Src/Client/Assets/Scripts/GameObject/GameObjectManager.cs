@@ -92,7 +92,7 @@ using UnityEngine;
                 }
 
                 // --- 第五板块：环境交互（UI表现） ---
-                //UIWorldElementManager.Instance.AddCharacterNameBar(go.transform, character);
+                UIWorldElementManager.Instance.AddCharacterNameBar(go.transform, character);
             }
 
 
