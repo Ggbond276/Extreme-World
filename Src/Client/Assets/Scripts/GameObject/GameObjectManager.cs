@@ -8,13 +8,11 @@ using UnityEngine;
     {
         // 创建字典用来管理界面中所有的GameObject
         Dictionary<int, GameObject> Characters = new Dictionary<int, GameObject>(); 
-
         protected void Start()
         {
             StartCoroutine(InitGameObjects());
             CharacterManager.Instance.OnCharacterEnter = OnCharacterEnter;
         }
-
         private void OnDestroy()
         {
             CharacterManager.Instance.OnCharacterEnter = null;
@@ -23,7 +21,6 @@ using UnityEngine;
         {
         
         }
-
         IEnumerator InitGameObjects()
         {
             foreach(var cha in CharacterManager.Instance.Characters.Values)
@@ -32,13 +29,10 @@ using UnityEngine;
                 yield return null;
             }
         }
-
         void OnCharacterEnter(Character cha)
         {
             CrearteCharacterObject(cha);
         }
-
-
         private void CrearteCharacterObject(Character character)
         {
             // --- 第一板块：安全准入与资源准备 ---

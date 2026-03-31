@@ -35,7 +35,6 @@ namespace Assets.Scripts.Services
             #endregion
         }
 
-        //Initialize the UserService component
         public void Init()
         {
 
@@ -78,9 +77,11 @@ namespace Assets.Scripts.Services
             //根据MapId 使用DataManager拿到关于地图的信息
             //判断地图是否存在
             if (DataManager.Instance.Maps.ContainsKey(mapId))
-            {
+            {   
                 //使用DataManager获取地图的定义 地图的定义中包含地图的资源
                 MapDefine map = DataManager.Instance.Maps[mapId];
+               
+                User.Instance.CurrentMapData = map;
                 //加载地图资源
                 //map.Resource可以拿到资源路径
                 //然后调用SceneManager.Instance.LoadScene这个方法就可以让 Unity 引擎去自己的 Assets 资源库里寻找名为 Scene_StartCity 的真实场景文件（包含地形、模型、光源等）。

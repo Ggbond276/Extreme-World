@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,20 +12,21 @@ namespace Models
     class User : Singleton<User>
     {
         SkillBridge.Message.NUserInfo userInfo;
-
-
         public SkillBridge.Message.NUserInfo Info
         {
             get { return userInfo; }
         }
-
-
         public void SetupUserInfo(SkillBridge.Message.NUserInfo info)
         {
             this.userInfo = info;
         }
 
+        //  当前角色的内在信息
         public SkillBridge.Message.NCharacterInfo CurrentCharacter { get; set; }
+        // 当前角色的模型
         public GameObject CurrentCharacterObject { get; set; }
+        // 当前角色所在的地图
+        public MapDefine CurrentMapData { get; set; }
+     
     }
 }
