@@ -15,7 +15,7 @@ namespace Assets.Scripts.Managers
         public Dictionary<int, Character> Characters = new Dictionary<int, Character>();
         // 这个委托会在GameObjectManager中
         public UnityAction<Character> OnCharacterEnter;
-
+        public UnityAction<Character> OnCharacterLeave;
         public CharacterManager()
         {
 
@@ -50,5 +50,10 @@ namespace Assets.Scripts.Managers
             }
         }
 
+        // 空方法 还没有实现
+        public void RemoveCharacter(NCharacterInfo cha)
+        {
+
+        }
     }
 }

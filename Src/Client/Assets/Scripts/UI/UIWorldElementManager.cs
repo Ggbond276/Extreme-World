@@ -5,12 +5,8 @@ using UnityEngine;
 
 public class UIWorldElementManager : MonoSingleton<UIWorldElementManager>
 {
-
 	public GameObject infoBarPrefab;
-
 	public Dictionary<Transform, GameObject> elements = new Dictionary<Transform, GameObject>();
-
-
     protected override void OnStart()
     {
         // 这里的 Instance 永远指向那个“最先被发现的、唯一的真身” (Manager_A)
@@ -28,11 +24,9 @@ public class UIWorldElementManager : MonoSingleton<UIWorldElementManager>
         // 我就是那个唯一的真身，可以开始干活了
         base.OnStart();
     }
-
     void Update () {
 		
 	}
-
 	public void AddCharacterNameBar(Transform owner, Character character)
     {
 		GameObject goInfoBar = Instantiate(infoBarPrefab, this.transform);
@@ -41,7 +35,6 @@ public class UIWorldElementManager : MonoSingleton<UIWorldElementManager>
 		goInfoBar.GetComponent<UINameBar>().character = character;
 		this.elements[owner] = goInfoBar;
     }
-
 	public void RemoveCharacterNameBar(Transform owner)
     {
 		if(this.elements.ContainsKey(owner))

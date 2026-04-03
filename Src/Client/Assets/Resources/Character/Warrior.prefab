@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 494e3b9302269e34985213c0cfc6ffbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityController: {fileID: 8598028774180199300}
+  entityController: {fileID: 0}
   rb: {fileID: 4992141799773907516}
   rotateSpeed: 2
   turnAngle: 0

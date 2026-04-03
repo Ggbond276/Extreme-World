@@ -35,8 +35,6 @@ namespace Services
             MessageDistributer.Instance.Subscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Subscribe<UserGameEnterResponse>(this.OnGameEnter);
             MessageDistributer.Instance.Subscribe<UserGameLeaveResponse>(this.OnGameLeave);
-            MessageDistributer.Instance.Subscribe<MapCharacterEnterResponse>(this.OnCharacterEnter);
-            MessageDistributer.Instance.Subscribe<MapCharacterLeaveResponse>(this.OnCharacterLeave);
 
         }
         //销毁的时候执行
@@ -47,21 +45,15 @@ namespace Services
             MessageDistributer.Instance.Unsubscribe<UserCreateCharacterResponse>(this.OnUserCreateCharacter);
             MessageDistributer.Instance.Unsubscribe<UserGameEnterResponse>(this.OnGameEnter);
             MessageDistributer.Instance.Unsubscribe<UserGameLeaveResponse>(this.OnGameLeave);
-            MessageDistributer.Instance.Unsubscribe<MapCharacterEnterResponse>(this.OnCharacterEnter);
-            MessageDistributer.Instance.Unsubscribe<MapCharacterLeaveResponse>(this.OnCharacterLeave);
             NetClient.Instance.OnConnect -= OnGameServerConnect;
             NetClient.Instance.OnDisconnect -= OnGameServerDisconnect;
         }
-
-
-
-        //Initialize the UserService component
         public void Init()
         {
 
         }
 
-        #region 连接到服务器 ConnectToServer()
+        // 1. 连接到服务器 ConnectToServer()
         public void ConnectToServer()
         {
             Debug.Log("ConnectToServer() Start ");
@@ -69,9 +61,7 @@ namespace Services
             NetClient.Instance.Init("127.0.0.1", 8000);
             NetClient.Instance.Connect();
         }
-        #endregion
-
-        #region 检测是否连接到服务器 OnGameServerConnect(int result, string reason)
+        // 2. 检测是否连接到服务器 OnGameServerConnect(int result, string reason)
         void OnGameServerConnect(int result, string reason)
         {
             Log.InfoFormat("LoadingMesager::OnGameServerConnect :{0} reason:{1}", result, reason);
@@ -92,17 +82,13 @@ namespace Services
                 }
             }
         }
-        #endregion
-
-        #region 检查是否和服务器断开连接 OnGameServerDisconnect(int result, string reason)
+        // 3. 检查是否和服务器断开连接 OnGameServerDisconnect(int result, string reason)
         public void OnGameServerDisconnect(int result, string reason)
         {
             this.DisconnectNotify(result, reason);
             return;
         }
-        #endregion
-
-        #region 服务器断连的提示 DisconnectNotify(int result,string reason)
+        // 4. 服务器断连的提示 DisconnectNotify(int result,string reason)
         bool DisconnectNotify(int result,string reason)
         {
             if (this.pendingMessage != null)
@@ -132,10 +118,9 @@ namespace Services
             }
             return false;
         }
-        #endregion
+        
 
-        #region 接收UI层传来的登录信息并将登录信息传输给服务端 SendLogin(string user , string passward)
-        //Send the user login information to the Server
+        // 用户登录
         public void SendLogin(string user , string passward)
         {
             #region 在日志中打印将登录信息发送给服务器
@@ -162,9 +147,6 @@ namespace Services
             }
             #endregion
         }
-        #endregion
-
-        #region 记录当用户登录成功事从服务端返回的信息 OnUserLogin(object sender, UserLoginResponse response)
         void OnUserLogin(object sender, UserLoginResponse response)
         {
             Debug.LogFormat("OnLogin:{0} [{1}]", response.Result, response.Errormsg);
@@ -179,10 +161,9 @@ namespace Services
 
             }
         }
-        #endregion
+ 
 
-        #region 接收UI层传来的注册信息并将注册信息传输给服务端 SendRegister(string user, string psw)
-        //Send the user registration information to the Server
+        // 用户注册
         public void SendRegister(string user, string psw)
         {
             #region 在日志中打印将注册信息
@@ -218,10 +199,6 @@ namespace Services
             }
             #endregion
         }
-        #endregion
-
-        #region 记录当用户注册成功时从服务端返回的信息 OnUserRegister(object sender, UserRegisterResponse response)
-        //After the registration is completed, send the response back to the UI Layer
         void OnUserRegister(object sender, UserRegisterResponse response)
         {
             Debug.LogFormat("OnUserRegister:{0} [{1}]", response.Result, response.Errormsg);
@@ -232,9 +209,9 @@ namespace Services
 
             }
         }
-        #endregion
 
-        #region 接收UI层传来的角色创建信息并将角色创建信息发送给服务端 SendCharacterCreate(string name, CharacterClass cls)
+
+        // 用户创建角色
         public void SendCharacterCreate(string name, CharacterClass cls)
         {
             #region 在日志中打印角色创建信息
@@ -262,9 +239,6 @@ namespace Services
             }
             #endregion
         }
-        #endregion
-
-        #region 记录当用户角色创建成功时从服务端返回的信息 OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         void OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         {
             Debug.LogFormat("OnUserCreateCharacter:{0} [{1}]", response.Result, response.Errormsg);
@@ -280,9 +254,9 @@ namespace Services
                 this.OnCharacterCreate(response.Result, response.Errormsg);
             }
         }
-        #endregion
+  
 
-        // 发送进入游戏请求
+        // 角色进入游戏
         public void SendGameEnter(int characterIdx)
         {
             //打印日志 告知现在进行的是角色进入游戏
@@ -295,17 +269,18 @@ namespace Services
             //发送请求给服务器
             NetClient.Instance.SendMessage(message);
         }
-        // 记录当进入游戏成功时从服务端返回的信息
         void OnGameEnter(object sender , UserGameEnterResponse response)
         {
             Debug.LogFormat("OnGameEnter : {0} [{1}]", response.Result, response.Errormsg);
             
             if(response.Result == Result.Success)
             {
-
+                Debug.LogFormat("");
             }
         }
-        // 发送离开游戏请求
+        
+
+        // 角色离开游戏
         public void SendGameLeave()
         {
             Debug.LogFormat("UserGameLeaveRequest");
@@ -314,37 +289,14 @@ namespace Services
             message.Request.gameLeave = new UserGameLeaveRequest();
             NetClient.Instance.SendMessage(message);
         }
-        // 记录当离开游戏时从服务端返回的信息
         void OnGameLeave(object sender , UserGameLeaveResponse response)
         {
             //MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
-        }
-        // 发送角色进入游戏请求
-        public void SendCharacterEnter()
-        {
 
         }
-        // 记录当角色成功进入游戏时服务端返回的请求
-       public  void OnCharacterEnter(object sender , MapCharacterEnterResponse response)
-        {
-            Debug.LogFormat("OnMapCharacterEnter : {0}", response.mapId);
-            NCharacterInfo info = response.Characters[0];
-            User.Instance.CurrentCharacter = info;
-            // 到这里主城就加载进来了
-            SceneManager.Instance.LoadScene(DataManager.Instance.Maps[response.mapId].Resource);
-        }
-        // 发送角色离开游戏请求
-        public void SendCharacterLeave()
-        {
-
-        }
-        // 记录当角色离开游戏时从服务端返回的信息
-        void OnCharacterLeave(object sender , MapCharacterLeaveResponse response)
-        {
-
-        }
-
+       
+        
 
     }
 }

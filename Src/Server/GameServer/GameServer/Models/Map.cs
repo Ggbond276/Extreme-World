@@ -50,12 +50,6 @@ namespace GameServer.Models
         {
 
         }
-
-        /// <summary>
-        /// 角色进入地图
-        /// </summary>
-        /// <param name="conn">连接器</param>
-        /// <param name="character"></param>
         internal void CharacterEnter(NetConnection<NetSession> conn, Character character)
         {
             //打印日志
@@ -89,14 +83,6 @@ namespace GameServer.Models
             //发送信息
             conn.SendData(data, 0, data.Length);
         }
-
-
-        //广播功能 将进入地图的角色信息广播给在这个地图中的所有角色
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="conn">连接器</param>
-        /// <param name="character">角色信息</param>
         void SendCharacterEnterMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
             #region 打包响应式信息
@@ -113,23 +99,19 @@ namespace GameServer.Models
             conn.SendData(data, 0, data.Length);
         }
 
-
-       
-        internal void CharacterLeaveMap(NCharacterInfo cha)
+        internal void CharacterLeave(NCharacterInfo cha)
         {
-            Log.InfoFormat("CharacterEnter: Map : {0} characterId: {1}", this.Define.ID, cha.Id);
+            // 执行到这条语句出现了问题
+            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Id); 
             this.MapCharacters.Remove(cha.Id);
             foreach( var kv in this.MapCharacters)
             {
+                // 发送到服务器告诉他们哪个角色离开了
                 this.SendCharacterLeaveMap(kv.Value.connection, cha);
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="conn">连接器</param>
-        /// <param name="character">角色信息</param>
+
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
             NetMessage message = new NetMessage();
@@ -140,6 +122,7 @@ namespace GameServer.Models
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
         }
+
 
         internal void UpdateEntity(NEntitySync entity)
         {
@@ -157,7 +140,6 @@ namespace GameServer.Models
                 }
             }
         }
-
         void SendEntityUpdate(NetConnection<NetSession> conn , NEntitySync entity)
         {
             NetMessage message = new NetMessage();

@@ -24,7 +24,6 @@ public class UIMiniMap : MonoBehaviour
     {
         this.InitMap();
     }
-
     void InitMap()
     {
         this.mapName.text = User.Instance.CurrentMapData.Name;
@@ -36,8 +35,6 @@ public class UIMiniMap : MonoBehaviour
         this.minimap.transform.localPosition = Vector3.zero;
         this.playerTransform = User.Instance.CurrentCharacterObject.transform;
     }
-    
-
     void Update()
     {
         float realWidth = minimapBouingBox.bounds.size.x;
