@@ -272,7 +272,7 @@ namespace Services
         void OnGameEnter(object sender , UserGameEnterResponse response)
         {
             Debug.LogFormat("OnGameEnter : {0} [{1}]", response.Result, response.Errormsg);
-            
+            // 如果受到了服务器成功进入游戏的请求
             if(response.Result == Result.Success)
             {
                 Debug.LogFormat("");
@@ -293,7 +293,6 @@ namespace Services
         {
             //MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
-
         }
        
         

@@ -23,7 +23,12 @@ public class UICharacterSelect : MonoBehaviour
     void Start()
     {
         InitSelectCharacter(true);
-        UserService.Instance.OnCharacterCreate = OnCharacterCreate;
+        UserService.Instance.OnCharacterCreate += OnCharacterCreate;
+    }
+
+    void OnDestroy()
+    {
+        UserService.Instance.OnCharacterCreate -= OnCharacterCreate;
     }
 
     //初始化角色选择界面
@@ -148,7 +153,6 @@ public class UICharacterSelect : MonoBehaviour
             MessageBox.Show(message, "错误", MessageBoxType.Error);
         }
     }
-
     public void OnSelectCharacter(int idx)
     {
         this.selectCharacterIdx = idx;

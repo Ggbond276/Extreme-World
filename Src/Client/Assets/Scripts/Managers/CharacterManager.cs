@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using Entities;
+using Managers;
 
 namespace Assets.Scripts.Managers
 {
-    class CharacterManager : Singleton<CharacterManager> , IDisposable
+    class CharacterManager : Singleton<CharacterManager>, IDisposable
     {
         public Dictionary<int, Character> Characters = new Dictionary<int, Character>();
         // 这个委托会在GameObjectManager中
@@ -21,7 +22,7 @@ namespace Assets.Scripts.Managers
 
         }
 
-        public void  Dispose()
+        public void Dispose()
         {
 
         }
@@ -31,8 +32,24 @@ namespace Assets.Scripts.Managers
 
         }
 
+        //OnMapCharacterLeave调用
         public void Clear()
         {
+            // 注释掉的逻辑是我自己思考写出来的
+            //if (this.OnCharacterLeave != null)
+            //{
+            //    foreach (var cha in this.Characters.Values)
+            //    {
+            //        this.OnCharacterLeave(cha);
+            //    }
+            //}
+            //Debug.LogFormat("this.Characters.Clear()");
+
+            int[] keys = this.Characters.Keys.ToArray();
+            foreach(var key in  keys)
+            {
+                this.RemoveCharacter(key);
+            }
             this.Characters.Clear();
         }
 
@@ -43,17 +60,25 @@ namespace Assets.Scripts.Managers
             // 通过NCharacter中的信息 实例化Character变成一个Entity
             Character character = new Character(cha);
             this.Characters[cha.Id] = character;
-
-            if(OnCharacterEnter!=null)
+            EntityManager.Instance.AddEntity(character);
+            if (OnCharacterEnter != null)
             {
                 OnCharacterEnter(character);
             }
         }
 
-        // 空方法 还没有实现
-        public void RemoveCharacter(NCharacterInfo cha)
+        //OnMapCharacterLeave调用
+        public void RemoveCharacter(int CharacterId)
         {
-
+            if (Characters.ContainsKey(CharacterId))
+            {
+                EntityManager.Instance.RemoveEntity(this.Characters[CharacterId].Info.Entity);
+                if (OnCharacterLeave != null)
+                {
+                    this.OnCharacterLeave(Characters[CharacterId]);
+                }
+                this.Characters.Remove(CharacterId);
+            }
         }
     }
 }

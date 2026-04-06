@@ -8,19 +8,14 @@ using SkillBridge.Message;
 //单例模式
 public class UILogin : MonoBehaviour
 {
-    #region 获取UI组件
     public static UILogin instance;
     public InputField InputUsername;
     public InputField InputPassword;
     public Button LoginButton;
-    #endregion
-
     private void Start()
     {
         UserService.Instance.OnLogin = this.OnLogin;
     } 
-    
-    #region 以弹窗的形式告知用户服务端的响应情况
     void OnLogin(Result result, string message)
     {
         if (result == Result.Success)
@@ -33,9 +28,6 @@ public class UILogin : MonoBehaviour
             MessageBox.Show(message, "错误", MessageBoxType.Error);
         }
     }
-    #endregion
-
-    #region  按下登录按钮后 将登录数据发送给UserService逻辑层
     public void OnClickLogin()
     {
         if(string.IsNullOrEmpty(this.InputUsername.text))
@@ -50,7 +42,4 @@ public class UILogin : MonoBehaviour
         }
         UserService.Instance.SendLogin(this.InputUsername.text, this.InputPassword.text);
     }
-    #endregion
-
-
 }

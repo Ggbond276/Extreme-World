@@ -96,8 +96,10 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
     {
         CrearteCharacterObject(cha);
     }
+    // 这里的逻辑会对角色进行销毁操作
     void OnCharacterLeave(Character cha)
     {
+        Debug.LogFormat("OnCharacterLeave()");
         if (!Characters.ContainsKey(cha.entityId))
             return;
         if (Characters[cha.entityId] != null)

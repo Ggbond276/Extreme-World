@@ -66,7 +66,18 @@ namespace Assets.Scripts.Services
         // 处理服务器发来的角色离开地图的消息
         private void OnMapCharacterLeave(object sender, MapCharacterLeaveResponse response)
         {
+            // 接收到消息了
             Debug.LogFormat("OnMapCharacterLeave: {0}", response.characterId);
+            // 如果是要离开的角色不是玩家角色 就清除当前角色即可
+            if(response.characterId != User.Instance.CurrentCharacter.Id)
+            {
+                Debug.LogFormat("CharacterManager.Instance.RemoveCharacter()");
+                CharacterManager.Instance.RemoveCharacter(response.characterId);
+            } else
+            {
+                Debug.LogFormat("CharacterManager.Instance.Clear()");
+                CharacterManager.Instance.Clear();
+            }
         }
         private void EnterMap(int mapId)
         {

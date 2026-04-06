@@ -1,10 +1,11 @@
 using Entities;
+using Managers;
 using SkillBridge.Message;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityController : MonoBehaviour
+public class EntityController : MonoBehaviour, IEntityNotify
 {
     public Animator anim;
     public Rigidbody rb;
@@ -24,18 +25,17 @@ public class EntityController : MonoBehaviour
     public bool isPlayer = false;
 
     void Start()
-    {   
-        // ���ʵ�岻Ϊ��
+    {
         if (entity != null)
         {
+            EntityManager.Instance.RegisterEntityChangeNotify(entity.entityId, this);
             this.updateTransform();
         }
-        // ���ʵ�岻����ҽ�ɫ
-        if(!this.isPlayer)
+        if (!this.isPlayer)
         {
             rb.useGravity = false;
         }
-}
+    }
 
     void updateTransform()
     {
@@ -44,7 +44,7 @@ public class EntityController : MonoBehaviour
         this.direction = GameObjectTool.LogicToWorld(entity.direction);
 
 
-        if(this.direction != Vector3.zero)
+        if (this.direction != Vector3.zero)
         {
             this.rotation = Quaternion.LookRotation(this.direction);
         }
@@ -66,7 +66,7 @@ public class EntityController : MonoBehaviour
 
         this.entity.OnUpdate(Time.fixedDeltaTime);
 
-        if(!this.isPlayer)
+        if (!this.isPlayer)
         {
             this.updateTransform();
         }
@@ -99,7 +99,17 @@ public class EntityController : MonoBehaviour
 
         if (UIWorldElementManager.Instance != null)
         {
-           UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
+            UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
         }
+    }
+
+    // 实现接口
+    public void OnEntityRemoved()
+    {
+        if(UIWorldElementManager.Instance != null)
+        {
+            UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
+        }
+        Destroy(this.gameObject);
     }
 }

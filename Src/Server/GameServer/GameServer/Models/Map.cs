@@ -101,7 +101,6 @@ namespace GameServer.Models
 
         internal void CharacterLeave(NCharacterInfo cha)
         {
-            // 执行到这条语句出现了问题
             Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Id); 
             this.MapCharacters.Remove(cha.Id);
             foreach( var kv in this.MapCharacters)
@@ -114,6 +113,7 @@ namespace GameServer.Models
 
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
+            Log.InfoFormat("SendCharacterLeaveMap start");
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
@@ -121,6 +121,7 @@ namespace GameServer.Models
 
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
+            Log.InfoFormat("SendCharacterLeaveMap end");
         }
 
 

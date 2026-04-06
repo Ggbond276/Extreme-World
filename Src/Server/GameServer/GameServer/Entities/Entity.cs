@@ -14,10 +14,7 @@ namespace GameServer.Entities
         {
             get { return this.entityData.Id; }
         }
-
-
         private Vector3Int position;
-
         public Vector3Int Position
         {
             get { return position; }
@@ -26,7 +23,6 @@ namespace GameServer.Entities
                 this.entityData.Position = position;
             }
         }
-
         private Vector3Int direction;
         public Vector3Int Direction
         {
@@ -37,7 +33,6 @@ namespace GameServer.Entities
                 this.entityData.Direction = direction;
             }
         }
-
         private int speed;
         public int Speed
         {
@@ -48,7 +43,6 @@ namespace GameServer.Entities
                 this.entityData.Speed = speed;
             }
         }
-
         private NEntity entityData;
         public NEntity EntityData
         {
@@ -62,7 +56,6 @@ namespace GameServer.Entities
                 this.SetEntityData(value);
             }
         }
-
         public Entity(Vector3Int pos,Vector3Int dir)
         {
             this.entityData = new NEntity();
@@ -70,12 +63,10 @@ namespace GameServer.Entities
             this.entityData.Direction = dir;
             this.SetEntityData(this.entityData);
         }
-
         public Entity(NEntity entity)
         {
             this.entityData = entity;
         }
-
         public void SetEntityData(NEntity entity)
         {
             this.Position = entity.Position;

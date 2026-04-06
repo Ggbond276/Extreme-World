@@ -106,11 +106,10 @@ namespace GameServer.Services
         //Response the request from the Client
         private void OnCreateCharacter(NetConnection<NetSession> sender, UserCreateCharacterRequest request)
         {
-            #region 打印日志
+            // 打印日志
             Log.InfoFormat("UserCreateCharacterRequest: Name:{0}  Class:{1}", request.Name, request.Class);
-            #endregion
 
-            #region 将客户端传输过来的数据创建成表
+            // 将客户端传输过来的数据创建成表
             TCharacter character = new TCharacter()
             {
                 Name = request.Name,
@@ -121,27 +120,34 @@ namespace GameServer.Services
                 MapPosY = 4000,
                 MapPosZ = 820,
             };
-            #endregion
 
-            #region 将创建好的表添加到数据库中
+            // 将创建好的表添加到数据库中
             DBService.Instance.Entities.Characters.Add(character);
             //角色表要关联到一个Player上
             sender.Session.User.Player.Characters.Add(character);
             DBService.Instance.Entities.SaveChanges();
-            #endregion
 
-            #region 封装要返回给客户端的数据 
+            // 封装要返回给客户端的数据 
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.createChar = new UserCreateCharacterResponse();
             message.Response.createChar.Result = Result.Success;
             message.Response.createChar.Errormsg = "None";
-            #endregion
 
-            #region 将数据打包成字节流发送
+            // 为什么加了这一段代码之后角色选择列表在创建完角色之后就可以实时显示了
+            foreach(var c in sender.Session.User.Player.Characters)
+            {
+                NCharacterInfo info = new NCharacterInfo();
+                info.Id = c.ID;
+                info.Name = c.Name;
+                info.Class = (CharacterClass)c.Class;
+                info.Tid = c.TID;
+                message.Response.createChar.Characters.Add(info);
+            }
+            // 将数据打包成字节流发送
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);
-            #endregion 
+           
         }
         //角色进入游戏的方法
         private void OnGameEnter(NetConnection<NetSession> sender, UserGameEnterRequest request)

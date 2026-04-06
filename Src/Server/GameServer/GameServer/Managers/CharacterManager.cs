@@ -40,8 +40,9 @@ namespace GameServer.Manager
         {
             //根据DB角色创建实体角色
             Character character = new Character(CharacterType.Player, cha);
+            // EntityManager.Instance.AddEntity(cha.MapID, character);
             //这段代码在干什么
-            this.Characters[cha.ID] = character;
+            this.Characters[character.Id] = character;
             //返回实体角色
             return character;
         }
@@ -49,6 +50,8 @@ namespace GameServer.Manager
         //删除角色
         public void RemoveCharacter(int characterId)
         {
+            var cha = this.Characters[characterId];
+            // EntityManager.Instance.RemoveEntity(cha.Data.MapID, cha);
             //根据角色ID删除角色
             this.Characters.Remove(characterId);
         }
