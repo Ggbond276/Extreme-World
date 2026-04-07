@@ -22,7 +22,6 @@ namespace Managers
         {
             this.notifiers[entityId] = notify;
         }
-
         public void AddEntity(Entity entity)
         {
             entities[entity.entityId] = entity;

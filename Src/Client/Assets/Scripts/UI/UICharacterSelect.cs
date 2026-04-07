@@ -87,7 +87,7 @@ public class UICharacterSelect : MonoBehaviour
         //获取选中角色的下标
         this.selectCharacterIdx = index;
         //通过下标获取到对应的玩家信息
-        SkillBridge.Message.NCharacterInfo cha = User.Instance.Info.Player.Characters[index];
+        NCharacterInfo cha = User.Instance.Info.Player.Characters[index];
         //在日志中打印出玩家信息
         Debug.LogFormat("Select Char: [{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
         //设置当前的角色是cha

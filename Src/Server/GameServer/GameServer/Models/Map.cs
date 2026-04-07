@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SkillBridge.Message;
 
 using Common;
@@ -37,7 +37,7 @@ namespace GameServer.Models
         //MapDefine 是配置表
         internal MapDefine Define;
 
-        //用于存储地图上角色的字典
+        //用于存储地图上角色的字典(这里使用的是Entity.Id作为键值存放)
         Dictionary<int, MapCharacter> MapCharacters = new Dictionary<int, MapCharacter>();
 
         //构造方法初始化Map对象
@@ -57,14 +57,13 @@ namespace GameServer.Models
             //给网络数据MapID赋值
             character.Info.mapId = this.ID;
 
-            #region 打包响应式信息
+            // 打包响应式信息
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.mapCharacterEnter = new MapCharacterEnterResponse();
             message.Response.mapCharacterEnter.mapId = this.Define.ID;
             //将角色信息添加到集合中 以便通知其他客户端该角色的信息
             message.Response.mapCharacterEnter.Characters.Add(character.Info);
-            #endregion
 
 
             foreach (var kv in this.MapCharacters)
@@ -75,7 +74,7 @@ namespace GameServer.Models
                 this.SendCharacterEnterMap(kv.Value.connection, character.Info);
             }
 
-            //将新进入的角色和连接信息存储在MapCharacaters字典中
+            //将新进入的角色和连接信息存储在MapCharacaters字典中(这里使用的是Entity.Id作为键值存放)
             this.MapCharacters[character.Id] = new MapCharacter(conn, character);
 
             //将信息打包成字节流
@@ -101,23 +100,22 @@ namespace GameServer.Models
 
         internal void CharacterLeave(NCharacterInfo cha)
         {
-            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Id); 
-            this.MapCharacters.Remove(cha.Id);
+            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Entity.Id);
             foreach( var kv in this.MapCharacters)
             {
                 // 发送到服务器告诉他们哪个角色离开了
                 this.SendCharacterLeaveMap(kv.Value.connection, cha);
             }
+            // 删除地图管理器中的角色(这里的bug是因为Id弄错了） 所以修改Remove(cha.Id) --> Remove(cha.Entity.Id)
+            this.MapCharacters.Remove(cha.Entity.Id);
         }
-
-
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
-            Log.InfoFormat("SendCharacterLeaveMap start");
+            Log.InfoFormat("SendCharacterLeaveMap start : {0}", character.Entity.Id);
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
-            message.Response.mapCharacterLeave.characterId = character.Id;
+            message.Response.mapCharacterLeave.characterId = character.Entity.Id;
 
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
@@ -150,9 +148,6 @@ namespace GameServer.Models
 
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
-
         }
-
-
     }
 }

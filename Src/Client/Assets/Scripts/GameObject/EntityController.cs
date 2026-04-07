@@ -37,6 +37,17 @@ public class EntityController : MonoBehaviour, IEntityNotify
         }
     }
 
+    // 实现接口
+    public void OnEntityRemoved()
+    {
+        // 移除姓名条
+        if (UIWorldElementManager.Instance != null)
+        {
+            UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
+        }
+        //销毁实体
+        Destroy(this.gameObject);
+    }
     void updateTransform()
     {
         // ��ȡ�����е����� Ȼ�󽫼����������ݽ�������������
@@ -58,7 +69,6 @@ public class EntityController : MonoBehaviour, IEntityNotify
         this.lastDirection = this.direction;
         this.lastRotation = this.rotation;
     }
-
     void FixedUpdate()
     {
         if (this.entity == null)
@@ -71,7 +81,6 @@ public class EntityController : MonoBehaviour, IEntityNotify
             this.updateTransform();
         }
     }
-
     public void OnEntityEvent(EntityEvent entityEvent)
     {
         switch (entityEvent)
@@ -91,7 +100,6 @@ public class EntityController : MonoBehaviour, IEntityNotify
                 break;
         }
     }
-
     void OnDestroy()
     {
         if (entity != null)
@@ -101,15 +109,5 @@ public class EntityController : MonoBehaviour, IEntityNotify
         {
             UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
         }
-    }
-
-    // 实现接口
-    public void OnEntityRemoved()
-    {
-        if(UIWorldElementManager.Instance != null)
-        {
-            UIWorldElementManager.Instance.RemoveCharacterNameBar(this.transform);
-        }
-        Destroy(this.gameObject);
     }
 }

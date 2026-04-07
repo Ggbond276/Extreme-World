@@ -123,19 +123,17 @@ namespace Services
         // 用户登录
         public void SendLogin(string user , string passward)
         {
-            #region 在日志中打印将登录信息发送给服务器
+            // 在日志中打印将登录信息发送给服务器
             Debug.LogFormat("UserLoginRequest::user :{0} psw :{1}", user, passward);
-            #endregion
 
-            #region 封装发送给服务器的消息
+            // 封装发送给服务器的消息
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.userLogin = new UserLoginRequest();
             message.Request.userLogin.User = user;
             message.Request.userLogin.Passward = passward;
-            #endregion
              
-            #region 检查是否连接到服务器并发送消息
+            // 检查是否连接到服务器并发送消息
             if(this.connected && NetClient.Instance.Connected)
             {
                 pendingMessage = null;
@@ -145,15 +143,15 @@ namespace Services
                 pendingMessage = message;
                 this.ConnectToServer();
             }
-            #endregion
         }
         void OnUserLogin(object sender, UserLoginResponse response)
         {
             Debug.LogFormat("OnLogin:{0} [{1}]", response.Result, response.Errormsg);
 
             if (response.Result == Result.Success)
-            {//登陆成功逻辑
-                Models.User.Instance.SetupUserInfo(response.Userinfo);
+            {
+                //登陆成功逻辑
+                User.Instance.SetupUserInfo(response.Userinfo);
             };
             if (this.OnLogin != null)
             {
@@ -166,28 +164,23 @@ namespace Services
         // 用户注册
         public void SendRegister(string user, string psw)
         {
-            #region 在日志中打印将注册信息
-            //To printing what we are doing now in the log
+            // 在日志中打印将注册信息
             Debug.LogFormat("UserRegisterRequest::user :{0} psw:{1}", user, psw);
-            #endregion
 
-            #region 封装发送给服务器的信息
-            //initialize the user register request object
+            // 封装发送给服务器的信息
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.userRegister = new UserRegisterRequest();
             //write the message which you want to send in the message object
             message.Request.userRegister.User = user;
             message.Request.userRegister.Passward = psw;
-            #endregion
 
-            #region 检查是否连接到服务器并发送信息
-            //Determine whether the Client and the Server are connected
+            // 检查是否连接到服务器并发送信息
             if (this.connected && NetClient.Instance.Connected)
             {
-                //pendingMessage is a cache container, It will be used when Client and the Server fail to connect
+                // pendingMessage是一个缓存容器 当客户端与服务端的链接失败的时候 我们要发送的数据会被存储到
+                // pendingMessage这个缓存容器中 然后尝试重新连接服务器 并再次尝试发送
                 this.pendingMessage = null;
-                //If the Client and the Server are connected sucessfully , send the message to the Server
                 NetClient.Instance.SendMessage(message);
             }
             else
@@ -197,7 +190,6 @@ namespace Services
                 //Reconnect to the Server
                 this.ConnectToServer();
             }
-            #endregion
         }
         void OnUserRegister(object sender, UserRegisterResponse response)
         {
@@ -206,7 +198,6 @@ namespace Services
             if (this.OnRegister != null)
             {
                 this.OnRegister(response.Result, response.Errormsg);
-
             }
         }
 
@@ -275,7 +266,7 @@ namespace Services
             // 如果受到了服务器成功进入游戏的请求
             if(response.Result == Result.Success)
             {
-                Debug.LogFormat("");
+                Debug.LogFormat("Success");
             }
         }
         

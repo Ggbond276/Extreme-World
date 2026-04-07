@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -185,7 +185,7 @@ namespace GameServer.Services
         private void OnGameLeave(NetConnection<NetSession> sender, UserGameLeaveRequest request)
         {
             Character character = sender.Session.Character;
-            Log.InfoFormat("UserGameLeaveRequest: characterID: {0} : {1} Map: {2}", character.Id, character.Info.Name, character.Info.mapId);
+            Log.InfoFormat(">>> OnGameLeave: characterID: {0} : {1} Map: {2}", character.Id, character.Info.Name, character.Info.mapId);
 
             CharacterManager.Instance.RemoveCharacter(character.Id);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character.Info);
@@ -194,7 +194,7 @@ namespace GameServer.Services
             message.Response = new NetMessageResponse();
             message.Response.gameLeave = new UserGameLeaveResponse();
             message.Response.gameLeave.Result = Result.Success;
-            message.Response.gameLeave.Errormsg = "None";
+            message.Response.gameLeave.Errormsg = "None";   
 
             byte[] data = PackageHandler.PackMessage(message);
             sender.SendData(data, 0, data.Length);

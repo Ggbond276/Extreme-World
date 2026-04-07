@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Managers;
+using Assets.Scripts.Managers;
 using Common.Data;
 using Models;
 using Network;
@@ -38,6 +38,7 @@ namespace Assets.Scripts.Services
         // 处理服务器发来的角色进入地图的消息
         private void OnMapCharacterEnter(object sender, MapCharacterEnterResponse response)
         {
+            
             // 将response中的信息打印出来
             Debug.LogFormat("OnMapCharacterEnter : {0} Count : {1}", response.mapId, response.Characters.Count);
            
@@ -69,9 +70,10 @@ namespace Assets.Scripts.Services
             // 接收到消息了
             Debug.LogFormat("OnMapCharacterLeave: {0}", response.characterId);
             // 如果是要离开的角色不是玩家角色 就清除当前角色即可
-            if(response.characterId != User.Instance.CurrentCharacter.Id)
+            if(response.characterId != User.Instance.CurrentCharacter.Entity.Id)
             {
                 Debug.LogFormat("CharacterManager.Instance.RemoveCharacter()");
+                // 这里要传入的是EnityId
                 CharacterManager.Instance.RemoveCharacter(response.characterId);
             } else
             {

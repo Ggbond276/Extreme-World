@@ -29,12 +29,12 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
         {
             CrearteCharacterObject(cha);
             yield return null;
-        }
+        }   
     }
     private void CrearteCharacterObject(Character character)
     {
         // --- 第一板块：安全准入与资源准备 ---
-        // 1.判断我们的字典中不存在当前要生成的角色
+        // 1.如果我们的字典中不存在当前要生成的角色
         if (!Characters.ContainsKey(character.entityId) || Characters[character.entityId] == null)
         {
             // 2.拉取模型资源

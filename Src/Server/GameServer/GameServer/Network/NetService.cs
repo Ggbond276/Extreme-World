@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using GameServer;
 using Common;
+using GameServer.Manager;
 
 namespace Network
 {
@@ -69,6 +70,12 @@ namespace Network
         {
             //Performance.ServerConnect = Interlocked.Decrement(ref Performance.ServerConnect);
             Log.WarningFormat("Client[{0}] Disconnected", e.RemoteEndPoint);
+            if (sender.Session.Character != null)
+            {
+                var character = sender.Session.Character;
+                CharacterManager.Instance.RemoveCharacter(character.Id);
+                MapManager.Instance[character.Info.mapId].CharacterLeave(character.Info);
+            }
         }
 
 

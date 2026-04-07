@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SkillBridge.Message;
 using GameServer.Entities;
 using Common;
+using GameServer.Managers;
 
 namespace GameServer.Manager
 {
@@ -40,7 +41,7 @@ namespace GameServer.Manager
         {
             //根据DB角色创建实体角色
             Character character = new Character(CharacterType.Player, cha);
-            // EntityManager.Instance.AddEntity(cha.MapID, character);
+            EntityManager.Instance.AddEntity(cha.MapID, character);
             //这段代码在干什么
             this.Characters[character.Id] = character;
             //返回实体角色
@@ -51,8 +52,8 @@ namespace GameServer.Manager
         public void RemoveCharacter(int characterId)
         {
             var cha = this.Characters[characterId];
-            // EntityManager.Instance.RemoveEntity(cha.Data.MapID, cha);
-            //根据角色ID删除角色
+            EntityManager.Instance.RemoveEntity(cha.Data.MapID, cha);
+            // 删除角色管理器中的角色
             this.Characters.Remove(characterId);
         }
     }

@@ -1,4 +1,4 @@
-﻿using SkillBridge.Message;
+using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,11 +55,12 @@ namespace Assets.Scripts.Managers
 
         public void AddCharacter(NCharacterInfo cha)
         {
-            // 打印所有的角色信息数据
+            // 打印角色的所有信息数据
             Debug.LogFormat("AddCharacter : {0} : {1} Map:{2} Entity:{3}", cha.Id, cha.Name, cha.mapId, cha.Entity.String());
             // 通过NCharacter中的信息 实例化Character变成一个Entity
             Character character = new Character(cha);
-            this.Characters[cha.Id] = character;
+            // 统一用 entityId 作为字典的 key（与服务端和 EntityManager 保持一致）
+            this.Characters[character.entityId] = character;
             EntityManager.Instance.AddEntity(character);
             if (OnCharacterEnter != null)
             {
@@ -67,17 +68,17 @@ namespace Assets.Scripts.Managers
             }
         }
 
-        //OnMapCharacterLeave调用
-        public void RemoveCharacter(int CharacterId)
+        //OnMapCharacterLeave调用（参数 entityId 由服务端发来）
+        public void RemoveCharacter(int entityId)
         {
-            if (Characters.ContainsKey(CharacterId))
+            if (Characters.ContainsKey(entityId))
             {
-                EntityManager.Instance.RemoveEntity(this.Characters[CharacterId].Info.Entity);
+                EntityManager.Instance.RemoveEntity(this.Characters[entityId].Info.Entity);
                 if (OnCharacterLeave != null)
                 {
-                    this.OnCharacterLeave(Characters[CharacterId]);
+                    this.OnCharacterLeave(Characters[entityId]);
                 }
-                this.Characters.Remove(CharacterId);
+                this.Characters.Remove(entityId);
             }
         }
     }
