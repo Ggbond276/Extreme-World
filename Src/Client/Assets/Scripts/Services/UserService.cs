@@ -8,6 +8,7 @@ using UnityEngine;
 
 using SkillBridge.Message;
 using Models;
+using Assets.Scripts.Services;
 
 namespace Services
 {
@@ -284,6 +285,7 @@ namespace Services
         {
             //MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
+            MapService.Instance.CurrentMapId = 0;
         }
        
         

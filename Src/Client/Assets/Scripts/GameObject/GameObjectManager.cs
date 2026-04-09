@@ -10,14 +10,32 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
     Dictionary<int, GameObject> Characters = new Dictionary<int, GameObject>();
     protected override void OnStart()
     {
+        // --- 第一步：单例守护逻辑 ---
+        // 检查当前实例 (this) 是否是单例索引 (Instance) 指向的那个
+        if (Instance != this)
+        {
+            // 如果不是，说明我是重复的副本，直接销毁挂载该脚本的 GameObject
+            Destroy(this.gameObject);
+            return; // 极其重要：直接返回，不执行后面的业务代码
+        }
+
+        // --- 第二步：业务初始化逻辑 ---
+        // 只有“真身”才会运行到这里
+        base.OnStart();
+
         StartCoroutine(InitGameObjects());
         CharacterManager.Instance.OnCharacterEnter += OnCharacterEnter;
         CharacterManager.Instance.OnCharacterLeave += OnCharacterLeave;
     }
     private void OnDestroy()
     {
-        CharacterManager.Instance.OnCharacterEnter -= OnCharacterEnter;
-        CharacterManager.Instance.OnCharacterLeave -= OnCharacterLeave;
+        // 只有 Instance 等于 this 的时候才需要解绑，防止副本销毁时误删真身的事件订阅
+        // 但在 MonoSingleton 架构下，通常 Instance 指向的是第一个，这里做个安全判断更好
+        if (Instance == this && CharacterManager.Instance != null)
+        {
+            CharacterManager.Instance.OnCharacterEnter -= OnCharacterEnter;
+            CharacterManager.Instance.OnCharacterLeave -= OnCharacterLeave;
+        }
     }
     void Update()
     {
@@ -81,6 +99,7 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
         if (character.Info.Id == Models.User.Instance.CurrentCharacter.Id)
         {
             Models.User.Instance.CurrentCharacterObject = go;
+            // 第二次进入的问题是这里的主摄像机实体为空
             MainPlayerCamera.Instance.player = go;
 
             pc.enabled = true;

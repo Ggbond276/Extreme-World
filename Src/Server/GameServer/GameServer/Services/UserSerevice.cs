@@ -178,7 +178,6 @@ namespace GameServer.Services
             //更新临时会话中的角色信息
             sender.Session.Character = character;   
 
-
             MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
         }
         //角色离开游戏的方法

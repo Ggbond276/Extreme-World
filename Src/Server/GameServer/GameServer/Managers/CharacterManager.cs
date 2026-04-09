@@ -14,6 +14,7 @@ namespace GameServer.Manager
     class CharacterManager : Singleton<CharacterManager>
     {
         // 角色管理器使用字典来存储角色对象 查询效率较高 不需要做遍历即可查找
+        // 这里利用的是EntityId作为键值
         public Dictionary<int, Character> Characters = new Dictionary<int, Character>();
 
         public CharacterManager()

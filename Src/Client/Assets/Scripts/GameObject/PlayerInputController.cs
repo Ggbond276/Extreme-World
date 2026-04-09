@@ -47,7 +47,6 @@ public class PlayerInputController : MonoBehaviour
             if (entityController != null) entityController.entity = this.character;
         }
     }
-
     void FixedUpdate()
     {
         if (character == null)
@@ -127,7 +126,6 @@ public class PlayerInputController : MonoBehaviour
             }
         }
     }
-
     Vector3 lastPos;
     void LateUpdate()
     {
@@ -153,7 +151,6 @@ public class PlayerInputController : MonoBehaviour
         // 6.确保刚体和模型位置始终是在一起的
         this.transform.position = this.rb.transform.position;
     }
-        
     void SendEntityEvent(EntityEvent entityEvent)
     {
         if (entityController != null)

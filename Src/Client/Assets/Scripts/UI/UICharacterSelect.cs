@@ -101,6 +101,7 @@ public class UICharacterSelect : MonoBehaviour
         //判断有没有选择角色
         if (selectCharacterIdx >= 0)
         {
+            Debug.LogFormat("OnClickEnterGame");
             //发送角色进入游戏请求给客户端    
             UserService.Instance.SendGameEnter(selectCharacterIdx);
         }

@@ -24,9 +24,6 @@ public class UIWorldElementManager : MonoSingleton<UIWorldElementManager>
         // 我就是那个唯一的真身，可以开始干活了
         base.OnStart();
     }
-    void Update () {
-		
-	}
 	public void AddCharacterNameBar(Transform owner, Character character)
     {
 		GameObject goInfoBar = Instantiate(infoBarPrefab, this.transform);

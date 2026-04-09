@@ -14,7 +14,7 @@ namespace Assets.Scripts.Services
 {
     class MapService : Singleton<MapService>, IDisposable
     {
-        public int CurrentMapId { get; private set; }
+        public int CurrentMapId { get; set; }
         //构造的时候执行
         public MapService()
         {
