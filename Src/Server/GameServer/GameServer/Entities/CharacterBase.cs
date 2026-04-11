@@ -21,12 +21,10 @@ namespace GameServer.Entities
         }
         public NCharacterInfo Info;
         public CharacterDefine Define;
-
         public CharacterBase(Vector3Int pos, Vector3Int dir):base(pos,dir)
         {
 
         }
-
         public CharacterBase(CharacterType type, int tid, int level, Vector3Int pos, Vector3Int dir) : base(pos, dir)
         {
             this.Info = new NCharacterInfo();

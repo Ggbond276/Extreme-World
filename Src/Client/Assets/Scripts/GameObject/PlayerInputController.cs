@@ -1,3 +1,4 @@
+using Assets.Scripts.Services;
 using Entities;
 using SkillBridge.Message;
 using System.Collections;
@@ -14,7 +15,7 @@ public class PlayerInputController : MonoBehaviour
     public Rigidbody rb;
 
     public float rotateSpeed = 2.0f;
-    public float turnAngle = 0;
+    public float turnAngle = 50;
 
     public int speed;
 
@@ -74,10 +75,12 @@ public class PlayerInputController : MonoBehaviour
             if (state != CharacterState.Move)
             {
                 state = CharacterState.Move;
+                // 修改实体速度
                 character.MoveBack();
                 // 动画播放逻辑
                 this.SendEntityEvent(EntityEvent.MoveBack);
             }
+            // 这些是在计算表现层刚体的速度 不用管 
             Vector3 VerticalVelocity = rb.velocity.y * Vector3.up;
             Vector3 dir = GameObjectTool.LogicToWorld(character.direction);
             float speed = (character.speed + 9.81f) / 100f;
@@ -90,7 +93,6 @@ public class PlayerInputController : MonoBehaviour
                 state = CharacterState.Idle;
                 this.rb.velocity = Vector3.zero;
                 this.character.Stop();
-                // 动画播放逻辑
                 this.SendEntityEvent(EntityEvent.Idle);
             }
         }
@@ -155,6 +157,7 @@ public class PlayerInputController : MonoBehaviour
     {
         if (entityController != null)
             entityController.OnEntityEvent(entityEvent);
+        MapService.Instance.SendMapEntitySync(entityEvent, this.character.EntityData);
     }
 
 }

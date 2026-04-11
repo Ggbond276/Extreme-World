@@ -6,6 +6,7 @@ using Common.Data;
 
 using Network;
 using GameServer.Entities;
+using GameServer.Services;
 
 //Map类提供了角色进入地图的方法
 namespace GameServer.Models
@@ -50,6 +51,7 @@ namespace GameServer.Models
         {
 
         }
+        // 玩家进入地图
         internal void CharacterEnter(NetConnection<NetSession> conn, Character character)
         {
             //打印日志
@@ -98,6 +100,7 @@ namespace GameServer.Models
             conn.SendData(data, 0, data.Length);
         }
 
+        // 玩家离开地图
         internal void CharacterLeave(NCharacterInfo cha)
         {
             Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Entity.Id);
@@ -122,32 +125,23 @@ namespace GameServer.Models
             Log.InfoFormat("SendCharacterLeaveMap end");
         }
 
-
+        // 玩家移动同步
         internal void UpdateEntity(NEntitySync entity)
         {
-            foreach(var kv in this.MapCharacters)
+           foreach(var kv in MapCharacters)
             {
                 if(kv.Value.character.entityId == entity.Id)
                 {
                     kv.Value.character.Position = entity.Entity.Position;
                     kv.Value.character.Direction = entity.Entity.Direction;
                     kv.Value.character.Speed = entity.Entity.Speed;
-                }
-                else
+                } else
                 {
-                    this.SendEntityUpdate(kv.Value.connection, entity);
+                    MapService.Instance.SendEntityUpdate(kv.Value.connection, entity);
                 }
+
             }
         }
-        void SendEntityUpdate(NetConnection<NetSession> conn , NEntitySync entity)
-        {
-            NetMessage message = new NetMessage();
-            message.Response = new NetMessageResponse();
-            message.Response.mapEntitySync = new MapEntitySyncResponse();
-            message.Response.mapEntitySync.entitySyncs.Add(entity);
-
-            byte[] data = PackageHandler.PackMessage(message);
-            conn.SendData(data, 0, data.Length);
-        }
+     
     }
 }

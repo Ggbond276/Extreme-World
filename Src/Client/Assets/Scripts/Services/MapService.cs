@@ -1,5 +1,6 @@
 using Assets.Scripts.Managers;
 using Common.Data;
+using Managers;
 using Models;
 using Network;
 using SkillBridge.Message;
@@ -18,22 +19,42 @@ namespace Assets.Scripts.Services
         //构造的时候执行
         public MapService()
         {
-            #region 注册协议 接收服务端发送来的响应信息
+            // 注册协议 接收服务端发送来的响应信息
             MessageDistributer.Instance.Subscribe<MapCharacterEnterResponse>(this.OnMapCharacterEnter);
             MessageDistributer.Instance.Subscribe<MapCharacterLeaveResponse>(this.OnMapCharacterLeave);
-            #endregion
+            MessageDistributer.Instance.Subscribe<MapEntitySyncResponse>(this.OnMapEntitySync);
         }
         //销毁的时候执行
         public void Dispose()
         {
-            #region 销毁协议 不再接收服务端发送来的响应信息
+            // 销毁协议 不再接收服务端发送来的响应信息
             MessageDistributer.Instance.Unsubscribe<MapCharacterEnterResponse>(this.OnMapCharacterEnter);
             MessageDistributer.Instance.Unsubscribe<MapCharacterLeaveResponse>(this.OnMapCharacterLeave);
-            #endregion
+            MessageDistributer.Instance.Unsubscribe<MapEntitySyncResponse>(this.OnMapEntitySync);
         }
         public void Init()
         {
 
+        }
+        private void EnterMap(int mapId)
+        {
+            //根据MapId 使用DataManager拿到关于地图的信息
+            //判断地图是否存在
+            if (DataManager.Instance.Maps.ContainsKey(mapId))
+            {
+                //使用DataManager获取地图的定义 地图的定义中包含地图的资源
+                MapDefine map = DataManager.Instance.Maps[mapId];
+
+                User.Instance.CurrentMapData = map;
+                //加载地图资源
+                //map.Resource可以拿到资源路径
+                //然后调用SceneManager.Instance.LoadScene这个方法就可以让 Unity 引擎去自己的 Assets 资源库里寻找名为 Scene_StartCity 的真实场景文件（包含地形、模型、光源等）。
+                SceneManager.Instance.LoadScene(map.Resource);
+            }
+            else
+            {
+                Debug.LogErrorFormat("EnterMap : Map {0} not existed", mapId);
+            }
         }
         // 处理服务器发来的角色进入地图的消息
         private void OnMapCharacterEnter(object sender, MapCharacterEnterResponse response)
@@ -81,25 +102,34 @@ namespace Assets.Scripts.Services
                 CharacterManager.Instance.Clear();
             }
         }
-        private void EnterMap(int mapId)
+        // 处理角色移动同步的消息
+        public void SendMapEntitySync(EntityEvent entityEvent, NEntity entity)
         {
-            //根据MapId 使用DataManager拿到关于地图的信息
-            //判断地图是否存在
-            if (DataManager.Instance.Maps.ContainsKey(mapId))
-            {   
-                //使用DataManager获取地图的定义 地图的定义中包含地图的资源
-                MapDefine map = DataManager.Instance.Maps[mapId];
-               
-                User.Instance.CurrentMapData = map;
-                //加载地图资源
-                //map.Resource可以拿到资源路径
-                //然后调用SceneManager.Instance.LoadScene这个方法就可以让 Unity 引擎去自己的 Assets 资源库里寻找名为 Scene_StartCity 的真实场景文件（包含地形、模型、光源等）。
-                SceneManager.Instance.LoadScene(map.Resource);
-            }
-            else
+            Debug.LogFormat("MapEntityUpdateRequest :ID {0} POS: {1} DIR: {2} SPD: {3} ", entity.Id, entity.Position.String(), entity.Position.String(), entity.Speed);
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.mapEntitySync = new MapEntitySyncRequest();
+            message.Request.mapEntitySync.entitySync = new NEntitySync()
             {
-                Debug.LogErrorFormat("EnterMap : Map {0} not existed", mapId);
+                Id = entity.Id,
+                Event = entityEvent,
+                Entity = entity
+            };
+            NetClient.Instance.SendMessage(message);
+        }
+
+        public void OnMapEntitySync(object sender, MapEntitySyncResponse response)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("MapEntityUpdateResponse: Entity:{0}", response.entitySyncs.Count);
+            sb.AppendLine();
+            foreach (var entity in response.entitySyncs)
+            {
+                EntityManager.Instance.OnEntitySync(entity);
+                sb.AppendFormat("[ {0} ] evt : {1}  entity : {2}", entity.Id, entity.Event, entity.Entity.ToString());
+                sb.AppendLine();
             }
+            Debug.Log(sb.ToString());
         }
     }
 }

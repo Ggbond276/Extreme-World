@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Data;
 using SkillBridge.Message;
 using UnityEngine;
 
@@ -11,8 +12,7 @@ namespace Entities
     {
         public NCharacterInfo Info;
 
-        public Common.Data.CharacterDefine Define;
-
+        public CharacterDefine Define;
         public string Name
         {
             get
@@ -23,7 +23,6 @@ namespace Entities
                     return this.Define.Name;
             }
         }
-
         //判断是否是本人玩家
         public bool IsPlayer
         {
@@ -41,18 +40,21 @@ namespace Entities
         {
             Debug.LogFormat("MoveForward");
             this.speed = this.Define.Speed;
+            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //向后移动
         public void MoveBack()
         {
             Debug.LogFormat("MoveBack");
             this.speed = -this.Define.Speed;
+            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //停止
         public void Stop()
         {
             Debug.LogFormat("Stop");
             this.speed = 0;
+            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //设置方向
         public void SetDirection(Vector3Int direction)

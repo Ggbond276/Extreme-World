@@ -10,7 +10,6 @@ namespace Entities
     public class Entity
     {
         //包含四个属性 ID 位置 方向 速度
-
         // ID
         public int entityId;
         // 位置
@@ -19,26 +18,26 @@ namespace Entities
         public Vector3Int direction;
         // 速度
         public int speed;
-
-
-        private NEntity entityData;
         public NEntity EntityData
         {
-            get {
+            get
+            {
                 return entityData;
             }
-            set {
+            set
+            {
                 entityData = value;
                 this.SetEntityData(value);
             }
         }
+
+        private NEntity entityData;
         public Entity(NEntity entity)
         {
             this.entityId = entity.Id;
             this.entityData = entity;
             this.SetEntityData(entity);
         }
-
         public virtual void OnUpdate(float delta)
         {
             if (this.speed != 0)
@@ -53,7 +52,6 @@ namespace Entities
             entityData.Direction.FromVector3Int(this.direction);
             entityData.Speed = this.speed;
         }
-
         public void SetEntityData(NEntity entity)
         {
             this.position = this.position.FromNVector3(entity.Position);
