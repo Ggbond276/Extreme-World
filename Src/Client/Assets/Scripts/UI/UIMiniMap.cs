@@ -33,10 +33,13 @@ public class UIMiniMap : MonoBehaviour
         // 由于不同地图尺寸不一样所以要做一个适应
         this.minimap.SetNativeSize();
         this.minimap.transform.localPosition = Vector3.zero;
-        this.playerTransform = User.Instance.CurrentCharacterObject.transform;
     }
     void Update()
     {
+        if(this.playerTransform == null)
+        {
+            this.playerTransform = MinimapManager.Instance.PlayerTransform;
+        }
         if (minimapBouingBox == null || playerTransform == null)
             return;
         float realWidth = minimapBouingBox.bounds.size.x;

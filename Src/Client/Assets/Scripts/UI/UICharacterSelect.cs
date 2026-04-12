@@ -91,7 +91,7 @@ public class UICharacterSelect : MonoBehaviour
         //在日志中打印出玩家信息
         Debug.LogFormat("Select Char: [{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
         //设置当前的角色是cha
-        User.Instance.CurrentCharacter = cha;
+        //User.Instance.CurrentCharacter = cha;
         //显示对应的3D角色试图
         characterView.CurrentCharacter = (int)cha.Class - 1 ;
     }
@@ -159,7 +159,6 @@ public class UICharacterSelect : MonoBehaviour
         this.selectCharacterIdx = idx;
         var cha = User.Instance.Info.Player.Characters[idx];
         Debug.LogFormat("Select Char:[{0}]{1}[{2}]", cha.Id, cha.Name, cha.Class);
-        User.Instance.CurrentCharacter = cha;
         characterView.CurrentCharacter = ((int)cha.Class - 1);
 
         for (int i = 0; i < User.Instance.Info.Player.Characters.Count; i++)

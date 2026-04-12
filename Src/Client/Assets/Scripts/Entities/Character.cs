@@ -40,21 +40,18 @@ namespace Entities
         {
             Debug.LogFormat("MoveForward");
             this.speed = this.Define.Speed;
-            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //向后移动
         public void MoveBack()
         {
             Debug.LogFormat("MoveBack");
             this.speed = -this.Define.Speed;
-            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //停止
         public void Stop()
         {
             Debug.LogFormat("Stop");
             this.speed = 0;
-            this.EntityData.Speed = this.speed;  // 添加这行
         }
         //设置方向
         public void SetDirection(Vector3Int direction)

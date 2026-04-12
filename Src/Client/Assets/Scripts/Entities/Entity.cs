@@ -10,6 +10,7 @@ namespace Entities
     public class Entity
     {
         //包含四个属性 ID 位置 方向 速度
+
         // ID
         public int entityId;
         // 位置
@@ -22,6 +23,7 @@ namespace Entities
         {
             get
             {
+                UpdateEntityDate();
                 return entityData;
             }
             set
@@ -30,7 +32,6 @@ namespace Entities
                 this.SetEntityData(value);
             }
         }
-
         private NEntity entityData;
         public Entity(NEntity entity)
         {
@@ -58,5 +59,12 @@ namespace Entities
             this.direction = this.direction.FromNVector3(entity.Direction);
             this.speed = entity.Speed;
         }
+        private void UpdateEntityDate()
+        {
+            entityData.Position.FromVector3Int(this.position);
+            entityData.Direction.FromVector3Int(this.direction);
+            entityData.Speed = this.speed;
+        }
+
     }
 }

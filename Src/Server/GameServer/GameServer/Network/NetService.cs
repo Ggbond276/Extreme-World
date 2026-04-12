@@ -74,7 +74,7 @@ namespace Network
             {
                 var character = sender.Session.Character;
                 CharacterManager.Instance.RemoveCharacter(character.Id);
-                MapManager.Instance[character.Info.mapId].CharacterLeave(character.Info);
+                MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             }
         }
 

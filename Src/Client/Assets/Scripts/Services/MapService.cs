@@ -62,28 +62,30 @@ namespace Assets.Scripts.Services
             
             // 将response中的信息打印出来
             Debug.LogFormat("OnMapCharacterEnter : {0} Count : {1}", response.mapId, response.Characters.Count);
-           
-            //1.如果发现角色准备进入的地图的id和当前所在的地图的id不一样 那就加载新的地图资源
-            if(CurrentMapId != response.mapId)
-            {
-                CharacterManager.Instance.Clear();
-                // 调用EnterMap方法进入新的地图
-                this.EnterMap(response.mapId);
-                // 更新当前的地图id
-                this.CurrentMapId = response.mapId;
-            }
-            //2.把角色丢给角色管理器
-            foreach( var cha in response.Characters)
+
+
+            //1.把角色丢给角色管理器
+            foreach (var cha in response.Characters)
             {
                 // 如果发现名单里的某个人 ID 跟我自己一样，说明这是服务器发来的最新的我的数据（可能血量变了，或者装备变了），赶紧更新一下本地的自己。
-                if (User.Instance.CurrentCharacter.Id == cha.Id)
+                if (User.Instance.CurrentCharacter == null||User.Instance.CurrentCharacter.Id == cha.Id )
                 {
                     //重新赋值
                     User.Instance.CurrentCharacter = cha;
                 }
                 // 把所有的角色全部都丢给角色管理器去处理
                 CharacterManager.Instance.AddCharacter(cha);
-            } 
+            }
+
+            //2.如果发现角色准备进入的地图的id和当前所在的地图的id不一样 那就加载新的图资源
+            if (CurrentMapId != response.mapId)
+            {
+            // 调用EnterMap方法进入新的地图
+                this.EnterMap(response.mapId);
+                // 更新当前的地图id
+                this.CurrentMapId = response.mapId;
+            }
+            
         }
         // 处理服务器发来的角色离开地图的消息
         private void OnMapCharacterLeave(object sender, MapCharacterLeaveResponse response)
@@ -102,10 +104,10 @@ namespace Assets.Scripts.Services
                 CharacterManager.Instance.Clear();
             }
         }
-        // 处理角色移动同步的消息
+        // 处理角色移动同步的消息  
         public void SendMapEntitySync(EntityEvent entityEvent, NEntity entity)
         {
-            Debug.LogFormat("MapEntityUpdateRequest :ID {0} POS: {1} DIR: {2} SPD: {3} ", entity.Id, entity.Position.String(), entity.Position.String(), entity.Speed);
+            Debug.LogFormat("MapEntityUpdateRequest :ID {0} POS: {1} DIR: {2} SPD: {3} ", entity.Id, entity.Position.String(), entity.Direction.String(), entity.Speed);
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.mapEntitySync = new MapEntitySyncRequest();

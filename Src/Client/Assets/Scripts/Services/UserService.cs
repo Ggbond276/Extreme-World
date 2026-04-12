@@ -69,7 +69,7 @@ namespace Services
             if (NetClient.Instance.Connected)
             {
                 this.connected = true;
-                if(this.pendingMessage!=null)
+                if (this.pendingMessage != null)
                 {
                     NetClient.Instance.SendMessage(this.pendingMessage);
                     this.pendingMessage = null;
@@ -90,18 +90,18 @@ namespace Services
             return;
         }
         // 4. 服务器断连的提示 DisconnectNotify(int result,string reason)
-        bool DisconnectNotify(int result,string reason)
+        bool DisconnectNotify(int result, string reason)
         {
             if (this.pendingMessage != null)
             {
-                if (this.pendingMessage.Request.userLogin!=null)
+                if (this.pendingMessage.Request.userLogin != null)
                 {
                     if (this.OnLogin != null)
                     {
                         this.OnLogin(Result.Failed, string.Format("服务器断开！\n RESULT:{0} ERROR:{1}", result, reason));
                     }
                 }
-                else if(this.pendingMessage.Request.userRegister!=null)
+                else if (this.pendingMessage.Request.userRegister != null)
                 {
                     if (this.OnRegister != null)
                     {
@@ -119,10 +119,10 @@ namespace Services
             }
             return false;
         }
-        
+
 
         // 用户登录
-        public void SendLogin(string user , string passward)
+        public void SendLogin(string user, string passward)
         {
             // 在日志中打印将登录信息发送给服务器
             Debug.LogFormat("UserLoginRequest::user :{0} psw :{1}", user, passward);
@@ -133,13 +133,14 @@ namespace Services
             message.Request.userLogin = new UserLoginRequest();
             message.Request.userLogin.User = user;
             message.Request.userLogin.Passward = passward;
-             
+
             // 检查是否连接到服务器并发送消息
-            if(this.connected && NetClient.Instance.Connected)
+            if (this.connected && NetClient.Instance.Connected)
             {
                 pendingMessage = null;
                 NetClient.Instance.SendMessage(message);
-            } else
+            }
+            else
             {
                 pendingMessage = message;
                 this.ConnectToServer();
@@ -160,7 +161,7 @@ namespace Services
 
             }
         }
- 
+
 
         // 用户注册
         public void SendRegister(string user, string psw)
@@ -235,7 +236,7 @@ namespace Services
         {
             Debug.LogFormat("OnUserCreateCharacter:{0} [{1}]", response.Result, response.Errormsg);
 
-            if(response.Result == Result.Success)
+            if (response.Result == Result.Success)
             {
                 Models.User.Instance.Info.Player.Characters.Clear();
                 Models.User.Instance.Info.Player.Characters.AddRange(response.Characters);
@@ -246,7 +247,7 @@ namespace Services
                 this.OnCharacterCreate(response.Result, response.Errormsg);
             }
         }
-  
+
 
         // 角色进入游戏
         public void SendGameEnter(int characterIdx)
@@ -261,16 +262,17 @@ namespace Services
             //发送请求给服务器
             NetClient.Instance.SendMessage(message);
         }
-        void OnGameEnter(object sender , UserGameEnterResponse response)
+        void OnGameEnter(object sender, UserGameEnterResponse response)
         {
             Debug.LogFormat("OnGameEnter : {0} [{1}]", response.Result, response.Errormsg);
             // 如果受到了服务器成功进入游戏的请求
-            if(response.Result == Result.Success)
+            if (response.Result == Result.Success)
             {
                 Debug.LogFormat("Success");
+
             }
         }
-        
+
 
         // 角色离开游戏
         public void SendGameLeave()
@@ -281,14 +283,14 @@ namespace Services
             message.Request.gameLeave = new UserGameLeaveRequest();
             NetClient.Instance.SendMessage(message);
         }
-        void OnGameLeave(object sender , UserGameLeaveResponse response)
+        void OnGameLeave(object sender, UserGameLeaveResponse response)
         {
-            //MapService.Instance.CurrentMapId = 0;
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
+            User.Instance.CurrentCharacter = null;
             MapService.Instance.CurrentMapId = 0;
         }
-       
-        
+
+
 
     }
 }

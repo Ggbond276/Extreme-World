@@ -101,24 +101,24 @@ namespace GameServer.Models
         }
 
         // 玩家离开地图
-        internal void CharacterLeave(NCharacterInfo cha)
+        internal void CharacterLeave(Character character)
         {
-            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, cha.Entity.Id);
+            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, character.Id);
             foreach( var kv in this.MapCharacters)
             {
                 // 发送到服务器告诉他们哪个角色离开了
-                this.SendCharacterLeaveMap(kv.Value.connection, cha);
+                this.SendCharacterLeaveMap(kv.Value.connection, character);
             }
             // 删除地图管理器中的角色(这里的bug是因为Id弄错了） 所以修改Remove(cha.Id) --> Remove(cha.Entity.Id)
-            this.MapCharacters.Remove(cha.Entity.Id);
+            this.MapCharacters.Remove(character.Id);
         }
-        void SendCharacterLeaveMap(NetConnection<NetSession> conn, NCharacterInfo character)
+        void SendCharacterLeaveMap(NetConnection<NetSession> conn, Character character)
         {
-            Log.InfoFormat("SendCharacterLeaveMap start : {0}", character.Entity.Id);
+            Log.InfoFormat("SendCharacterLeaveMap start : {0}", character.Id);
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
-            message.Response.mapCharacterLeave.characterId = character.Entity.Id;
+            message.Response.mapCharacterLeave.characterId = character.Id;
 
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
