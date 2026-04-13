@@ -119,7 +119,7 @@ namespace Assets.Scripts.Services
             };
             NetClient.Instance.SendMessage(message);
         }
-
+        // 处理移动同步问题
         public void OnMapEntitySync(object sender, MapEntitySyncResponse response)
         {
             StringBuilder sb = new StringBuilder();
@@ -132,6 +132,16 @@ namespace Assets.Scripts.Services
                 sb.AppendLine();
             }
             Debug.Log(sb.ToString());
+        }
+        // 处理传送问题
+        internal void SendMapTeleport(int teleporterID)
+        {
+            Debug.LogFormat("MapTeleportRequest : teleporterID: {0}", teleporterID);
+            NetMessage message = new NetMessage();
+            message.Request = new NetMessageRequest();
+            message.Request.mapTeleport = new MapTeleportRequest();
+            message.Request.mapTeleport.teleporterId = teleporterID;
+            NetClient.Instance.SendMessage(message);
         }
     }
 }

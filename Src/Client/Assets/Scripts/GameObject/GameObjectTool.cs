@@ -39,8 +39,8 @@ public class GameObjectTool
         return new NVector3()
         {
             X = Mathf.RoundToInt(vector.x * 100),
-            Y = Mathf.RoundToInt(vector.y * 100),
-            Z = Mathf.RoundToInt(vector.z * 100)
+            Y = Mathf.RoundToInt(vector.z * 100),
+            Z = Mathf.RoundToInt(vector.y * 100)
         };
     }
 
