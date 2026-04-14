@@ -22478,11 +22478,11 @@ Transform:
   m_GameObject: {fileID: 547527680}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 39.9, y: 7.4, z: 40}
-  m_LocalScale: {x: 80, y: 80, z: 1.0000001}
+  m_LocalPosition: {x: -1880.1, y: -1072.6, z: 40}
+  m_LocalScale: {x: 80, y: 80, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1004383693}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &547938429
 PrefabInstance:
@@ -36645,7 +36645,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9080ae796f59c544883d113c5cf0386c, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -38776,6 +38776,52 @@ Transform:
   - {fileID: 2135059377}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1004383692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1004383693}
+  - component: {fileID: 1004383694}
+  m_Layer: 0
+  m_Name: MapRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1004383693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004383692}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1920, y: 1080, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 547527684}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1004383694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004383692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88fb5c0a8d519bc468b487f3ff6e3a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miniMapBoundingBox: {fileID: 547527681}
 --- !u!1001 &1005113694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52947,7 +52993,7 @@ GameObject:
   - component: {fileID: 1415483397}
   - component: {fileID: 1415483401}
   m_Layer: 5
-  m_Name: UIMainCity
+  m_Name: UIMain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53050,6 +53096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a99d0a3653d7145836454d705e33fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  global: 1
   avatarName: {fileID: 1523941226}
   avatarLevel: {fileID: 610885321}
 --- !u!1001 &1421056535
@@ -78741,7 +78788,7 @@ PrefabInstance:
     - target: {fileID: 8911281039935258231, guid: a318bed58c0c3174f961c109ed5b0e8a,
         type: 3}
       propertyPath: m_Name
-      value: MapRoot
+      value: TeleporterMainCity
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1961071264729753222, guid: a318bed58c0c3174f961c109ed5b0e8a, type: 3}
@@ -78761,10 +78808,10 @@ SceneRoots:
   - {fileID: 962017735}
   - {fileID: 704953523}
   - {fileID: 1039635967}
-  - {fileID: 1415483400}
   - {fileID: 483645570}
+  - {fileID: 1415483400}
   - {fileID: 1003608081}
   - {fileID: 209195118}
   - {fileID: 1359031018}
-  - {fileID: 547527684}
   - {fileID: 5469876503376795373}
+  - {fileID: 1004383693}

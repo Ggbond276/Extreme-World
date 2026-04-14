@@ -114,7 +114,7 @@ namespace GameServer.Models
         }
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, Character character)
         {
-            Log.InfoFormat("SendCharacterLeaveMap start : {0}", character.Id);
+            Log.InfoFormat("SendCharacterLeaveMap : {0}", character.Id);
             NetMessage message = new NetMessage();
             message.Response = new NetMessageResponse();
             message.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
@@ -122,7 +122,6 @@ namespace GameServer.Models
 
             byte[] data = PackageHandler.PackMessage(message);
             conn.SendData(data, 0, data.Length);
-            Log.InfoFormat("SendCharacterLeaveMap end");
         }
 
         // 玩家移动同步

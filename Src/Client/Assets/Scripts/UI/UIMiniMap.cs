@@ -22,17 +22,19 @@ public class UIMiniMap : MonoBehaviour
     
     void Start()
     {
-        this.InitMap();
+        MinimapManager.Instance.minimap = this;
+        this.UpdateMap();
     }
-    void InitMap()
+    // 我们希望进入新的地图的时候可以地图可以更新
+    public void UpdateMap()
     {
+        this.minimapBouingBox = MinimapManager.Instance.MiniMapBoundingBox;
         this.mapName.text = User.Instance.CurrentMapData.Name;
-        // User.Instance.CurrentMapData.MiniMap
-        if(this.minimap.overrideSprite == null)
-            this.minimap.overrideSprite = MinimapManager.Instance.LoadCurrentMinimap();
+        this.minimap.overrideSprite = MinimapManager.Instance.LoadCurrentMinimap();
         // 由于不同地图尺寸不一样所以要做一个适应
         this.minimap.SetNativeSize();
         this.minimap.transform.localPosition = Vector3.zero;
+        this.playerTransform = null;
     }
     void Update()
     {
