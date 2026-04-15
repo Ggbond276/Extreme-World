@@ -18,7 +18,7 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, CharacterDefine> Characters = null;
     public Dictionary<int, TeleporterDefine> Teleporters = null;
     public Dictionary<int, Dictionary<int, SpawnPointDefine>> SpawnPoints = null;
-
+    public Dictionary<int, NpcDefine> NPCs = null;
 
     public DataManager()
     {
@@ -43,6 +43,11 @@ public class DataManager : Singleton<DataManager>
 
         json = File.ReadAllText(this.DataPath + "SpawnPointDefine.txt");
         this.SpawnPoints = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, SpawnPointDefine>>> (json);
+
+        // Npc定义
+        json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
+        this.NPCs = JsonConvert.DeserializeObject<Dictionary<int, NpcDefine>>(json);
+
     }
     //LoadData接口时提供给客户端使用的
     public IEnumerator LoadData()
@@ -64,6 +69,11 @@ public class DataManager : Singleton<DataManager>
 
         json = File.ReadAllText(this.DataPath + "SpawnPointDefine.txt");
         this.SpawnPoints = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, SpawnPointDefine>>>(json);
+
+        yield return null;
+
+        json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
+        this.NPCs = JsonConvert.DeserializeObject<Dictionary<int, NpcDefine>>(json);
 
         yield return null;
     }

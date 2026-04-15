@@ -9,7 +9,6 @@ public abstract class UIWindow : MonoBehaviour
     public delegate void CloseHandler(UIWindow sender, WindowResult result);
     // 因为UI界面不管点击什么按钮都是OnClose所以统一为OnClose
     public event CloseHandler OnClose;
-    
     public virtual Type type
     {
         get
@@ -17,7 +16,6 @@ public abstract class UIWindow : MonoBehaviour
             return this.GetType();
         }
     }
-
     public enum WindowResult
     {
         None = 0,
@@ -25,9 +23,10 @@ public abstract class UIWindow : MonoBehaviour
         No,
     }
 
-    // 这个是点击直接关闭的结果
+    // 这个是点击关闭和点击Yes关闭的方法内核
     public void Close(WindowResult result = WindowResult.None)
     {
+        // 这个内核实际上也是调用了Manager的方法
         UIManager.Instance.Close(this.type);
         // 如果OnClose 不为空就执行OnClose
         if (this.OnClose != null)
@@ -37,7 +36,7 @@ public abstract class UIWindow : MonoBehaviour
     // 点击关闭按钮时触发
     public virtual void OnCloseClick()
     {
-        this.Close();
+        this.Close(WindowResult.No);
     }
     // 点击确定按钮时触发
     public virtual void OnYesClick()
