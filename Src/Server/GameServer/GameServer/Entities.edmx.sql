@@ -44,9 +44,9 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 11/15/2024 19:35:34
+-- Date Created: 04/16/2026 13:21:46
 
--- Generated from EDMX file: C:\Users\op\Documents\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
+-- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
 
 -- --------------------------------------------------
@@ -63,6 +63,8 @@
 
 --    ALTER TABLE `Characters` DROP CONSTRAINT `FK_PlayerCharacter`;
 
+--    ALTER TABLE `CharacterItemSet` DROP CONSTRAINT `FK_TCharacterTCharacterItem`;
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -74,6 +76,8 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `Players`;
 
     DROP TABLE IF EXISTS `Characters`;
+
+    DROP TABLE IF EXISTS `CharacterItemSet`;
 
 SET foreign_key_checks = 1;
 
@@ -121,6 +125,18 @@ ALTER TABLE `Characters` ADD PRIMARY KEY (`ID`);
 
 
 
+CREATE TABLE `CharacterItemSet`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`ItemID` int NOT NULL, 
+	`ItemCount` int NOT NULL, 
+	`TCharacterID` int NOT NULL);
+
+ALTER TABLE `CharacterItemSet` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
 
 
 -- --------------------------------------------------
@@ -161,6 +177,24 @@ ADD CONSTRAINT `FK_PlayerCharacter`
 CREATE INDEX `IX_FK_PlayerCharacter`
     ON `Characters`
     (`Player_ID`);
+
+
+
+-- Creating foreign key on `TCharacterID` in table 'CharacterItemSet'
+
+ALTER TABLE `CharacterItemSet`
+ADD CONSTRAINT `FK_TCharacterTCharacterItem`
+    FOREIGN KEY (`TCharacterID`)
+    REFERENCES `Characters`
+        (`ID`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TCharacterTCharacterItem'
+
+CREATE INDEX `IX_FK_TCharacterTCharacterItem`
+    ON `CharacterItemSet`
+    (`TCharacterID`);
 
 
 

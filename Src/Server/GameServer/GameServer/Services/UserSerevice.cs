@@ -8,6 +8,7 @@ using Network;
 using SkillBridge.Message;
 using GameServer.Entities;
 using GameServer.Manager;
+using GameServer.Models;
 
 namespace GameServer.Services
 {
@@ -170,7 +171,23 @@ namespace GameServer.Services
             message.Response.gameEnter = new UserGameEnterResponse();
             message.Response.gameEnter.Result = Result.Success;
             message.Response.gameEnter.Errormsg = "None";
-            
+            // 将角色信息打包返回
+            message.Response.gameEnter.Character = character.Info;
+
+            #region  测试当玩家进入游戏的时候有道具生成
+            // 假设有个id为一的道具
+            //int itemId = 1;
+            //bool hasItem = character.ItemManager.HasItem(itemId);
+            //Item item = null;
+            //if(hasItem)
+            //{
+            //    item = character.ItemManager.Items[itemId];
+            //    Log.InfoFormat("HasItem ItemID : [ {0} ]  ItemCount : [ {1} ]", item.ItemID, item.Count);
+            //} else
+            //{
+            //    character.ItemManager.AddItem(itemId, 2);
+            //}
+            #endregion
             //使用PackageHandler将响应客户端的信息打包成字节流
             byte[] data = PackageHandler.PackMessage(message);
             //将响应信息发送出去

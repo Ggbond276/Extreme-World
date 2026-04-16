@@ -9,6 +9,7 @@ using UnityEngine;
 using SkillBridge.Message;
 using Models;
 using Assets.Scripts.Services;
+using Assets.Scripts.Managers;
 
 namespace Services
 {
@@ -268,8 +269,15 @@ namespace Services
             // 如果受到了服务器成功进入游戏的请求
             if (response.Result == Result.Success)
             {
-                Debug.LogFormat("Success");
+                NCharacterInfo Info = response.Character;
+                ItemManager.Instance.Init(Info.Items);
 
+                #region 测试用户是否接收到了物品信息
+                foreach (var item in ItemManager.Instance.Items)
+                {
+                    Debug.LogErrorFormat("Item ID : [ {0} ]  Count : [ {1} ]", item.Value.ItemID, item.Value.Count);
+                }
+                #endregion
             }
         }
 

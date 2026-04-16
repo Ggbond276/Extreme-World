@@ -1,5 +1,7 @@
 ﻿using Common.Data;
 using GameServer.Core;
+using GameServer.Manager;
+using GameServer.Managers;
 using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
@@ -13,11 +15,13 @@ namespace GameServer.Entities
     {
        
         public TCharacter Data;
-        
+        public ItemManager ItemManager;
         //构造方法
         public Character(CharacterType type,TCharacter cha): base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
         {
+            // 数据库数据
             this.Data = cha;
+            // 网络协议数据
             this.Info = new NCharacterInfo();
             this.Info.Type = type;
             this.Info.Id = cha.ID;
@@ -27,7 +31,13 @@ namespace GameServer.Entities
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
             this.Info.Entity = this.EntityData;
-            //this.Define = DataManager.Instance.Characters[this.Info.Tid];
+            // 定义数据
+            this.Define = DataManager.Instance.Characters[this.Info.Tid];
+
+            this.ItemManager = new ItemManager(this);
+            this.ItemManager.GetItemInfos(this.Info.Items);
         }
+
+
     }
 }
