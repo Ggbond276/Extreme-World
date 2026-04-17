@@ -1,3 +1,4 @@
+using Assets.Scripts.UI;
 using Models;
 using Services;
 using System.Collections;
@@ -28,5 +29,10 @@ public class UIMain : MonoSingleton<UIMain>
     public void OnClickTest()
     {
         UIManager.Instance.Show<UITest>();
+    }
+
+    public void OnClickBag()
+    {
+        UIManager.Instance.Show<UIBag>();
     }
 }

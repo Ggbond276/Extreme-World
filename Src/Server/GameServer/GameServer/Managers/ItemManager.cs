@@ -115,5 +115,7 @@ namespace GameServer.Managers
                 list.Add(new NItemInfo() { Id = item.Value.ItemID, Count = item.Value.Count });
             }
         }
+
+        // 将所有的数据打印到服务器日志中
     } 
 }

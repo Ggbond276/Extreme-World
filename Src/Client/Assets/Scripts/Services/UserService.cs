@@ -9,7 +9,7 @@ using UnityEngine;
 using SkillBridge.Message;
 using Models;
 using Assets.Scripts.Services;
-using Assets.Scripts.Managers;
+using Managers;
 
 namespace Services
 {
@@ -54,7 +54,7 @@ namespace Services
         {
 
         }
-
+        
         // 1. 连接到服务器 ConnectToServer()
         public void ConnectToServer()
         {
@@ -271,13 +271,18 @@ namespace Services
             {
                 NCharacterInfo Info = response.Character;
                 ItemManager.Instance.Init(Info.Items);
+                // 初始化背包
+                BagManager.Instance.Init(Info.Bag);
 
-                #region 测试用户是否接收到了物品信息
+                #region 测试物品和背包的数据已经被传输过来了
                 foreach (var item in ItemManager.Instance.Items)
                 {
                     Debug.LogErrorFormat("Item ID : [ {0} ]  Count : [ {1} ]", item.Value.ItemID, item.Value.Count);
                 }
+                Debug.LogErrorFormat("BagUnlock : [ {0} ]", Info.Bag.Unlocked);
+                Debug.LogErrorFormat("BagItemsCount : [ {0} ]", BagManager.Instance.bagItems.Length);
                 #endregion
+
             }
         }
 

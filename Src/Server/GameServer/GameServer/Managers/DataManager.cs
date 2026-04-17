@@ -20,7 +20,7 @@ namespace GameServer.Manager
         public Dictionary<int, Dictionary<int, SpawnPointDefine>> SpawnPoints = null;
         public Dictionary<int, Dictionary<int, SpawnRuleDefine>> SpawnRules = null;
         public Dictionary<int, NpcDefine> NPCs = null;
-
+        public Dictionary<int, ItemDefine> Items = null;
         public DataManager()
         {
             this.DataPath = "Data/";
@@ -44,6 +44,10 @@ namespace GameServer.Manager
             // Npc定义
             json = File.ReadAllText(this.DataPath + "NpcDefine.txt");
             this.NPCs = JsonConvert.DeserializeObject<Dictionary<int, NpcDefine>>(json);
+
+            // Item定义
+            json = File.ReadAllText(this.DataPath + "ItemDefine.txt");
+            this.Items = JsonConvert.DeserializeObject<Dictionary<int, ItemDefine>>(json);
         }
     }
 }

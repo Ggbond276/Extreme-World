@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.Data;
 
-namespace Assets.Scripts.Managers
+namespace Managers
 {
     class ItemManager : Singleton<ItemManager>
     {

@@ -13,7 +13,7 @@ namespace GameServer.Entities
 {
     class Character : CharacterBase
     {
-       
+       // 数据库中拉取的数据是存放有背包相关的数据的
         public TCharacter Data;
         public ItemManager ItemManager;
         //构造方法
@@ -36,8 +36,11 @@ namespace GameServer.Entities
 
             this.ItemManager = new ItemManager(this);
             this.ItemManager.GetItemInfos(this.Info.Items);
+
+            // 背包的初始化
+            this.Info.Bag = new NBagInfo();
+            this.Info.Bag.Items = this.Data.Bag.Items;
+            this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
         }
-
-
     }
 }

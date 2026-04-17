@@ -12,7 +12,6 @@ namespace GameServer.Models
 
         public int ItemID;
         public int Count;
-
         // 构造方法
         public Item(TCharacterItem dbitem)
         {

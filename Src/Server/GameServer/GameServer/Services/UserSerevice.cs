@@ -9,6 +9,7 @@ using SkillBridge.Message;
 using GameServer.Entities;
 using GameServer.Manager;
 using GameServer.Models;
+using GameServer.Managers;
 
 namespace GameServer.Services
 {
@@ -124,6 +125,12 @@ namespace GameServer.Services
                 MapPosY = 4000,
                 MapPosZ = 820,
             };
+            // 设置自己是背包的所有者
+            var bag = new TCharacterBag();
+            bag.Owner = character;
+            bag.Items = new byte[0];
+            bag.Unlocked = 20;
+            DBService.Instance.Entities.CharacterBag.Add(bag);
 
             // 将创建好的表添加到数据库中
             DBService.Instance.Entities.Characters.Add(character);
@@ -175,18 +182,15 @@ namespace GameServer.Services
             message.Response.gameEnter.Character = character.Info;
 
             #region  测试当玩家进入游戏的时候有道具生成
-            // 假设有个id为一的道具
-            //int itemId = 1;
-            //bool hasItem = character.ItemManager.HasItem(itemId);
-            //Item item = null;
-            //if(hasItem)
-            //{
-            //    item = character.ItemManager.Items[itemId];
-            //    Log.InfoFormat("HasItem ItemID : [ {0} ]  ItemCount : [ {1} ]", item.ItemID, item.Count);
-            //} else
-            //{
-            //    character.ItemManager.AddItem(itemId, 2);
-            //}
+            if(character.ItemManager.Items.Count == 0)
+            {
+                character.ItemManager.AddItem(1, 100);
+                character.ItemManager.AddItem(2, 50);
+                character.ItemManager.AddItem(3, 200);
+                character.ItemManager.AddItem(4, 300);
+                Log.Info("Item添加成功");
+            }
+
             #endregion
             //使用PackageHandler将响应客户端的信息打包成字节流
             byte[] data = PackageHandler.PackMessage(message);

@@ -1,3 +1,4 @@
+using Assets.Scripts.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ public class UIManager : Singleton<UIManager>
         // 这里写构造前的逻辑
         // 用来向字典中添加UI
         this.UIResources.Add(typeof(UITest), new UIElement() { Resources = "UI/UITest", Cache = true });
+        this.UIResources.Add(typeof(UIBag), new UIElement() { Resources = "UI/UIBag", Cache = true });
     }
 
     // 这里应该是一个上波浪号 2.析构函数到底是什么
