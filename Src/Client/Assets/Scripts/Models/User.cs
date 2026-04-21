@@ -24,5 +24,12 @@ namespace Models
         {
             this.userInfo = info;
         }
+        public static event Action<long> OnGoldChanged;
+        internal void AddGold(int value)
+        {
+            this.CurrentCharacter.Gold += value;
+            OnGoldChanged?.Invoke(CurrentCharacter.Gold);
+        }
+
     }
 }

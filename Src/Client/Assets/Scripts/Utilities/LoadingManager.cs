@@ -53,7 +53,8 @@ public class LoadingManager : MonoBehaviour
         //perfrom initialization operations related to user service functions
         MapService.Instance.Init();
         UserService.Instance.Init();
-        TestManager.Instance.Init();
+        // TestManager.Instance.Init();
+        ShopManager.Instance.Init();
         #endregion
 
         #region 5.进度条加载

@@ -124,6 +124,7 @@ namespace GameServer.Services
                 MapPosX = 5000,
                 MapPosY = 4000,
                 MapPosZ = 820,
+                Gold = 100000,
             };
             // 设置自己是背包的所有者
             var bag = new TCharacterBag();
@@ -182,16 +183,16 @@ namespace GameServer.Services
             message.Response.gameEnter.Character = character.Info;
 
             #region  测试当玩家进入游戏的时候有道具生成
-            if(character.ItemManager.Items.Count == 0)
-            {
-                character.ItemManager.AddItem(1, 100);
-                character.ItemManager.AddItem(2, 50);
-                character.ItemManager.AddItem(3, 200);
-                character.ItemManager.AddItem(4, 300);
-                Log.Info("Item添加成功");
-            }
-
+            //if(character.ItemManager.Items.Count == 0)
+            //{
+            //    character.ItemManager.AddItem(1, 100);
+            //    character.ItemManager.AddItem(2, 50);
+            //    character.ItemManager.AddItem(3, 200);
+            //    character.ItemManager.AddItem(4, 300);
+            //    Log.Info("Item添加成功");
+            //}
             #endregion
+
             //使用PackageHandler将响应客户端的信息打包成字节流
             byte[] data = PackageHandler.PackMessage(message);
             //将响应信息发送出去

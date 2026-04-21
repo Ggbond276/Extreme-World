@@ -275,12 +275,12 @@ namespace Services
                 BagManager.Instance.Init(Info.Bag);
 
                 #region 测试物品和背包的数据已经被传输过来了
-                foreach (var item in ItemManager.Instance.Items)
-                {
-                    Debug.LogErrorFormat("Item ID : [ {0} ]  Count : [ {1} ]", item.Value.ItemID, item.Value.Count);
-                }
-                Debug.LogErrorFormat("BagUnlock : [ {0} ]", Info.Bag.Unlocked);
-                Debug.LogErrorFormat("BagItemsCount : [ {0} ]", BagManager.Instance.bagItems.Length);
+                //foreach (var item in ItemManager.Instance.Items)
+                //{
+                //    Debug.LogErrorFormat("Item ID : [ {0} ]  Count : [ {1} ]", item.Value.ItemID, item.Value.Count);
+                //}
+                //Debug.LogErrorFormat("BagUnlock : [ {0} ]", Info.Bag.Unlocked);
+                //Debug.LogErrorFormat("BagItemsCount : [ {0} ]", BagManager.Instance.bagItems.Length);
                 #endregion
 
             }

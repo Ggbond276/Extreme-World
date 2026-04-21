@@ -16,6 +16,7 @@ namespace GameServer.Entities
        // 数据库中拉取的数据是存放有背包相关的数据的
         public TCharacter Data;
         public ItemManager ItemManager;
+        public StatusManager statusManager;
         //构造方法
         public Character(CharacterType type,TCharacter cha): base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
         {
@@ -30,6 +31,7 @@ namespace GameServer.Entities
             this.Info.Tid = cha.TID;
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
+            this.Info.Gold = cha.Gold;
             this.Info.Entity = this.EntityData;
             // 定义数据
             this.Define = DataManager.Instance.Characters[this.Info.Tid];
@@ -41,6 +43,20 @@ namespace GameServer.Entities
             this.Info.Bag = new NBagInfo();
             this.Info.Bag.Items = this.Data.Bag.Items;
             this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
+
+            this.statusManager = new StatusManager(this);
+        }
+
+        public long Gold
+        {
+            get { return this.Data.Gold; }
+            set
+            {
+                if (value == this.Data.Gold)
+                    return;
+                this.statusManager.AddGoldChange((int)(value - this.Data.Gold));
+                this.Data.Gold = value;
+            }
         }
     }
 }

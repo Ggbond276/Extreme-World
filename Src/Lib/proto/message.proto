@@ -72,7 +72,7 @@ message NCharacterInfo {
 	int32 level = 6;
 	int32 mapId = 7;
 	NEntity entity = 8;
-	
+	int64 gold = 9;
 	repeated NItemInfo Items = 10;
 	NBagInfo Bag = 11;
 }
@@ -94,6 +94,48 @@ message NBagInfo
 {
 	int32 Unlocked = 1;
 	bytes Items = 2;
+}
+
+
+////////////////////////////////////////////////////////////////
+//
+//  Status
+//
+////////////////////////////////////////////////////////////////
+
+enum STATUS_ACTION
+{
+	UPDATE = 0;
+	ADD = 1;
+	DELETE = 2;
+}
+
+enum STATUS_TYPE
+{
+	MONEY = 0;
+	EXP = 1;
+	SKILL_POINT = 2;
+	ITEM = 3;
+}
+
+enum STATUS_SOURCE
+{
+	UPDATE = 0;
+	ADD = 1;
+	DELETE = 2;
+}
+
+message NStatus
+{
+	STATUS_TYPE type = 1;
+	STATUS_ACTION action = 2;
+	int32 id = 3;
+	int32 value = 4;
+}
+
+message StatusNotify
+{
+	repeated NStatus Status = 1;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -140,6 +182,8 @@ message NetMessageRequest{
 
 	MapEntitySyncRequest mapEntitySync = 8;
 	MapTeleportRequest mapTeleport = 9;
+
+	ItemBuyRequest itemBuy = 10;
 }
 
 message NetMessageResponse{
@@ -153,7 +197,10 @@ message NetMessageResponse{
 	MapCharacterLeaveResponse mapCharacterLeave = 7;
 
 	MapEntitySyncResponse mapEntitySync = 8;
-	
+
+	ItemBuyResponse itemBuy = 10;
+
+	StatusNotify statusNotify = 100;
 }
 
 
@@ -245,4 +292,17 @@ message MapEntitySyncResponse
 message MapTeleportRequest
 {
 	int32 teleporterId = 1;
+}
+
+// Shop Protocol
+message ItemBuyRequest
+{
+	int32 shopId = 1;
+	int32 shopItemId = 2;
+}
+
+message ItemBuyResponse
+{
+	Result result = 1;
+	string errormsg = 2;
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Models;
 
 namespace Assets.Scripts.UI
 {
@@ -15,7 +16,7 @@ namespace Assets.Scripts.UI
         public Transform[] pages;
         public GameObject bagItem;
         private List<Image> slots;
-
+        public Text money;
         void Start()
         {
             if (slots == null)
@@ -52,6 +53,8 @@ namespace Assets.Scripts.UI
             {
                 slots[i].color = Color.gray;
             }
+
+            money.text = User.Instance.CurrentCharacter.Gold.ToString();
             yield return null;
         }
     }

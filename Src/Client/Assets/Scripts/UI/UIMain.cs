@@ -35,4 +35,17 @@ public class UIMain : MonoSingleton<UIMain>
     {
         UIManager.Instance.Show<UIBag>();
     }
+
+    // 点击打开商店1
+    public void OnClickShop1()
+    {
+        UIShop shop = UIManager.Instance.Show<UIShop>();
+        shop.SetShop(DataManager.Instance.Shops[1]);
+    }
+    // 点击打开商店2
+    public void OnClickShop2()
+    {
+        UIShop shop = UIManager.Instance.Show<UIShop>();
+        shop.SetShop(DataManager.Instance.Shops[2]);
+    }
 }

@@ -13,10 +13,16 @@ namespace Models
         public int ItemID;
         public int Count;
         public ItemDefine define;
-        public Item(NItemInfo item)
+        public Item(NItemInfo item) : 
+            this(item.Id, item.Count)
         {
-            this.ItemID = item.Id;
-            this.Count = item.Count;
+          
+        }
+
+        public Item(int id, int count)
+        {
+            this.ItemID =id;
+            this.Count = count;
             this.define = DataManager.Instance.Items[this.ItemID];
         }
     }

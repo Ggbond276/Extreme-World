@@ -17,6 +17,8 @@ public class NPCManager : Singleton<NPCManager>
             eventMap[npcFunction] += npcActionHandler;
         }
     }
+
+
     public NpcDefine GetNPCDefine(int id)
     {
         return DataManager.Instance.NPCs[id];

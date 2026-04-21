@@ -46,6 +46,56 @@ namespace Managers
             }
         }
 
+        internal void AddItem(int itemId, int count)
+        {
+            ushort addCount = (ushort)count;
+             for(int i = 0; i < bagItems.Length; i++)
+            {
+                if(bagItems[i].ItemId == itemId)
+                {
+                    ushort canAdd = (ushort)(DataManager.Instance.Items[itemId].StackLimit - bagItems[i].Count);
+                    if (canAdd == 0)
+                        continue;
+                    if(canAdd < addCount)
+                    {
+                        bagItems[i].Count += canAdd;
+                        addCount -= canAdd;
+                    } else
+                    {
+                        bagItems[i].Count += addCount;
+                        addCount = 0;
+                        break;
+                    }
+                }
+            }
 
+             if(addCount > 0)
+            {
+                for(int i = 0; i < bagItems.Length; i++)
+                {
+                    if(bagItems[i].ItemId == 0)
+                    {
+                        ushort canAdd = (ushort)(DataManager.Instance.Items[itemId].StackLimit);
+                        if (canAdd < addCount)
+                        {
+                            bagItems[i].ItemId = (ushort)itemId;
+                            bagItems[i].Count += canAdd;
+                            addCount -= canAdd;
+                        } else
+                        {
+                            bagItems[i].ItemId = (ushort)itemId;
+                            bagItems[i].Count += addCount;
+                            addCount = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        internal void RemoveItem(int itemId, int count)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

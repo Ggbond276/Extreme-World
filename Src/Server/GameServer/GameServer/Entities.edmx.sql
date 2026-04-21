@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 04/17/2026 11:58:15
+-- Date Created: 04/18/2026 17:40:54
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -65,6 +65,8 @@
 
 --    ALTER TABLE `CharacterItemSet` DROP CONSTRAINT `FK_TCharacterTCharacterItem`;
 
+--    ALTER TABLE `CharacterBag` DROP CONSTRAINT `FK_TCharacterBagTCharacter`;
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -78,6 +80,8 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `Characters`;
 
     DROP TABLE IF EXISTS `CharacterItemSet`;
+
+    DROP TABLE IF EXISTS `CharacterBag`;
 
 SET foreign_key_checks = 1;
 
@@ -117,6 +121,7 @@ CREATE TABLE `Characters`(
 	`MapPosX` int NOT NULL, 
 	`MapPosY` int NOT NULL, 
 	`MapPosZ` int NOT NULL, 
+	`Gold` bigint NOT NULL, 
 	`Player_ID` int NOT NULL);
 
 ALTER TABLE `Characters` ADD PRIMARY KEY (`ID`);

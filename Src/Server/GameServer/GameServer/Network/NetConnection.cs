@@ -37,7 +37,7 @@ namespace Network
     /// <summary>
     /// A connection to our server.
     /// </summary>
-    public class NetConnection<T>
+    public class NetConnection<T> where T : INetSession
     {
         /// <summary>
         /// Represents a callback used to inform a listener that a ServerConnection has received data.
@@ -129,6 +129,14 @@ namespace Network
             }
         }
 
+        public void SendResponse()
+        {
+            // 打包字节流
+            byte[] data = session.GetResponse();
+            // 发送
+            this.SendData(data, 0, data.Length);
+        }
+
         private void SendCallback(IAsyncResult ar)
         {
             try
@@ -147,7 +155,6 @@ namespace Network
 
 
         #endregion
-
 
         #region Private Methods
         /// <summary>
@@ -256,5 +263,8 @@ namespace Network
         public T Session { get { return session; } }
 
         #endregion
+
+
+
     }
 }

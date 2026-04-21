@@ -86,8 +86,8 @@ public class NPCController : MonoBehaviour
     private void OnMouseOver()
     {
         // 鼠标离开取消高亮
-        Debug.LogError("高亮执行结束");
-        this.Highlight(false);
+        //Debug.LogError("高亮执行结束");
+        this.Highlight(true);
     }
 
     private void OnMouseEnter()
