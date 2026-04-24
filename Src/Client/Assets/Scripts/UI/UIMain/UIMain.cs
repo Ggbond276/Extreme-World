@@ -48,9 +48,14 @@ public class UIMain : MonoSingleton<UIMain>
         UIShop shop = UIManager.Instance.Show<UIShop>();
         shop.SetShop(DataManager.Instance.Shops[2]);
     }
-
+    // 点击打开装备栏
     public void OnClickCharEquip()
     {
         UIManager.Instance.Show<UICharEquip>();
     }
-}
+    // 点击打开任务系统
+    public void OnClickQuestSystem()
+    {
+        UIManager.Instance.Show<UIQuestSystem>();
+    }
+}   
