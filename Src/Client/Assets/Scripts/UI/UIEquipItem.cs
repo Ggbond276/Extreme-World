@@ -52,13 +52,16 @@ public class UIEquipItem : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(this.isEquiped)
+        if (this.isEquiped)
         {
             UnEquip();
-        } else if (this.selected) {
+        }
+        else if (this.selected)
+        {
             DoEquip();
             this.selected = false;
-        }  else
+        }
+        else
         {
             this.selected = true;
         }

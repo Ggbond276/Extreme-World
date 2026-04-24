@@ -14,7 +14,7 @@ public class UICharEquip : UIWindow
     public GameObject EquipItemPrefab;
     public List<Transform> slots;
 
-    
+
     void Start()
     {
         EquipManager.Instance.OnEquipChanged += RefreshUI;
@@ -28,14 +28,14 @@ public class UICharEquip : UIWindow
         ClearEquipedItemList();
         InitEquipedItemList();
     }
-    
+
     /// <summary>
     /// 初始化装备列表
     /// </summary>
     /// <returns></returns>
     void InitAllEquipItemList()
     {
-        foreach(var kv in ItemManager.Instance.Items)
+        foreach (var kv in ItemManager.Instance.Items)
         {
             if (kv.Value.define.Type == ItemType.Equip)
             {
@@ -53,7 +53,7 @@ public class UICharEquip : UIWindow
     /// </summary>
     void ClearAllEquipItemList()
     {
-        foreach(var item in ItemListRoot.GetComponentsInChildren<UIEquipItem>())
+        foreach (var item in ItemListRoot.GetComponentsInChildren<UIEquipItem>())
         {
             Destroy(item.gameObject);
         }
@@ -64,10 +64,10 @@ public class UICharEquip : UIWindow
     /// </summary>
     void InitEquipedItemList()
     {
-        for(int i = 0; i < (int)EquipSlot.SlotMax; i++)
+        for (int i = 0; i < (int)EquipSlot.SlotMax; i++)
         {
             var item = EquipManager.Instance.Equips[i];
-            if(item != null)
+            if (item != null)
             {
                 GameObject go = Instantiate(EquipItemPrefab, slots[i]);
                 UIEquipItem ui = go.GetComponent<UIEquipItem>();
@@ -81,9 +81,9 @@ public class UICharEquip : UIWindow
     /// </summary>
     void ClearEquipedItemList()
     {
-        foreach(var root in slots)
+        foreach (var root in slots)
         {
-            if(root.childCount > 1)
+            if (root.childCount > 1)
             {
                 Destroy(root.GetChild(1).gameObject);
             }

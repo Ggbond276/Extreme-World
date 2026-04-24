@@ -67,9 +67,8 @@ namespace Managers
         {
             int slot = (int)equip.EquipInfo.Slot;
             //这里的逻辑不是常规的切换逻辑 而是装备需要卸下才可以装备其他的装备
-            if (this.Equips[slot] != null && this.Equips[slot].ItemID != equip.ItemID)
-                return;
-            this.Equips[slot] = ItemManager.Instance.Items[equip.ItemID];
+            if (this.Equips[slot] != null && this.Equips[slot].ItemID != equip.ItemID) 
+                this.Equips[slot] = ItemManager.Instance.Items[equip.ItemID];
 
             // 修改完之后需要调用UI层 让UI层发生变化
             if (OnEquipChanged != null)

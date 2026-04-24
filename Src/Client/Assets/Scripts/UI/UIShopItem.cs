@@ -21,8 +21,9 @@ public class UIShopItem : MonoBehaviour, ISelectHandler
     // 高亮事件需要的对象
     public Image Bg;
     private bool selected = false;
-    public bool Selected { 
-        get { return selected;  }
+    public bool Selected
+    {
+        get { return selected; }
         set
         {
             selected = value;
@@ -35,7 +36,7 @@ public class UIShopItem : MonoBehaviour, ISelectHandler
     public int shopItemId;
     void Start()
     {
-        
+
     }
     // 渲染逻辑
     public void SetShopItem(ShopItemDefine define, UIShop father, int shopItemId)

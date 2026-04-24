@@ -4801,7 +4801,7 @@ GameObject:
   - component: {fileID: 7346057568502874398}
   - component: {fileID: 7678730204825420644}
   - component: {fileID: 9091073396754100796}
-  - component: {fileID: 7137381732985397712}
+  - component: {fileID: 3339319179656550941}
   m_Layer: 5
   m_Name: UIBag
   m_TagString: Untagged
@@ -4892,7 +4892,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7137381732985397712
+--- !u!114 &3339319179656550941
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5438,7 +5438,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7137381732985397712}
+      - m_Target: {fileID: 3339319179656550941}
         m_TargetAssemblyTypeName: UIWindow, Assembly-CSharp
         m_MethodName: OnCloseClick
         m_Mode: 1

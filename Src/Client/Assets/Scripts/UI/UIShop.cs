@@ -18,7 +18,7 @@ public class UIShop : UIWindow
     public Text money;
     void Start()
     {
-        
+
     }
     // the Item you choose to buy
     public UIShopItem selectedItem;
@@ -38,7 +38,7 @@ public class UIShop : UIWindow
         // 数据应该从DataManager中获取
         foreach (var kv in DataManager.Instance.ShopItems[define.ID])
         {
-            if(kv.Value.Status > 0)
+            if (kv.Value.Status > 0)
             {
                 // 创建预制体挂载到第一个content上
                 GameObject go = Instantiate(shopItem, content[page]);
@@ -46,14 +46,14 @@ public class UIShop : UIWindow
                 var ui = go.GetComponent<UIShopItem>();
                 ui.SetShopItem(kv.Value, this, kv.Key);
                 count++;
-                if(count > 10)
+                if (count > 10)
                 {
                     count = 0;
                     page++;
                     // content[page].gameObject.SetActive(true);
                 }
             }
-           
+
         }
         yield return null;
     }
@@ -62,7 +62,7 @@ public class UIShop : UIWindow
         if (selectedItem != null)
             selectedItem.Selected = false;
         this.selectedItem = shopItem;
-        Debug.LogErrorFormat("{0}", this.selectedItem.Item.Name);   
+        Debug.LogErrorFormat("{0}", this.selectedItem.Item.Name);
     }
     public void OnClickBuy()
     {
@@ -71,7 +71,7 @@ public class UIShop : UIWindow
             MessageBox.Show("Please choose the item you wanna buy");
             return;
         }
-        if(!ShopManager.Instance.ItemBuy(this.define.ID, this.selectedItem.shopItemId))
+        if (!ShopManager.Instance.ItemBuy(this.define.ID, this.selectedItem.shopItemId))
         {
             MessageBox.Show("The money is not enough");
             return;
