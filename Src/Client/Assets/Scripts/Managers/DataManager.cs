@@ -22,6 +22,7 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, ItemDefine> Items = null;
     public Dictionary<int, Dictionary<int, ShopItemDefine>> ShopItems = null;
     public Dictionary<int, ShopDefine> Shops = null;
+    public Dictionary<int, EquipDefine> Equips = null;
 
     public DataManager()
     {
@@ -59,6 +60,9 @@ public class DataManager : Singleton<DataManager>
 
         json = File.ReadAllText(this.DataPath + "ShopDefine.txt");
         this.Shops = JsonConvert.DeserializeObject<Dictionary<int, ShopDefine>>(json);
+
+        json = File.ReadAllText(this.DataPath + "EquipDefine.txt");
+        this.Equips = JsonConvert.DeserializeObject<Dictionary<int, EquipDefine>>(json);
 
     }
     //LoadData接口时提供给客户端使用的
@@ -101,6 +105,11 @@ public class DataManager : Singleton<DataManager>
 
         json = File.ReadAllText(this.DataPath + "ShopDefine.txt");
         this.Shops = JsonConvert.DeserializeObject<Dictionary<int, ShopDefine>>(json);
+
+        yield return null;
+
+        json = File.ReadAllText(this.DataPath + "EquipDefine.txt");
+        this.Equips = JsonConvert.DeserializeObject<Dictionary<int, EquipDefine>>(json);
 
         yield return null;
     }

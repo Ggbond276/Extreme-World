@@ -36,8 +36,8 @@ public class UIMessageBox : MonoBehaviour {
         this.icons[1].enabled = type == MessageBoxType.Confirm;
         this.icons[2].enabled = type == MessageBoxType.Error;
 
-        if (!string.IsNullOrEmpty(btnOK)) this.buttonYesTitle.text = title;
-        if (!string.IsNullOrEmpty(btnCancel)) this.buttonNoTitle.text = title;
+        if (!string.IsNullOrEmpty(btnOK)) this.buttonYesTitle.text = btnOK;
+        if (!string.IsNullOrEmpty(btnCancel)) this.buttonNoTitle.text = btnCancel;
 
         this.buttonYes.onClick.AddListener(OnClickYes);
         this.buttonNo.onClick.AddListener(OnClickNo);
@@ -45,14 +45,14 @@ public class UIMessageBox : MonoBehaviour {
         this.buttonNo.gameObject.SetActive(type == MessageBoxType.Confirm);
     }
 
-    void OnClickYes()
+  public  void OnClickYes()
     {
-        Destroy(this.gameObject);
         if (this.OnYes != null)
             this.OnYes();
+        Destroy(this.gameObject);
     }
 
-    void OnClickNo()
+    public void OnClickNo()
     {
         Destroy(this.gameObject);
         if (this.OnNo != null)

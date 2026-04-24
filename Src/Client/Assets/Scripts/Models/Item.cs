@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    class Item
+    public class Item
     {
         public int ItemID;
         public int Count;
         public ItemDefine define;
+        public EquipDefine EquipInfo;
         public Item(NItemInfo item) : 
             this(item.Id, item.Count)
         {
@@ -24,6 +25,10 @@ namespace Models
             this.ItemID =id;
             this.Count = count;
             this.define = DataManager.Instance.Items[this.ItemID];
+            if (this.define.Type == ItemType.Equip)  // ← 先判断类型
+            {
+                this.EquipInfo = DataManager.Instance.Equips[this.ItemID];
+            }
         }
     }
 }

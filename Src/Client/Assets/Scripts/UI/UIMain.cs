@@ -48,4 +48,9 @@ public class UIMain : MonoSingleton<UIMain>
         UIShop shop = UIManager.Instance.Show<UIShop>();
         shop.SetShop(DataManager.Instance.Shops[2]);
     }
+
+    public void OnClickCharEquip()
+    {
+        UIManager.Instance.Show<UICharEquip>();
+    }
 }

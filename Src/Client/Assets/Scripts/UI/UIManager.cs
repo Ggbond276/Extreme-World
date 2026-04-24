@@ -22,6 +22,7 @@ public class UIManager : Singleton<UIManager>
         this.UIResources.Add(typeof(UITest), new UIElement() { Resources = "UI/UITest", Cache = true });
         this.UIResources.Add(typeof(UIBag), new UIElement() { Resources = "UI/UIBag", Cache = false });
         this.UIResources.Add(typeof(UIShop), new UIElement() { Resources = "UI/UIShop", Cache = false });
+        this.UIResources.Add(typeof(UICharEquip), new UIElement() { Resources = "UI/UICharEquip", Cache = false });
     }
 
     // 这里应该是一个上波浪号 2.析构函数到底是什么

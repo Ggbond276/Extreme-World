@@ -72,7 +72,7 @@ namespace Managers
                 return;
             item.Count -= count;
 
-             BagManager.Instance.RemoveItem(itemId, count);
+            BagManager.Instance.RemoveItem(itemId, count);
         }
     }
 }

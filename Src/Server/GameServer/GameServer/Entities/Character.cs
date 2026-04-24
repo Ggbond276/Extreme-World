@@ -32,6 +32,7 @@ namespace GameServer.Entities
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
             this.Info.Gold = cha.Gold;
+            this.Info.Equips = cha.Equips;
             this.Info.Entity = this.EntityData;
             // 定义数据
             this.Define = DataManager.Instance.Characters[this.Info.Tid];
@@ -45,6 +46,8 @@ namespace GameServer.Entities
             this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
 
             this.statusManager = new StatusManager(this);
+
+
         }
 
         public long Gold

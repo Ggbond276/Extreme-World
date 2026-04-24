@@ -33,16 +33,25 @@ public class UIShop : UIWindow
     // 使用协程函数渲染
     IEnumerator InitShop()
     {
+        int count = 0;
+        int page = 0;
         // 数据应该从DataManager中获取
-        foreach(var kv in DataManager.Instance.ShopItems[define.ID])
+        foreach (var kv in DataManager.Instance.ShopItems[define.ID])
         {
             if(kv.Value.Status > 0)
             {
                 // 创建预制体挂载到第一个content上
-                GameObject go = Instantiate(shopItem, content[0]);
+                GameObject go = Instantiate(shopItem, content[page]);
                 // 然后将数据移交给UIShopItem让他去做对应的渲染逻辑
                 var ui = go.GetComponent<UIShopItem>();
                 ui.SetShopItem(kv.Value, this, kv.Key);
+                count++;
+                if(count > 10)
+                {
+                    count = 0;
+                    page++;
+                    // content[page].gameObject.SetActive(true);
+                }
             }
            
         }
