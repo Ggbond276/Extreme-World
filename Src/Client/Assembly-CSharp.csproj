@@ -79,8 +79,8 @@
     <Compile Include="Assets\Scripts\UI\UIMiniMap\UIMiniMap.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestItem.cs" />
     <Compile Include="Assets\Scripts\Managers\BagManager.cs" />
-    <Compile Include="Assets\Scripts\UI\UINameBar\UINameBar.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestInfo.cs" />
+    <Compile Include="Assets\Scripts\UI\UINameBar\UINameBar.cs" />
     <Compile Include="Assets\Scripts\Managers\NPCManager.cs" />
     <Compile Include="Assets\Scripts\Utilities\LoadingManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\MapController.cs" />
