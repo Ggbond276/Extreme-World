@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Models
 {
-    class Quest
+    public class Quest
     {
         public QuestDefine Define;
         public NQuestInfo Info;

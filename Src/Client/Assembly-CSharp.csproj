@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\UI\UILogin\UILogin.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestStatus.cs" />
     <Compile Include="Assets\Scripts\Entities\Entity.cs" />
+    <Compile Include="Assets\Scripts\UI\ListView\ListView.cs" />
     <Compile Include="Assets\Scripts\Models\Item.cs" />
     <Compile Include="Assets\Scripts\Managers\ItemManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIWindow\UIWindow.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Assets\Scripts\Managers\ShopManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\GameObjectTool.cs" />
     <Compile Include="Assets\Scripts\Utilities\EnumUtil.cs" />
+    <Compile Include="Assets\Scripts\UI\TabView\TabView.cs" />
     <Compile Include="Assets\Scripts\Assets\Resloader.cs" />
     <Compile Include="Assets\Scripts\Managers\CharacterManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestSystem.cs" />
@@ -108,11 +110,10 @@
     <Compile Include="Assets\Scripts\UI\UIBag\UIBag.cs" />
     <Compile Include="Assets\Scripts\Services\StatusService.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestDialog.cs" />
-    <Compile Include="Assets\Resources\UI\TabView\TabView.cs" />
     <Compile Include="Assets\Scripts\UI\UIRegister\UIRegister.cs" />
+    <Compile Include="Assets\Scripts\UI\TabView\TabButton.cs" />
     <Compile Include="Assets\Scripts\UI\UIEquip\UICharEquip.cs" />
     <Compile Include="Assets\Scripts\Services\UserService.cs" />
-    <Compile Include="Assets\Resources\UI\TabView\TabButton.cs" />
     <Compile Include="Assets\Scripts\Models\User.cs" />
     <Compile Include="Assets\Scripts\GameObject\GameObjectManager.cs" />
     <Compile Include="Assets\Scripts\Services\ItemService.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Assets\Scripts\UI\UIBag\UIBagItem.cs" />
     <Compile Include="Assets\Scripts\UI\UICharacterSelect\UICharInfo.cs" />
     <Compile Include="Assets\Scripts\Utilities\Singleton.cs" />
+    <Compile Include="Assets\Scripts\UI\ListView\ListViewItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\References\Protocol.dll" />

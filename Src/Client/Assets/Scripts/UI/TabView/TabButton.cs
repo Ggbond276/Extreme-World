@@ -8,16 +8,17 @@ public class TabButton : MonoBehaviour
     public TabView tableView;
     public int index = 0;
 
+    // 这个不是通用的 不是所有按钮都需要这个
     private Sprite normalImage;
     public Sprite activeImage;
 
 
     private Image tabImage;
+
     private void Start()
     {
         tabImage = this.GetComponent<Image>();
         normalImage = tabImage.sprite;
-
         this.GetComponent<Button>().onClick.AddListener(OnClick);
     }
 

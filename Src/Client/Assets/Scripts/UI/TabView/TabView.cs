@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TabView : MonoBehaviour
 {
+    public UnityAction<int> OnTabSelected;
     public TabButton[] tabButtons;
     public GameObject[] tabPages;
     public int index = -1;
     
+    // 初始化的时候没有问题
     IEnumerator Start()
     {
         for(int i  = 0; i < tabButtons.Length; i++)
@@ -18,23 +21,23 @@ public class TabView : MonoBehaviour
         yield return new WaitForEndOfFrame();
         SelectTab(0);
     }
-
     public void SelectTab(int index)
     {
-        if (this.index != index)
+        if (tabPages == null ||  tabPages.Length == 0)
         {
-            for(int i = 0; i < tabButtons.Length; i++)
-            {   
-                // 1.让index等于这个的button亮起来
-                tabButtons[i].Select(i == index);
-                // 2.让index等于这个的页面显示出来
-                tabPages[i].SetActive(i == index);
+            this.OnTabSelected(index);
+        } 
+        else
+        {
+            if (this.index != index)
+            {
+                for (int i = 0; i < tabButtons.Length; i++)
+                {
+                    tabButtons[i].Select(i == index);
+                    tabPages[i].SetActive(i == index);
+                }
+                this.index = index;
             }
-            this.index = index;
         }
     }
-
-
-
-    
 }
