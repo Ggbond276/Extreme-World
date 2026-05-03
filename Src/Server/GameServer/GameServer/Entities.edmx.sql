@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 04/22/2026 17:08:30
+-- Date Created: 05/01/2026 16:19:44
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -67,6 +67,8 @@
 
 --    ALTER TABLE `CharacterBag` DROP CONSTRAINT `FK_TCharacterBagTCharacter`;
 
+--    ALTER TABLE `CharacterQuests` DROP CONSTRAINT `FK_TCharacterTCharacterQuest`;
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -82,6 +84,8 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `CharacterItemSet`;
 
     DROP TABLE IF EXISTS `CharacterBag`;
+
+    DROP TABLE IF EXISTS `CharacterQuests`;
 
 SET foreign_key_checks = 1;
 
@@ -123,6 +127,7 @@ CREATE TABLE `Characters`(
 	`MapPosZ` int NOT NULL, 
 	`Gold` bigint NOT NULL, 
 	`Equips` tinyblob NOT NULL, 
+	`EXP` bigint NOT NULL, 
 	`Player_ID` int NOT NULL);
 
 ALTER TABLE `Characters` ADD PRIMARY KEY (`ID`);
@@ -150,6 +155,21 @@ CREATE TABLE `CharacterBag`(
 	`Owner_ID` int NOT NULL);
 
 ALTER TABLE `CharacterBag` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
+CREATE TABLE `CharacterQuests`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`TCharacterID` int NOT NULL, 
+	`QuestID` int NOT NULL, 
+	`Target1` int NOT NULL, 
+	`Target2` int NOT NULL, 
+	`Target3` int NOT NULL, 
+	`Status` int NOT NULL);
+
+ALTER TABLE `CharacterQuests` ADD PRIMARY KEY (`Id`);
 
 
 
@@ -231,6 +251,24 @@ ADD CONSTRAINT `FK_TCharacterBagTCharacter`
 CREATE INDEX `IX_FK_TCharacterBagTCharacter`
     ON `CharacterBag`
     (`Owner_ID`);
+
+
+
+-- Creating foreign key on `TCharacterID` in table 'CharacterQuests'
+
+ALTER TABLE `CharacterQuests`
+ADD CONSTRAINT `FK_TCharacterTCharacterQuest`
+    FOREIGN KEY (`TCharacterID`)
+    REFERENCES `Characters`
+        (`ID`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TCharacterTCharacterQuest'
+
+CREATE INDEX `IX_FK_TCharacterTCharacterQuest`
+    ON `CharacterQuests`
+    (`TCharacterID`);
 
 
 

@@ -11,16 +11,13 @@ public class UINameBar : MonoBehaviour {
     
     public Character character;
 
-
-    // Use this for initialization
     void Start () {
 		if(this.character!=null)
         {
             this.UpdateInfo();
         }
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
         this.UpdateInfo();
         // 为了让视线对其摄像机
@@ -37,8 +34,6 @@ public class UINameBar : MonoBehaviour {
             {
                 this.characterInfo.text = info;
             }
-
-
         }
     }
 }

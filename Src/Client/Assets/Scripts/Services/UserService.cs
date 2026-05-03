@@ -269,11 +269,13 @@ namespace Services
             // 如果受到了服务器成功进入游戏的请求
             if (response.Result == Result.Success)
             {
+                User.Instance.CurrentCharacter = response.Character;
                 NCharacterInfo Info = response.Character;
                 ItemManager.Instance.Init(Info.Items);
                 // 初始化背包
                 BagManager.Instance.Init(Info.Bag);
                 EquipManager.Instance.Init(Info.Equips);
+                QuestManager.Instance.Init(Info.Quests);
                 #region 测试物品和背包的数据已经被传输过来了
                 //foreach (var item in ItemManager.Instance.Items)
                 //{

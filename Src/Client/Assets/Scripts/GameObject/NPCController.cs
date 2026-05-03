@@ -1,8 +1,10 @@
+using Assets.Scripts.Models;
 using Common.Data;
 using Models;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static QuestManager;
 
 public class NPCController : MonoBehaviour
 {
@@ -17,9 +19,14 @@ public class NPCController : MonoBehaviour
     {
         npc = NPCManager.Instance.GetNPCDefine(ID);
         anim = this.gameObject.GetComponent<Animator>();
+        // 以下两个不是核心逻辑 只是处理高亮逻辑的
         myrenderder = this.gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
         orignColor = myrenderder.sharedMaterial.color;
         StartCoroutine(DoAction());
+
+        // 状态变化监听
+        RefreshNpcStatus();
+        QuestManager.Instance.OnQuestStatusChanged += OnQuestStatusChanged;
     }
 
     IEnumerator DoAction()
@@ -72,7 +79,7 @@ public class NPCController : MonoBehaviour
         Vector3 faceto = (User.Instance.CurrentCharacterObject.transform.position - this.transform.position).normalized;
         if(Mathf.Abs(Vector3.Angle(this.transform.forward, faceto)) > 5)
         {
-            Debug.LogError("朝向逻辑执行");
+            // Debug.LogError("朝向逻辑执行");
             this.transform.forward = Vector3.Lerp(this.transform.forward, faceto, Time.deltaTime * 5f);
             yield return null;
         }
@@ -82,22 +89,19 @@ public class NPCController : MonoBehaviour
         // 执行交互逻辑
         this.Interactive();
     }
-
     private void OnMouseOver()
     {
         // 鼠标离开取消高亮
         //Debug.LogError("高亮执行结束");
         this.Highlight(true);
     }
-
     private void OnMouseEnter()
     {
         // 鼠标进入显示高亮
-        Debug.LogError("高亮执行开始");
+        // Debug.LogError("高亮执行开始");
         this.Highlight(true);
     }
-
-     void Highlight(bool highlight)
+    void Highlight(bool highlight)
     {
         // 高亮逻辑
         if(highlight)
@@ -110,5 +114,17 @@ public class NPCController : MonoBehaviour
                 myrenderder.sharedMaterial.color = orignColor;
         }
 
+    }
+
+
+    public void OnQuestStatusChanged(Quest quest)
+    {
+        RefreshNpcStatus();
+    }
+
+    public void RefreshNpcStatus()
+    {
+        NpcQuestStatus status = QuestManager.Instance.GetQuestStatusByNpc(this.ID);
+        UIWorldElementManager.Instance.AddNpcQuestStatus(this.transform, status);
     }
 }

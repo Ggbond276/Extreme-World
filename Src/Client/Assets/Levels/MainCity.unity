@@ -51899,6 +51899,8 @@ MonoBehaviour:
   global: 1
   infoBarPrefab: {fileID: 6420573190837427481, guid: 6a47108dd4ef8b246878f873e65ae627,
     type: 3}
+  questStautsPrefab: {fileID: 6992714890880193111, guid: 843005859b6263f45ae079a00299a6ef,
+    type: 3}
 --- !u!1001 &1362069278
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -57,7 +57,7 @@ namespace Common.Data
         public int RewardItem1 { get; set; }
         public int RewardItem1Count { get; set; }
         public int RewardItem2 { get; set; }
-        public int RewardItemCount2 { get; set; }
+        public int RewardItem2Count { get; set; }
         public int RewardItem3 { get; set; }
         public int RewardItem3Count { get; set; }
 

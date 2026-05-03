@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f3dd13422c314bf8a758e92bb74d3bcf" Name="Diagram1" ZoomLevel="78" >
+      <Diagram DiagramId="f3dd13422c314bf8a758e92bb74d3bcf" Name="Diagram1" ZoomLevel="75" >
         <EntityTypeShape EntityType="ExtremeWorldModel.TUser" Width="1.5" PointX="2.25" PointY="1.5" />
         <EntityTypeShape EntityType="ExtremeWorldModel.TPlayer" Width="1.5" PointX="5.125" PointY="1.875" />
         <AssociationConnector Association="ExtremeWorldModel.UserPlayer" />
@@ -14,6 +14,8 @@
         <AssociationConnector Association="ExtremeWorldModel.TCharacterTCharacterItem" />
         <EntityTypeShape EntityType="ExtremeWorldModel.TCharacterBag" Width="1.5" PointX="11.875" PointY="4.5" />
         <AssociationConnector Association="ExtremeWorldModel.TCharacterBagTCharacter" />
+        <EntityTypeShape EntityType="ExtremeWorldModel.TCharacterQuest" Width="1.5" PointX="11" PointY="6.625" />
+        <AssociationConnector Association="ExtremeWorldModel.TCharacterTCharacterQuest" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

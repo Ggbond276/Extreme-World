@@ -11,7 +11,7 @@ namespace GameServer.Managers
     class StatusManager
     {
         public Character Owner;
-        // 
+        
         public List<NStatus> Status;
         public StatusManager(Character character)
         {
@@ -28,6 +28,7 @@ namespace GameServer.Managers
                 Value = value
             });
         }
+        // 这个方法将变化的消息塞进了大卡车
         public void ApplyReponse(NetMessageResponse Response)
         {
             if (Response.statusNotify == null)
@@ -38,6 +39,8 @@ namespace GameServer.Managers
             }
             this.Status.Clear();
         }
+
+
 
         // 金币状态发生变化
         public void AddGoldChange(int goldDelta)
@@ -55,6 +58,18 @@ namespace GameServer.Managers
         public void AddItemChange(StatusAction action, int id, int count)
         {
             AddStatus(StatusType.Item, action, id, count);
+        }
+        // 经验值发生了变化
+        public void AddExpChange(int expDelta)
+        {
+            if(expDelta > 0)
+            {
+                AddStatus(StatusType.Exp, StatusAction.Add, 0, expDelta);
+            }
+            if(expDelta < 0)
+            {
+                AddStatus(StatusType.Exp, StatusAction.Delete, 0, expDelta);
+            }
         }
     }
 }

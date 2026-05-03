@@ -24,12 +24,19 @@ namespace Models
         {
             this.userInfo = info;
         }
+        // 谁来注册这个委托就可以实时监听到金币的变化
         public static event Action<long> OnGoldChanged;
+        public static event Action<long> OnExpChanged;
         internal void AddGold(int value)
         {
             this.CurrentCharacter.Gold += value;
             OnGoldChanged?.Invoke(CurrentCharacter.Gold);
         }
 
+        internal void AddExp(int value)
+        {
+            this.CurrentCharacter.Exp += value;
+            OnExpChanged?.Invoke(CurrentCharacter.Exp);
+        }
     }
 }

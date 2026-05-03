@@ -83,6 +83,9 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(13, Name = @"quests")]
         public global::System.Collections.Generic.List<NQuestInfo> Quests { get; } = new global::System.Collections.Generic.List<NQuestInfo>();
 
+        [global::ProtoBuf.ProtoMember(14, Name = @"exp")]
+        public long Exp { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -703,6 +706,9 @@ namespace SkillBridge.Message
         [global::System.ComponentModel.DefaultValue("")]
         public string Errormsg { get; set; } = "";
 
+        [global::ProtoBuf.ProtoMember(3, Name = @"quest")]
+        public NQuestInfo Quest { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -730,6 +736,9 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
         public string Errormsg { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"quest")]
+        public NQuestInfo Quest { get; set; }
 
     }
 

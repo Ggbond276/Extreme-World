@@ -96,6 +96,7 @@ message NCharacterInfo {
 	NBagInfo Bag = 11;
 	bytes Equips = 12;
 	repeated NQuestInfo quests = 13;
+	int64 exp = 14;
 }
 
 message NItemInfo
@@ -408,6 +409,7 @@ message QuestAcceptResponse
 {
 	RESULT result = 1;
 	string errormsg = 2;
+	NQuestInfo quest = 3;
 }
 
 message QuestSubmitRequest
@@ -419,6 +421,7 @@ message QuestSubmitResponse
 {
 	RESULT result = 1;
 	string errormsg = 2;
+	NQuestInfo quest = 3;
 }
 
 message QuestAbandonRequest

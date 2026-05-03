@@ -17,8 +17,36 @@ namespace GameServer.Entities
         public TCharacter Data;
         public ItemManager ItemManager;
         public StatusManager statusManager;
+        public QuestManager questManager;
+
+        public long Gold
+        {
+            get { return this.Data.Gold; }
+            set
+            {
+                if (value == this.Data.Gold)
+                    return;
+                this.statusManager.AddGoldChange((int)(value - this.Data.Gold));
+                this.Data.Gold = value;
+            }
+        }
+
+        public long Exp
+        {
+            get { return this.Data.EXP; }
+            set
+            {
+                if (Exp == value)
+                    return;
+                this.statusManager.AddExpChange((int)(value - this.Data.EXP));
+                this.Data.EXP = value;
+            }
+        }
+
+
         //构造方法
-        public Character(CharacterType type,TCharacter cha): base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
+        public Character(CharacterType type,TCharacter cha): 
+            base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
         {
             // 数据库数据
             this.Data = cha;
@@ -32,11 +60,13 @@ namespace GameServer.Entities
             this.Info.Class = (CharacterClass)cha.Class;
             this.Info.mapId = cha.MapID;
             this.Info.Gold = cha.Gold;
+            this.Info.Exp = cha.EXP;
             this.Info.Equips = cha.Equips;
             this.Info.Entity = this.EntityData;
             // 定义数据
             this.Define = DataManager.Instance.Characters[this.Info.Tid];
 
+            // 道具管理器初始化
             this.ItemManager = new ItemManager(this);
             this.ItemManager.GetItemInfos(this.Info.Items);
 
@@ -45,21 +75,13 @@ namespace GameServer.Entities
             this.Info.Bag.Items = this.Data.Bag.Items;
             this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
 
+            // 任务管理器初始化
+            this.questManager = new QuestManager(this);
+            this.questManager.GetQuestInfo(this.Info.Quests);
+
             this.statusManager = new StatusManager(this);
-
-
         }
 
-        public long Gold
-        {
-            get { return this.Data.Gold; }
-            set
-            {
-                if (value == this.Data.Gold)
-                    return;
-                this.statusManager.AddGoldChange((int)(value - this.Data.Gold));
-                this.Data.Gold = value;
-            }
-        }
+        
     }
 }

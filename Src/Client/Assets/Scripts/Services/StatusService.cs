@@ -52,6 +52,13 @@ public class StatusService : Singleton<StatusService>, IDisposable
             else if (status.Action == StatusAction.Delete)
                 User.Instance.AddGold(status.Value);
         }
+        if(status.Type == StatusType.Exp)
+        {
+            if (status.Action == StatusAction.Add)
+                User.Instance.AddExp(status.Value);
+            else if (status.Action == StatusAction.Delete)
+                User.Instance.AddExp(status.Value);
+        }
 
         StatusNotifyHandler handler;
         if (eventMap.TryGetValue(status.Type, out handler))

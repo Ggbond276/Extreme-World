@@ -1,3 +1,4 @@
+using Assets.Scripts.Models;
 using Assets.Scripts.UI;
 using Models;
 using Services;
@@ -14,6 +15,7 @@ public class UIMain : MonoSingleton<UIMain>
     protected override void OnStart()
     {
         this.UpdateAvatar();
+        QuestManager.Instance.OnOpenQuestDialog += OnOpenQuestDialog;
     }
     void UpdateAvatar()
     {
@@ -57,5 +59,11 @@ public class UIMain : MonoSingleton<UIMain>
     public void OnClickQuestSystem()
     {
         UIManager.Instance.Show<UIQuestSystem>();
+    }
+    // 打开任务对话面板
+    public void OnOpenQuestDialog(Quest targetQuest)
+    {
+         UIQuestDialog dlg = UIManager.Instance.Show<UIQuestDialog>();
+         dlg.SetQuest(targetQuest);
     }
 }   

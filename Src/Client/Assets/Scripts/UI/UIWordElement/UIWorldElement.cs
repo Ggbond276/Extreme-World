@@ -8,12 +8,6 @@ public class UIWorldElement : MonoBehaviour {
 
     public float height = 2.01f;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
-    // Update is called once per frame
     void Update()
     {
         if (owner != null)
