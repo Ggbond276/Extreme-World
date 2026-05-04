@@ -28,7 +28,25 @@ public class NPCController : MonoBehaviour
         RefreshNpcStatus();
         QuestManager.Instance.OnQuestStatusChanged += OnQuestStatusChanged;
     }
+    void OnDestroy()
+    {
+        // 1. 注销全局事件监听，超度“幽灵”，防止切换场景时报错
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnQuestStatusChanged -= OnQuestStatusChanged;
+        }
 
+        // 2. 通知 UI 管家，把挂在我头顶的任务状态 UI 彻底销毁
+        if (UIWorldElementManager.Instance != null)
+        {
+            UIWorldElementManager.Instance.RemoveNpcQuestStatus(this.transform); // 假设你的清理方法叫这个
+        }
+    }
+
+    /// <summary>
+    /// 无交互状态下的动作部分
+    /// </summary>
+    /// <returns></returns>
     IEnumerator DoAction()
     {
         while(true)
@@ -40,7 +58,6 @@ public class NPCController : MonoBehaviour
             this.Relax();
         }
     }
-
     void Relax()
     {
         this.anim.SetTrigger("Relax");
@@ -50,6 +67,16 @@ public class NPCController : MonoBehaviour
         this.anim.SetTrigger("Talk");
     }
 
+    /// <summary>
+    /// 点击交互逻辑部分
+    /// </summary>
+    void OnMouseDown()
+    {
+        // 执行交互逻辑
+        this.Interactive();
+        // 测试返回状态
+        Debug.LogErrorFormat("[{0}]", (int)QuestManager.Instance.GetQuestStatusByNpc(this.ID));
+    }
     void Interactive()
     {
         if(!inInteractive)
@@ -58,7 +85,17 @@ public class NPCController : MonoBehaviour
             StartCoroutine(DoInteractive());
         }
     }
-
+    IEnumerator FaceToPlayer()
+    {
+        // 具体的面向玩家的逻辑
+        Vector3 faceto = (User.Instance.CurrentCharacterObject.transform.position - this.transform.position).normalized;
+        if (Mathf.Abs(Vector3.Angle(this.transform.forward, faceto)) > 5)
+        {
+            // Debug.LogError("朝向逻辑执行");
+            this.transform.forward = Vector3.Lerp(this.transform.forward, faceto, Time.deltaTime * 5f);
+            yield return null;
+        }
+    }
     IEnumerator DoInteractive()
     {
         // 面向玩家
@@ -72,23 +109,10 @@ public class NPCController : MonoBehaviour
         yield return new WaitForSeconds(3f);
         this.inInteractive = false;
     }
-    // 面向玩家的逻辑(朝向逻辑的执行好像有问题）
-    IEnumerator FaceToPlayer()
-    {
-        // 具体的面向玩家的逻辑
-        Vector3 faceto = (User.Instance.CurrentCharacterObject.transform.position - this.transform.position).normalized;
-        if(Mathf.Abs(Vector3.Angle(this.transform.forward, faceto)) > 5)
-        {
-            // Debug.LogError("朝向逻辑执行");
-            this.transform.forward = Vector3.Lerp(this.transform.forward, faceto, Time.deltaTime * 5f);
-            yield return null;
-        }
-    }
-    void OnMouseDown()
-    {
-        // 执行交互逻辑
-        this.Interactive();
-    }
+    
+    /// <summary>
+    /// 高亮逻辑部分
+    /// </summary>
     private void OnMouseOver()
     {
         // 鼠标离开取消高亮
@@ -116,12 +140,14 @@ public class NPCController : MonoBehaviour
 
     }
 
-
+    /// <summary>
+    /// npc任务状态变化刷新逻辑部分
+    /// </summary>
+    /// <param name="quest"></param>
     public void OnQuestStatusChanged(Quest quest)
     {
         RefreshNpcStatus();
     }
-
     public void RefreshNpcStatus()
     {
         NpcQuestStatus status = QuestManager.Instance.GetQuestStatusByNpc(this.ID);

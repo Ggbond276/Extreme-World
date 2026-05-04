@@ -1,5 +1,6 @@
 using Assets.Scripts.Models;
 using Common.Data;
+using SkillBridge.Message;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ public class UIQuestSystem : UIWindow
         this.tabs.OnTabSelected += OnTabSelected;
         this.listMain.OnItemSelected += OnQuestSelected;
         this.listBranch.OnItemSelected += OnQuestSelected;
-        this.UIRefresh();
+        OnTabSelected(1);
     }
      void OnDestroy()
     {
@@ -53,8 +54,15 @@ public class UIQuestSystem : UIWindow
         foreach(var kv in QuestManager.Instance.allQuests)
         {
             Quest quest = kv.Value;
+
+            // 新增拦截逻辑：只要任务已经彻底完成了，直接踢出渲染列表！不予显示
+            if (quest.Info != null && quest.Info.Status == QuestStatus.Finished)
+            {
+                continue;
+            }
+
             // 展示可接取任务列表 也就是要展示未被接取的任务列表
-            if(showAvaliableList)
+            if (showAvaliableList)
             {
                 // quest.Info == null 代表任务未被接取 quest.Info != null 代表任务已经被接取
                 if (quest.Info != null)
@@ -115,6 +123,14 @@ public class UIQuestSystem : UIWindow
     }
     public void OnQuestSelected(ListViewItem quest)
     {
+        if(quest.Owner == this.listMain)
+        {
+            this.listBranch.ClearSelection();
+        } else if(quest.Owner == listBranch)
+        {
+            this.listMain.ClearSelection();
+        }
+        
         UIQuestItem questItem = quest as UIQuestItem;
         if (questItem != null && this.questInfo != null)
         {

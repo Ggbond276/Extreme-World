@@ -24,11 +24,11 @@ public class QuestService : Singleton<QuestService>, IDisposable
 
     public void SendQuestAccept(Quest quest)
     {
-        Debug.LogFormat("SendQuestAccept questId:[{0}]",quest.Info.QuestId);
+        Debug.LogFormat("SendQuestAccept questId:[{0}]",quest.Define.ID);
         NetMessage message = new NetMessage();
         message.Request = new NetMessageRequest();
         message.Request.questAccept = new QuestAcceptRequest();
-        message.Request.questAccept.QuestId = quest.Info.QuestId;
+        message.Request.questAccept.QuestId = quest.Define.ID;
 
         NetClient.Instance.SendMessage(message);
 
@@ -49,11 +49,11 @@ public class QuestService : Singleton<QuestService>, IDisposable
 
     public void SendQuestSubmit(Quest quest)
     {
-        Debug.LogFormat("SendQuestSubmit questId:[{0}]", quest.Info.QuestId);
+        Debug.LogFormat("SendQuestSubmit questId:[{0}]", quest.Define.ID);
         NetMessage message = new NetMessage();
         message.Request = new NetMessageRequest();
         message.Request.questSubmit = new QuestSubmitRequest();
-        message.Request.questSubmit.QuestId = quest.Info.QuestId;
+        message.Request.questSubmit.QuestId = quest.Define.ID;
 
         NetClient.Instance.SendMessage(message);
     }

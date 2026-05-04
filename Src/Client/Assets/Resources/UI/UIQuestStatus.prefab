@@ -335,4 +335,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
-  height: 2.01
+  height: 2.5

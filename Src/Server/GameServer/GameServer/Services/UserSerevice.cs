@@ -126,7 +126,7 @@ namespace GameServer.Services
                 MapPosZ = 820,
                 // 新手大礼包
                 Gold = 100000,
-                Equips = new byte[28]
+                Equips = new byte[28],
             };
             // 设置自己是背包的所有者
             var bag = new TCharacterBag();

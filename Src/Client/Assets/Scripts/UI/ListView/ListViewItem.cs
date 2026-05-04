@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class ListViewItem : MonoBehaviour, IPointerClickHandler
 {
-    public ListView Onwer;
+    public ListView Owner;
 
     private bool isSelected;
     public bool IsSelected
@@ -22,8 +22,8 @@ public class ListViewItem : MonoBehaviour, IPointerClickHandler
     {
         // 自己不管理状态 也不管理任何的逻辑 全部交给管理者去进行操作
         // 只要涉及到代码中没有被赋值的属性 全部要做排空处理
-        if (this.Onwer != null)
-            this.Onwer.OnSelected(this);
+        if (this.Owner != null)
+            this.Owner.OnSelected(this);
     }
 
     public virtual void OnSelected(bool value)

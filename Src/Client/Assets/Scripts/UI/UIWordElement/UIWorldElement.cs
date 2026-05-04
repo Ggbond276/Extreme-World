@@ -6,7 +6,7 @@ public class UIWorldElement : MonoBehaviour {
 
     public Transform owner;
 
-    public float height = 2.01f;
+    public float height = 2.5f;
 
     void Update()
     {

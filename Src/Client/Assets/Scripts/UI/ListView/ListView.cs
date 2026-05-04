@@ -27,13 +27,22 @@ public class ListView : MonoBehaviour
 
     public void AddItem(ListViewItem item)
     {
-        item.Onwer = this;
+        item.Owner = this;
         items.Add(item);
     }
 
     public void RemoveAll()
     {
         items.Clear();
+    }
+
+    public void ClearSelection()
+    {
+        if(this.selectedItem != null)
+        {
+            this.selectedItem.IsSelected = false;
+            this.selectedItem = null;
+        }
     }
 
 }

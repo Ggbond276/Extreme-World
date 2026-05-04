@@ -11,11 +11,17 @@ public class UIMain : MonoSingleton<UIMain>
 {
     public Text avatarName;
     public Text avatarLevel;
-
+    // ×¢²á¼àÌý
     protected override void OnStart()
     {
         this.UpdateAvatar();
         QuestManager.Instance.OnOpenQuestDialog += OnOpenQuestDialog;
+    }
+    // ×¢Ïú¼àÌý
+    void OnDestroy()
+    {
+        if (QuestManager.Instance != null)
+            QuestManager.Instance.OnOpenQuestDialog -= OnOpenQuestDialog;
     }
     void UpdateAvatar()
     {

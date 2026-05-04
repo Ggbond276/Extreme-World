@@ -21,6 +21,8 @@ public class UIQuestItem : ListViewItem
     internal void SetQuestItem(Quest quest)
     {
         if (quest == null) return;
+        // 给核心信息赋值
+        this.quest = quest;
         if(quest.Define.Type == QuestType.Main)
         {
             mainOrBranch.text = "[主线]";

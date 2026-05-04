@@ -12,7 +12,7 @@ public class QuestManager : Singleton<QuestManager>
     public enum NpcQuestStatus
     {
         None = 0,       // 0: 无状态 (隐藏UI)
-        Incomplete = 1, // 1: 银色/灰色问号 (催更)
+        Incomplete = 1, // 1: 银色问号 (催更)
         Available = 2,  // 2: 金色感叹号 (可接取)
         Complete = 3    // 3: 金色问号 (可交付)
     }
@@ -169,6 +169,10 @@ public class QuestManager : Singleton<QuestManager>
         return NpcQuestStatus.None;
     }
 
+    /// <summary>
+    /// 将接收任务和提交任务的请求发送给服务器
+    /// </summary>
+    /// <param name="quest"></param>
     public void AcceptQuest(Quest quest)
     {
         if (quest != null)
@@ -179,6 +183,10 @@ public class QuestManager : Singleton<QuestManager>
         if (quest != null)
             QuestService.Instance.SendQuestSubmit(quest);
     }
+    /// <summary>
+    /// 处理接收任务和提交任务之后状态更新后的操作
+    /// </summary>
+    /// <param name="info"></param>
     public void OnAcceptQuest(NQuestInfo info)
     {
         if(this.allQuests.TryGetValue(info.QuestId, out Quest quest))
@@ -195,6 +203,5 @@ public class QuestManager : Singleton<QuestManager>
             OnQuestStatusChanged?.Invoke(quest);
         }
     }
-
 
 }
