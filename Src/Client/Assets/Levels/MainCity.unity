@@ -1174,7 +1174,7 @@ PrefabInstance:
     - target: {fileID: 3084357902714606947, guid: 38574b3797228e84e81ddc6f64c30b63,
         type: 3}
       propertyPath: m_Name
-      value: DeliveryNPC1
+      value: DeliveryNPC1(Lilith)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -77993,7 +77993,7 @@ PrefabInstance:
     - target: {fileID: 8204715558050321458, guid: 461b3dcc18e1c244992dca5111e89177,
         type: 3}
       propertyPath: m_Name
-      value: DeliveryNPC2
+      value: DeliveryNPC2(Doris)
       objectReference: {fileID: 0}
     - target: {fileID: 8833478586410569352, guid: 461b3dcc18e1c244992dca5111e89177,
         type: 3}

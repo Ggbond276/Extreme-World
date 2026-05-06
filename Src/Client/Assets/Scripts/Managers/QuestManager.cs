@@ -50,12 +50,16 @@ public class QuestManager : Singleton<QuestManager>
         foreach(var kv in DataManager.Instance.Quests)
         {
             QuestDefine questDefine = kv.Value;
+            // 1.排除不符合职业要求的
             if (questDefine.LimitClass != CharacterClass.None && questDefine.LimitClass != User.Instance.CurrentCharacter.Class)
                 continue;
+            // 2.排除不符合等级要求的
             if (questDefine.LimitLevel > User.Instance.CurrentCharacter.Level)
                 continue;
+            // 3.排除已经被接取的任务
             if (allQuests.ContainsKey(questDefine.ID))
                 continue;
+            // 4.排除有前置任务 已经接取并且没有完成的
             if(questDefine.PreQuest > 0)
             {
                 Quest preQuest;
@@ -67,6 +71,7 @@ public class QuestManager : Singleton<QuestManager>
                     continue;
             }
 
+            // 三张表全都持有quest的引用 只要改变quest 三张表中的quest都会发生改变
             Quest quest = new Quest(questDefine);
             allQuests.Add(quest.Define.ID, quest);
 
@@ -150,7 +155,14 @@ public class QuestManager : Singleton<QuestManager>
         {
              foreach(var quest in questList)
             {
-                if (quest.Define.SubmitNPC == npcId && quest.Info != null && quest.Info.Status == QuestStatus.Finished)
+                //if (quest.Define.SubmitNPC == npcId && quest.Info != null && quest.Info.Status == QuestStatus.Finished)
+                //    return NpcQuestStatus.Complete;
+                // 修复点 1：如果是 Finished (已彻底完结)，它不应该产生任何图标，直接跳过！
+                if (quest.Info != null && quest.Info.Status == QuestStatus.Finished)
+                    continue;
+
+                // 修复点 2：只有当状态是 Complated (已达成条件，可交付) 时，才显示金色问号！
+                if (quest.Define.SubmitNPC == npcId && quest.Info != null && quest.Info.Status == QuestStatus.Complated)
                     return NpcQuestStatus.Complete;
             }
 
@@ -189,6 +201,7 @@ public class QuestManager : Singleton<QuestManager>
     /// <param name="info"></param>
     public void OnAcceptQuest(NQuestInfo info)
     {
+        // 服务器返回回来之后需要对两张列表进行更新 而不是只更新一张列表
         if(this.allQuests.TryGetValue(info.QuestId, out Quest quest))
         {
             quest.Info = info;
@@ -197,9 +210,11 @@ public class QuestManager : Singleton<QuestManager>
     }
     public void OnSubmitQuest(NQuestInfo info)
     {
+        // 服务器返回回来之后需要对两张列表进行更新 而不是只更新一张列表
         if(this.allQuests.TryGetValue(info.QuestId, out Quest quest))
         {
             quest.Info = info;
+            this.InitQuests();
             OnQuestStatusChanged?.Invoke(quest);
         }
     }

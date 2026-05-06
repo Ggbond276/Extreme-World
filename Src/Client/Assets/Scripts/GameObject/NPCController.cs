@@ -75,7 +75,7 @@ public class NPCController : MonoBehaviour
         // Ö´ÐÐ½»»¥Âß¼­
         this.Interactive();
         // ²âÊÔ·µ»Ø×´Ì¬
-        Debug.LogErrorFormat("[{0}]", (int)QuestManager.Instance.GetQuestStatusByNpc(this.ID));
+        // Debug.LogErrorFormat("[{0}]", (int)QuestManager.Instance.GetQuestStatusByNpc(this.ID));
     }
     void Interactive()
     {

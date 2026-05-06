@@ -41,11 +41,15 @@ namespace GameServer.Managers
         public Result AcceptQuest(int questId, out Quest quest)
         {
             quest = null;
+
+            // 判断以接取的任务列表中是否包含了这个任务 防止重复接取任务
             if (this.Quests.ContainsKey(questId))
                 return Result.Failed;
+            // 判断配置表中是否存在这个任务 放置接取不存在的任务
             if (!DataManager.Instance.Quests.ContainsKey(questId))
                 return Result.Failed;
 
+            // 创建数据库数据
             TCharacterQuest dbQuest = DBService.Instance.Entities.CharacterQuests.Create();
             dbQuest.TCharacterID = this.Owner.Data.ID;
             dbQuest.QuestID = questId;
