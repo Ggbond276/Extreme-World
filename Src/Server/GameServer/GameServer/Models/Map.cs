@@ -7,11 +7,12 @@ using Common.Data;
 using Network;
 using GameServer.Entities;
 using GameServer.Services;
+using GameServer.Managers;
 
 //Map类提供了角色进入地图的方法
 namespace GameServer.Models
 {
-    class Map
+     class Map
     {
         //MapCharacter 内部类
         internal class MapCharacter
@@ -41,6 +42,11 @@ namespace GameServer.Models
         //用于存储地图上角色的字典(这里使用的是Entity.Id作为键值存放)
         Dictionary<int, MapCharacter> MapCharacters = new Dictionary<int, MapCharacter>();
 
+        // 刷怪管理器
+        SpawnManager SpaenManager = new SpawnManager();
+        // 怪物管理器
+        public MonsterManager MonsterManager = new MonsterManager();
+
         //构造方法初始化Map对象
         internal Map(MapDefine define)
         {
@@ -58,46 +64,40 @@ namespace GameServer.Models
             Log.InfoFormat("CharacterEnter: Map:{0} characterId:{1}", this.Define.ID, character.Id);
             //给网络数据MapID赋值
             character.Info.mapId = this.ID;
-
-            // 打包响应式信息
-            NetMessage message = new NetMessage();
-            message.Response = new NetMessageResponse();
-            message.Response.mapCharacterEnter = new MapCharacterEnterResponse();
-            message.Response.mapCharacterEnter.mapId = this.Define.ID;
-            //将角色信息添加到集合中 以便通知其他客户端该角色的信息
-            message.Response.mapCharacterEnter.Characters.Add(character.Info);
-
-
-            foreach (var kv in this.MapCharacters)
-            {
-                //将角色信息添加到Characters集合中
-                message.Response.mapCharacterEnter.Characters.Add(kv.Value.character.Info);
-                //将进入的角色的信息发送给其他角色 实现角色进入的广播功能
-                this.SendCharacterEnterMap(kv.Value.connection, character.Info);
-            }
-
             //将新进入的角色和连接信息存储在MapCharacaters字典中(这里使用的是Entity.Id作为键值存放)
             this.MapCharacters[character.Id] = new MapCharacter(conn, character);
 
-            //将信息打包成字节流
-            byte[] data = PackageHandler.PackMessage(message);
-            //发送信息
-            conn.SendData(data, 0, data.Length);
+            conn.Session.Response.mapCharacterEnter = new MapCharacterEnterResponse();
+            conn.Session.Response.mapCharacterEnter.mapId = this.Define.ID;
+
+            // 玩家进入地图 将地图中的角色全部打包扔给客户端
+            foreach (var kv in this.MapCharacters)
+            {
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.Info);
+                if (kv.Value.character != character)
+                    this.SendCharacterEnterMap(kv.Value.connection, character.Info);
+            }
+            // 玩家进入地图 将地图中的怪物全部打包扔给客户端
+            foreach(var kv in  this.MonsterManager.Monsters)
+            {
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
+            }
+            conn.SendResponse();
+
         }
         void SendCharacterEnterMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
-            #region 打包响应式信息
-            NetMessage message = new NetMessage();
-            message.Response = new NetMessageResponse();
-            message.Response.mapCharacterEnter = new MapCharacterEnterResponse();
-            message.Response.mapCharacterEnter.mapId = this.Define.ID;
-            message.Response.mapCharacterEnter.Characters.Add(character);
-            #endregion
-
-            //将信息打包成字节流
-            byte[] data = PackageHandler.PackMessage(message);
-            //发送信息
-            conn.SendData(data, 0, data.Length);
+            
+            if(conn.Session.Response.mapCharacterEnter == null)
+            {
+                conn.Session.Response.mapCharacterEnter = new MapCharacterEnterResponse();
+                conn.Session.Response.mapCharacterEnter.mapId = this.Define.ID;
+            }
+            conn.Session.Response.mapCharacterEnter.Characters.Add(character);
+            
+            // 为了新能这里的SendResponse以后是可以删除掉的 好几个系统的协议 可能在一次消息的同步发送出去
+            // 减少发包的次数 提高性能
+            conn.SendResponse();
         }
 
         // 玩家离开地图
@@ -114,14 +114,10 @@ namespace GameServer.Models
         }
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, Character character)
         {
-            Log.InfoFormat("SendCharacterLeaveMap : {0}", character.Id);
-            NetMessage message = new NetMessage();
-            message.Response = new NetMessageResponse();
-            message.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
-            message.Response.mapCharacterLeave.characterId = character.Id;
+            conn.Session.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
+            conn.Session.Response.mapCharacterLeave.characterId = character.Id;
+            conn.SendResponse();
 
-            byte[] data = PackageHandler.PackMessage(message);
-            conn.SendData(data, 0, data.Length);
         }
 
         // 玩家移动同步
@@ -139,6 +135,16 @@ namespace GameServer.Models
                     MapService.Instance.SendEntityUpdate(kv.Value.connection, entity);
                 }
 
+            }
+        }
+
+        // 怪物刷新的时候 要通知给客户端 怪物刷新啦
+        internal void MonsterEnter(Monster monster)
+        {
+            Log.InfoFormat("MonsterEnter: Map:{0} monsterId:{1}", this.Define.ID, monster.Id);
+            foreach(var kv in this.MapCharacters)
+            {
+                this.SendCharacterEnterMap(kv.Value.connection, monster.Info);
             }
         }
      

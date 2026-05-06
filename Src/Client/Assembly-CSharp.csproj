@@ -123,6 +123,7 @@
     <Compile Include="Assets\Scripts\Utilities\MonoSingleton.cs" />
     <Compile Include="Assets\Scripts\UI\UICharacterSelect\UICharacterSelect.cs" />
     <Compile Include="Assets\Scripts\GameObject\MainPlayerCamera.cs" />
+    <Compile Include="Assets\Scripts\GameObject\SpawnPoint.cs" />
     <Compile Include="Assets\Scripts\Entities\Character.cs" />
     <Compile Include="Assets\Scripts\UI\UIBag\UIBagItem.cs" />
     <Compile Include="Assets\Scripts\UI\UICharacterSelect\UICharInfo.cs" />
