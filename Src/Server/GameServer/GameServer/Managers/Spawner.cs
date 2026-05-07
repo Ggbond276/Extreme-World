@@ -20,7 +20,7 @@ namespace GameServer.Managers
         public bool spawned = false;
 
         public float spawnTime = 0;
-        public float unspawnTime = 0;
+        public float unspawnTime = 0;   
 
         public Spawner(SpawnRuleDefine define, Map map)
         {
@@ -39,18 +39,17 @@ namespace GameServer.Managers
         }
         public void Update()
         {
-
+            if (this.CanSpawn())
+                this.Spawn();
         }
-
         private bool CanSpawn()
         {
-            if (this.spawned == false)
+            if (this.spawned == true)
                 return false;
             if (this.unspawnTime + this.define.SpawnPeriod > Time.time)
                 return false;
             return true;
         }
-
 
         public void Spawn()
         {

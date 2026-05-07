@@ -36,38 +36,22 @@ namespace GameServer.Services
         {
             Log.InfoFormat("UserLoginRequest: User:{0}  Pass:{1}", request.User, request.Passward);
 
-            //NetMessage message = new NetMessage();
-            //message.Response = new NetMessageResponse();
-            //message.Response.userLogin = new UserLoginResponse();
             sender.Session.Response.userLogin = new UserLoginResponse();
            
-
-
             TUser user = DBService.Instance.Entities.Users.Where(u => u.Username == request.User).FirstOrDefault();
             if (user == null)
             {
-                //message.Response.userLogin.Result = Result.Failed;
-                //message.Response.userLogin.Errormsg = "用户不存在";
                 sender.Session.Response.userLogin.Result = Result.Failed;
                 sender.Session.Response.userLogin.Errormsg = "用户不存在";
             }
             else if (user.Password != request.Passward)
             {
-                //message.Response.userLogin.Result = Result.Failed;
-                //message.Response.userLogin.Errormsg = "密码错误";
                 sender.Session.Response.userLogin.Result = Result.Failed;
                 sender.Session.Response.userLogin.Errormsg = "密码错误";
             }
             else
             {
                 sender.Session.User = user;
-
-                //message.Response.userLogin.Result = Result.Success;
-                //message.Response.userLogin.Errormsg = "None";
-                //message.Response.userLogin.Userinfo = new NUserInfo();
-                //message.Response.userLogin.Userinfo.Id = (int)user.ID;
-                //message.Response.userLogin.Userinfo.Player = new NPlayerInfo();
-                //message.Response.userLogin.Userinfo.Player.Id = user.Player.ID;
                 sender.Session.Response.userLogin.Result = Result.Success;
                 sender.Session.Response.userLogin.Errormsg = "None";
                 sender.Session.Response.userLogin.Userinfo = new NUserInfo();
@@ -82,15 +66,11 @@ namespace GameServer.Services
                     info.Name = c.Name;
                     info.Type = CharacterType.Player;
                     info.Class = (CharacterClass)c.Class;
-                    // 这里希望Tid访问的是数据库的id
                     info.Tid = c.ID;
-                    //message.Response.userLogin.Userinfo.Player.Characters.Add(info);
-                    sender.Session.Response.userLogin.Userinfo.Player.Id = user.Player.ID;
+                    sender.Session.Response.userLogin.Userinfo.Player.Characters.Add(info);
                 }
 
             }
-            //byte[] data = PackageHandler.PackMessage(message);
-            //sender.SendData(data, 0, data.Length);
             sender.SendResponse();
         }
         //Response the request from the Client

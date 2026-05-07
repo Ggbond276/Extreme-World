@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GameServer.Managers
 {
-    public class SpawnManager
+     class SpawnManager
     {
         private Map map;
         private List<Spawner> Rules = new List<Spawner>();
@@ -19,11 +19,14 @@ namespace GameServer.Managers
             if(DataManager.Instance.Maps.ContainsKey(map.Define.ID))
             {
                 this.map = map;
-                foreach(var kv in DataManager.Instance.SpawnRules[this.map.Define.ID])
+                if(DataManager.Instance.SpawnRules.ContainsKey(this.map.Define.ID))
                 {
-                    SpawnRuleDefine rule = kv.Value;
-                    Spawner spawner = new Spawner(rule, map);
-                    this.Rules.Add(spawner);
+                    foreach (var kv in DataManager.Instance.SpawnRules[this.map.Define.ID])
+                    {
+                        SpawnRuleDefine rule = kv.Value;
+                        Spawner spawner = new Spawner(rule, map);
+                        this.Rules.Add(spawner);
+                    }
                 }
             }
         }

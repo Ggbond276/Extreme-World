@@ -23,15 +23,26 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
     {
 
     }
+
+    /// <summary>
+    /// 异步初始化场景中已有的游戏物体。
+    /// 触发时机：通常在刚切完地图，数据层已经有了角色列表，但表现层（画面）还没生成模型时调用。
+    /// </summary>
     IEnumerator InitGameObjects()
     {
         foreach (var cha in CharacterManager.Instance.Characters.Values)
         {
-            CrearteCharacterObject(cha);
+            CreateCharacterObject(cha);
             yield return null;
         }   
     }
-    private void CrearteCharacterObject(Character character)
+
+    /// <summary>
+    /// 实体表现层工厂方法：负责从硬盘拉取模型资源并实例化。
+    /// 调试重点：如果怪物模型没加载出来，或者报资源找不到的错，重点查这里的 Resource 路径和 obj。
+    /// </summary>
+    /// <param name="character">包含配置表 TID 和资源路径的逻辑层实体数据</param>
+    private void CreateCharacterObject(Character character)
     {
         // --- 第一板块：安全准入与资源准备 ---
         // 1.如果我们的字典中不存在当前要生成的角色
@@ -60,6 +71,13 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
         this.InitGameObject(Characters[character.entityId], character);
 
     }
+
+    /// <summary>
+    /// 实体组件装配车间：负责为刚刚生成的 3D 模型注入灵魂（设置坐标、挂载控制脚本、分配权限）。
+    /// 调试重点：如果怪物刷出来后不动、位置错乱，或者玩家操控了怪物，重点排查此处的权限分配 (pc.enabled)。
+    /// </summary>
+    /// <param name="go">刚刚实例化出来的 3D 模型 GameObject</param>
+    /// <param name="character">服务端发来的该实体的数据对象</param>
     private void InitGameObject(GameObject go, Character character)
     {
         // 2.给予GameObject名字 方便调试
@@ -90,14 +108,27 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
         }
         else
         {
-            pc.enabled = false;
+            if (pc != null)
+            {
+                pc.enabled = false;
+            }
         }
     }
+
+    /// <summary>
+    /// 响应事件：当有新的角色/怪物进入玩家的视野范围（或刷新）时触发。
+    /// </summary>
+    /// <param name="cha">新进入的实体数据</param>
     void OnCharacterEnter(Character cha)
     {
-        CrearteCharacterObject(cha);
+        CreateCharacterObject(cha);
     }
-    // 这里的逻辑会对角色进行销毁操作
+
+    /// <summary>
+    /// 响应事件：当角色/怪物离开视野，或者怪物死亡时触发。
+    /// 主要职责：销毁 3D 模型，释放内存，并将其从管理字典中剔除。
+    /// </summary>
+    /// <param name="cha">要离开的实体数据</param>
     void OnCharacterLeave(Character cha)
     {
         Debug.LogFormat("OnCharacterLeave()");

@@ -43,7 +43,7 @@ namespace GameServer.Models
         Dictionary<int, MapCharacter> MapCharacters = new Dictionary<int, MapCharacter>();
 
         // 刷怪管理器
-        SpawnManager SpaenManager = new SpawnManager();
+        SpawnManager SpawnManager = new SpawnManager();
         // 怪物管理器
         public MonsterManager MonsterManager = new MonsterManager();
 
@@ -51,11 +51,13 @@ namespace GameServer.Models
         internal Map(MapDefine define)
         {
             this.Define = define;
+            this.SpawnManager.Init(this);
+            this.MonsterManager.Init(this);
         }
 
         internal void Update()
         {
-
+            SpawnManager.Update();
         }
         // 玩家进入地图
         internal void CharacterEnter(NetConnection<NetSession> conn, Character character)
