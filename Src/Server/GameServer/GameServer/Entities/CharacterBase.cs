@@ -13,27 +13,25 @@ namespace GameServer.Entities
     class CharacterBase : Entity
     {
 
-        public int Id
-        {
-            get
-            {
-                return this.entityId;
-            }
-        }
+        public int Id { get; set; }
         public NCharacterInfo Info;
         public CharacterDefine Define;
+
         public CharacterBase(Vector3Int pos, Vector3Int dir):base(pos,dir)
         {
 
         }
-        public CharacterBase(CharacterType type, int tid, int level, Vector3Int pos, Vector3Int dir) : base(pos, dir)
+
+        public CharacterBase(CharacterType type, int configId, int level, Vector3Int pos, Vector3Int dir) : base(pos, dir)
         {
+            
             this.Info = new NCharacterInfo();
+            this.Info.EntityId = this.entityId;
+            this.Info.ConfigId = configId;
             this.Info.Type = type;
             this.Info.Level = level;
-            this.Info.Tid = tid;
             this.Info.Entity = this.EntityData;
-            this.Define = DataManager.Instance.Characters[this.Info.Tid];
+            this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
             this.Info.Name = this.Define.Name;
         }
     }

@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 05/01/2026 16:19:44
+-- Date Created: 05/07/2026 20:52:53
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -118,7 +118,7 @@ ALTER TABLE `Players` ADD PRIMARY KEY (`ID`);
 
 CREATE TABLE `Characters`(
 	`ID` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`TID` int NOT NULL, 
+	`ConfigId` int NOT NULL, 
 	`Name` longtext NOT NULL, 
 	`Class` int NOT NULL, 
 	`MapID` int NOT NULL, 

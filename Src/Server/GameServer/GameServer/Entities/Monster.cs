@@ -10,8 +10,8 @@ namespace GameServer.Entities
 {
     class Monster : CharacterBase
     {
-        public Monster(int tid, int level, Vector3Int pos, Vector3Int dir) :
-            base(CharacterType.Monster, tid, level, pos, dir)
+        public Monster(int configId, int level, Vector3Int pos, Vector3Int dir) :
+            base(CharacterType.Monster, configId, level, pos, dir)
         {
 
         }

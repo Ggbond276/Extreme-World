@@ -17,17 +17,29 @@ namespace Managers
     class EntityManager : Singleton<EntityManager>
     {
         Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
-
-        // 这两个部分都是关于接口使用的 研究下这个接口到底有什么作用
+        
+        /// <summary>
+        /// 移动同步分发
+        /// </summary>
         Dictionary<int, IEntityNotify> notifiers = new Dictionary<int, IEntityNotify>();
         public void RegisterEntityChangeNotify(int entityId, IEntityNotify notify)
         {
             this.notifiers[entityId] = notify;
         }
+
+        /// <summary>
+        /// 添加Entity
+        /// </summary>
+        /// <param name="entity"></param>
         public void AddEntity(Entity entity)
         {
             entities[entity.entityId] = entity;
         }
+
+        /// <summary>
+        /// 移除Entity
+        /// </summary>
+        /// <param name="entity"></param>
         public void RemoveEntity(NEntity entity)
         {
             this.entities.Remove(entity.Id);
@@ -38,6 +50,10 @@ namespace Managers
             }
         }
 
+        /// <summary>
+        /// 移动同步信息
+        /// </summary>
+        /// <param name="data"></param>
         internal void OnEntitySync(NEntitySync data)
         {
             Entity entity = null;

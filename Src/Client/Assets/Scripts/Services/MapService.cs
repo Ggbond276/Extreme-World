@@ -80,13 +80,13 @@ namespace Assets.Scripts.Services
         /// </summary>
         private void OnMapCharacterEnter(object sender, MapCharacterEnterResponse response)
         {
-            Debug.LogFormat("OnMapCharacterEnter : {0} Count : {1}", response.mapId, response.Characters.Count);
+            Debug.LogFormat("OnMapCharacterEnter : MapID:{0} CharactersCount:{1}", response.mapId, response.Characters.Count);
 
             // 第一阶段：将所有进入地图的实体（人/怪）加入逻辑层管理器
             foreach (var cha in response.Characters)
             {
                 // 如果进入的角色 ID 是我自己，更新本地 User 单例中的角色快照
-                if (User.Instance.CurrentCharacter == null || User.Instance.CurrentCharacter.Id == cha.Id)
+                if (User.Instance.CurrentCharacter == null || User.Instance.CurrentCharacter.EntityId == cha.EntityId)
                 {
                     User.Instance.CurrentCharacter = cha;
                 }
@@ -132,7 +132,7 @@ namespace Assets.Scripts.Services
         /// <param name="entity">最新的位置、方向、速度等数据</param>
         public void SendMapEntitySync(EntityEvent entityEvent, NEntity entity)
         {
-            Debug.LogFormat("MapEntityUpdateRequest :ID {0} POS: {1} DIR: {2} SPD: {3} ", entity.Id, entity.Position.String(), entity.Direction.String(), entity.Speed);
+            Debug.LogFormat("MapEntityUpdateRequest :EntityID {0} POS: {1} DIR: {2} SPD: {3} ", entity.Id, entity.Position.String(), entity.Direction.String(), entity.Speed);
 
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();

@@ -26,13 +26,13 @@ namespace Entities
         //判断是否是本人玩家
         public bool IsPlayer
         {
-            get { return this.Info.Id == Models.User.Instance.CurrentCharacter.Id; }
+            get { return this.Info.EntityId == Models.User.Instance.CurrentCharacter.EntityId; }
         }
 
         public Character(NCharacterInfo info) : base(info.Entity)
         {
             this.Info = info;
-            this.Define = DataManager.Instance.Characters[info.Tid];
+            this.Define = DataManager.Instance.Characters[info.ConfigId];
         }
 
         //向前移动

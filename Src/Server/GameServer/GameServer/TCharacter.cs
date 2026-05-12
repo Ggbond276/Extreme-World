@@ -22,7 +22,7 @@ namespace GameServer
         }
     
         public int ID { get; set; }
-        public int TID { get; set; }
+        public int ConfigId { get; set; }
         public string Name { get; set; }
         public int Class { get; set; }
         public int MapID { get; set; }

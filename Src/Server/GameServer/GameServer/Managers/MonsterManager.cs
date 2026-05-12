@@ -12,6 +12,9 @@ namespace GameServer.Managers
     class MonsterManager
     {
         private Map Map;
+        /// <summary>
+        /// 这里依旧使用EntityId作为字典键值
+        /// </summary>
         public Dictionary<int, Monster> Monsters = new Dictionary<int, Monster>();
 
         public void Init(Map map)
@@ -23,9 +26,9 @@ namespace GameServer.Managers
         {
             Monster monster = new Monster(spawnMonID, spawnLevel, position, direction);
             EntityManager.Instance.AddEntity(Map.Define.ID, monster);
-            monster.Info.Id = monster.entityId;
+            monster.Info.EntityId = monster.entityId;
             monster.Info.mapId = this.Map.Define.ID;
-            Monsters[monster.Id] = monster;
+            Monsters[monster.entityId] = monster;
             this.Map.MonsterEnter(monster);
         }
     }

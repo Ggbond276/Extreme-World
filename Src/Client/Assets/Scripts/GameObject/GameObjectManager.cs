@@ -24,6 +24,35 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
 
     }
 
+
+    /// <summary>
+    /// 响应事件：当有新的角色/怪物进入玩家的视野范围（或刷新）时触发。
+    /// </summary>
+    /// <param name="cha">新进入的实体数据</param>
+    void OnCharacterEnter(Character cha)
+    {
+        CreateCharacterObject(cha);
+    }
+
+    /// <summary>
+    /// 响应事件：当角色/怪物离开视野，或者怪物死亡时触发。
+    /// 主要职责：销毁 3D 模型，释放内存，并将其从管理字典中剔除。
+    /// </summary>
+    /// <param name="cha">要离开的实体数据</param>
+    void OnCharacterLeave(Character cha)
+    {
+        Debug.LogFormat("OnCharacterLeave()");
+        if (!Characters.ContainsKey(cha.entityId))
+            return;
+        if (Characters[cha.entityId] != null)
+        {
+            Destroy(Characters[cha.entityId]);
+            this.Characters.Remove(cha.entityId);
+        }
+    }
+
+
+
     /// <summary>
     /// 异步初始化场景中已有的游戏物体。
     /// 触发时机：通常在刚切完地图，数据层已经有了角色列表，但表现层（画面）还没生成模型时调用。
@@ -115,29 +144,6 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
         }
     }
 
-    /// <summary>
-    /// 响应事件：当有新的角色/怪物进入玩家的视野范围（或刷新）时触发。
-    /// </summary>
-    /// <param name="cha">新进入的实体数据</param>
-    void OnCharacterEnter(Character cha)
-    {
-        CreateCharacterObject(cha);
-    }
 
-    /// <summary>
-    /// 响应事件：当角色/怪物离开视野，或者怪物死亡时触发。
-    /// 主要职责：销毁 3D 模型，释放内存，并将其从管理字典中剔除。
-    /// </summary>
-    /// <param name="cha">要离开的实体数据</param>
-    void OnCharacterLeave(Character cha)
-    {
-        Debug.LogFormat("OnCharacterLeave()");
-        if (!Characters.ContainsKey(cha.entityId))
-            return;
-        if (Characters[cha.entityId] != null)
-        {
-            Destroy(Characters[cha.entityId]);
-            this.Characters.Remove(cha.entityId);
-        }
-    }
+
 }

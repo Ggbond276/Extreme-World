@@ -27,10 +27,9 @@ namespace GameServer.Services
         private void OnMapEntitySync(NetConnection<NetSession> sender, MapEntitySyncRequest request)
         {
             Character character = sender.Session.Character;
-            Log.InfoFormat("OnMapEntitySync: character:{0} : {1} Entity.id: {2} Evt: {3} Entity: {4} ", character.Id, character.Info.Name, request.entitySync.Id, request.entitySync.Event, request.entitySync.Entity.String());
+            Log.InfoFormat("OnMapEntitySync: CharacterEntityID:{0} CharacterName:{1} EntitySyncID:{2} Evt:{3} Entity:{4} ", character.entityId, character.Info.Name, request.entitySync.Id, request.entitySync.Event, request.entitySync.Entity.String());
             MapManager.Instance[character.Info.mapId].UpdateEntity(request.entitySync);
         }
-
         internal void SendEntityUpdate(NetConnection<NetSession> conn, NEntitySync entity)
         {
             conn.Session.Response.mapEntitySync = new MapEntitySyncResponse();
@@ -43,7 +42,7 @@ namespace GameServer.Services
         private void OnMapTeleporter(NetConnection<NetSession> sender, MapTeleportRequest request)
         {
             Character character = sender.Session.Character;
-            Log.InfoFormat("OnMapTeleport: characterID: {0} : {1} TeleporterId: {2}", character.Id, character.Data, request.teleporterId);
+            Log.InfoFormat("OnMapTeleport: characterID: {0} : {1} TeleporterId: {2}", character.entityId, character.Data, request.teleporterId);
             if (!DataManager.Instance.Teleporters.ContainsKey(request.teleporterId))
             {
                 Log.WarningFormat("Source TeleporterID [ {0} ] not existed", request.teleporterId);

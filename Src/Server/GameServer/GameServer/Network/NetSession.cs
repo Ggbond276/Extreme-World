@@ -21,7 +21,7 @@ namespace Network
         {
             if (Character != null)
             {
-                Log.InfoFormat("CharacterLeave: {0}", Character.Id);
+                Log.InfoFormat("CharacterLeave: {0}", Character.entityId);
                 UserService.Instance.CharacterLeave(Character);
             }
         }

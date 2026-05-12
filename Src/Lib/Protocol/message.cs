@@ -46,44 +46,47 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(1, Name = @"id")]
         public int Id { get; set; }
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"tid")]
-        public int Tid { get; set; }
+        [global::ProtoBuf.ProtoMember(2, Name = @"config_id")]
+        public int ConfigId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"name")]
+        [global::ProtoBuf.ProtoMember(3, Name = @"entity_id")]
+        public int EntityId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(4, Name = @"name")]
         [global::System.ComponentModel.DefaultValue("")]
         public string Name { get; set; } = "";
 
-        [global::ProtoBuf.ProtoMember(4, Name = @"type")]
+        [global::ProtoBuf.ProtoMember(5, Name = @"type")]
         public CharacterType Type { get; set; }
 
-        [global::ProtoBuf.ProtoMember(5, Name = @"class")]
+        [global::ProtoBuf.ProtoMember(6, Name = @"class")]
         public CharacterClass Class { get; set; }
 
-        [global::ProtoBuf.ProtoMember(6, Name = @"level")]
+        [global::ProtoBuf.ProtoMember(7, Name = @"level")]
         public int Level { get; set; }
 
-        [global::ProtoBuf.ProtoMember(7)]
+        [global::ProtoBuf.ProtoMember(8)]
         public int mapId { get; set; }
 
-        [global::ProtoBuf.ProtoMember(8, Name = @"entity")]
+        [global::ProtoBuf.ProtoMember(9, Name = @"entity")]
         public NEntity Entity { get; set; }
 
-        [global::ProtoBuf.ProtoMember(9, Name = @"gold")]
+        [global::ProtoBuf.ProtoMember(10, Name = @"gold")]
         public long Gold { get; set; }
 
-        [global::ProtoBuf.ProtoMember(10)]
+        [global::ProtoBuf.ProtoMember(11)]
         public global::System.Collections.Generic.List<NItemInfo> Items { get; } = new global::System.Collections.Generic.List<NItemInfo>();
 
-        [global::ProtoBuf.ProtoMember(11)]
+        [global::ProtoBuf.ProtoMember(12)]
         public NBagInfo Bag { get; set; }
 
-        [global::ProtoBuf.ProtoMember(12)]
+        [global::ProtoBuf.ProtoMember(13)]
         public byte[] Equips { get; set; }
 
-        [global::ProtoBuf.ProtoMember(13, Name = @"quests")]
+        [global::ProtoBuf.ProtoMember(14, Name = @"quests")]
         public global::System.Collections.Generic.List<NQuestInfo> Quests { get; } = new global::System.Collections.Generic.List<NQuestInfo>();
 
-        [global::ProtoBuf.ProtoMember(14, Name = @"exp")]
+        [global::ProtoBuf.ProtoMember(15, Name = @"exp")]
         public long Exp { get; set; }
 
     }

@@ -38,7 +38,7 @@ namespace GameServer.Services
         private void OnItemEquip(NetConnection<NetSession> sender, ItemEquipRequest request)
         {
             Character character = sender.Session.Character;
-            Log.InfoFormat("OnItemEquip : character:{0} : Slot:{1} Item:{2} Equip:{3}",character.Id, request.Slot, request.itemId, request.isEquip);
+            Log.InfoFormat("OnItemEquip : character:{0} : Slot:{1} Item:{2} Equip:{3}",character.entityId, request.Slot, request.itemId, request.isEquip);
             Result result = EquipManager.Instance.EquipItem(sender, request.Slot, request.itemId, request.isEquip);
 
             sender.Session.Response.itemEquip = new ItemEquipReponse();

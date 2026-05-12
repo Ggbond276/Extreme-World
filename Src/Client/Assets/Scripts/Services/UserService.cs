@@ -122,7 +122,11 @@ namespace Services
         }
 
 
-        // 用户登录
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="passward"></param>
         public void SendLogin(string user, string passward)
         {
             // 在日志中打印将登录信息发送给服务器
@@ -164,7 +168,11 @@ namespace Services
         }
 
 
-        // 用户注册
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="psw"></param>
         public void SendRegister(string user, string psw)
         {
             // 在日志中打印将注册信息
@@ -205,7 +213,11 @@ namespace Services
         }
 
 
-        // 用户创建角色
+        /// <summary>
+        /// 用户创建角色
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="cls"></param>
         public void SendCharacterCreate(string name, CharacterClass cls)
         {
             #region 在日志中打印角色创建信息
@@ -250,7 +262,10 @@ namespace Services
         }
 
 
-        // 角色进入游戏
+        /// <summary>
+        /// 角色进入游戏
+        /// </summary>
+        /// <param name="characterIdx"></param>
         public void SendGameEnter(int characterIdx)
         {
             //打印日志 告知现在进行的是角色进入游戏
@@ -265,7 +280,7 @@ namespace Services
         }
         void OnGameEnter(object sender, UserGameEnterResponse response)
         {
-            Debug.LogFormat("OnGameEnter : {0} [{1}]", response.Result, response.Errormsg);
+            Debug.LogFormat("OnGameEnter : Result:{0} Errormsg:{1}", response.Result, response.Errormsg);
             // 如果受到了服务器成功进入游戏的请求
             if (response.Result == Result.Success)
             {
@@ -288,7 +303,9 @@ namespace Services
         }
 
 
-        // 角色离开游戏
+        /// <summary>
+        /// 角色离开游戏
+        /// </summary>
         public void SendGameLeave()
         {
             Debug.LogFormat("UserGameLeaveRequest");

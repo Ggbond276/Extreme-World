@@ -36,7 +36,7 @@ public class PlayerInputController : MonoBehaviour
             NCharacterInfo cinfo = new NCharacterInfo();
             cinfo.Id = 1;
             cinfo.Name = "Test";
-            cinfo.Tid = 1;
+            cinfo.ConfigId = 1;
             cinfo.Entity = new NEntity();
             cinfo.Entity.Position = new NVector3();
             cinfo.Entity.Direction = new NVector3();
@@ -60,9 +60,9 @@ public class PlayerInputController : MonoBehaviour
         {
             if (state != CharacterState.Move)
             {
+                // 移动同步逻辑
                 state = CharacterState.Move;
                 character.MoveForward();
-                // 动画播放逻辑
                 this.SendEntityEvent(EntityEvent.MoveFwd);
             }
             Vector3 verticalVelocity = rb.velocity.y * Vector3.up;

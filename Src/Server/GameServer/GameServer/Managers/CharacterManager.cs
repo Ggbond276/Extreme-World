@@ -13,8 +13,9 @@ namespace GameServer.Manager
     //为什么这里要继承这个接口
     class CharacterManager : Singleton<CharacterManager>
     {
-        // 角色管理器使用字典来存储角色对象 查询效率较高 不需要做遍历即可查找
-        // 这里利用的是EntityId作为键值
+        /// <summary>
+        /// 角色管理器使用EntityId
+        /// </summary>
         public Dictionary<int, Character> Characters = new Dictionary<int, Character>();
 
         public CharacterManager()
@@ -40,22 +41,26 @@ namespace GameServer.Manager
         //添加角色
         public Character AddCharascter(TCharacter cha)
         {
-            //根据DB角色创建实体角色
+            // 创建内存角色数据(这个时候还没有EntityID)
             Character character = new Character(CharacterType.Player, cha);
+            // 将角色添加到Entity管理器中(添加到管理器之后才有EntityID)
             EntityManager.Instance.AddEntity(cha.MapID, character);
-            character.Info.Id = character.Id;
-            //这段代码在干什么
-            this.Characters[character.Id] = character;
-            //返回实体角色
+            // 网络数据也需要更新EntityID
+            character.Info.EntityId = character.entityId;
+
+            // 将角色添加到Character管理器中
+            this.Characters[character.entityId] = character;
             return character;
         }
 
         //删除角色
         public void RemoveCharacter(int characterId)
         {
+            // 获得内存角色数据
             var cha = this.Characters[characterId];
+            // 将角色数据从Entity管理器中移除
             EntityManager.Instance.RemoveEntity(cha.Data.MapID, cha);
-            // 删除角色管理器中的角色
+            // 将角色数据从Character管理器中移除
             this.Characters.Remove(characterId);
         }
     }

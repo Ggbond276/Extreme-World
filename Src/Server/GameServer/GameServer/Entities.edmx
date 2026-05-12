@@ -54,7 +54,7 @@
       <PropertyRef Name="ID" />
     </Key>
     <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="TID" Type="int" Nullable="false" />
+    <Property Name="ConfigId" Type="int" Nullable="false" />
     <Property Name="Name" Type="longtext" Nullable="false" />
     <Property Name="Class" Type="int" Nullable="false" />
     <Property Name="MapID" Type="int" Nullable="false" />
@@ -214,7 +214,7 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TID" Type="Int32" Nullable="false" />
+          <Property Name="ConfigId" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Class" Type="Int32" Nullable="false" />
           <Property Name="MapID" Type="Int32" Nullable="false" />
@@ -320,7 +320,7 @@
       <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TCharacter)">
         <MappingFragment StoreEntitySet="Characters">
           <ScalarProperty Name="ID" ColumnName="ID" />
-          <ScalarProperty Name="TID" ColumnName="TID" />
+          <ScalarProperty Name="ConfigId" ColumnName="ConfigId" />
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Class" ColumnName="Class" />
           <ScalarProperty Name="MapID" ColumnName="MapID" />

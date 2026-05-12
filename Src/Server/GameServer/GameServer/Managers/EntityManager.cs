@@ -11,20 +11,35 @@ namespace GameServer.Managers
     class EntityManager : Singleton<EntityManager>
     {
         private int idx = 0;
+        /// <summary>
+        /// 这里管理的是全局所有的Entity实体
+        /// </summary>
         public List<Entity> AllEntities = new List<Entity>();
+        /// <summary>
+        /// 这里管理的是每张地图中的Entity实体
+        /// </summary>
         public Dictionary<int, List<Entity>> MapEntites = new Dictionary<int, List<Entity>>();
+
+        /// <summary>
+        /// 这里的entity拿到的实际是一个Character
+        /// </summary>
+        /// <param name="mapId"></param>
+        /// <param name="entity"></param>
         public void AddEntity(int mapId, Entity entity)
         {
+            // 添加角色数据到Character到Entity管理器
             AllEntities.Add(entity);
-            // 为什么要给NEntity一个idx 到时候这个EntityId要返回给谁
+            // 赋予Character一个
             entity.EntityData.Id = ++this.idx;
 
-            List<Entity> entites = null;
-            if(!MapEntites.TryGetValue(mapId, out entites))
+            
+            if(!MapEntites.ContainsKey(mapId))
             {
-                entites = new List<Entity>();
+                List<Entity> entites = new List<Entity>();
                 MapEntites[mapId] = entites;
             }
+
+            MapEntites[mapId].Add(entity);
         }
 
         public void RemoveEntity(int mapId, Entity entity)

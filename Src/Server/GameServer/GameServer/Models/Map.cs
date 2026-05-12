@@ -39,7 +39,9 @@ namespace GameServer.Models
         //MapDefine 是配置表
         internal MapDefine Define;
 
-        //用于存储地图上角色的字典(这里使用的是Entity.Id作为键值存放)
+        /// <summary>
+        /// 用于存储地图上角色的字典(这里使用的是Entity.Id作为键值存放)
+        /// </summary>
         Dictionary<int, MapCharacter> MapCharacters = new Dictionary<int, MapCharacter>();
 
         // 刷怪管理器
@@ -63,29 +65,27 @@ namespace GameServer.Models
         internal void CharacterEnter(NetConnection<NetSession> conn, Character character)
         {
             //打印日志
-            Log.InfoFormat("CharacterEnter: Map:{0} characterId:{1}", this.Define.ID, character.Id);
+            Log.InfoFormat("CharacterEnter: MapID: {0} CharacterEntityID: {1}", this.Define.ID, character.entityId);
             //给网络数据MapID赋值
             character.Info.mapId = this.ID;
             //将新进入的角色和连接信息存储在MapCharacaters字典中(这里使用的是Entity.Id作为键值存放)
-            this.MapCharacters[character.Id] = new MapCharacter(conn, character);
+            this.MapCharacters[character.entityId] = new MapCharacter(conn, character);
+
 
             conn.Session.Response.mapCharacterEnter = new MapCharacterEnterResponse();
             conn.Session.Response.mapCharacterEnter.mapId = this.Define.ID;
+            foreach (var kv in this.MapCharacters)
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.Info);
+            foreach(var kv in  this.MonsterManager.Monsters)
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
+            conn.SendResponse();
 
-            // 玩家进入地图 将地图中的角色全部打包扔给客户端
+
             foreach (var kv in this.MapCharacters)
             {
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.Info);
                 if (kv.Value.character != character)
                     this.SendCharacterEnterMap(kv.Value.connection, character.Info);
             }
-            // 玩家进入地图 将地图中的怪物全部打包扔给客户端
-            foreach(var kv in  this.MonsterManager.Monsters)
-            {
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
-            }
-            conn.SendResponse();
-
         }
         void SendCharacterEnterMap(NetConnection<NetSession> conn, NCharacterInfo character)
         {
@@ -105,19 +105,19 @@ namespace GameServer.Models
         // 玩家离开地图
         internal void CharacterLeave(Character character)
         {
-            Log.InfoFormat("CharacterLeaveMap: Map : {0} characterId: {1}", this.Define.ID, character.Id);
+            Log.InfoFormat("CharacterLeaveMap: MapID : {0} CharadcterEntityID: {1}", this.Define.ID, character.entityId);
             foreach( var kv in this.MapCharacters)
             {
                 // 发送到服务器告诉他们哪个角色离开了
                 this.SendCharacterLeaveMap(kv.Value.connection, character);
             }
             // 删除地图管理器中的角色(这里的bug是因为Id弄错了） 所以修改Remove(cha.Id) --> Remove(cha.Entity.Id)
-            this.MapCharacters.Remove(character.Id);
+            this.MapCharacters.Remove(character.entityId);
         }
         void SendCharacterLeaveMap(NetConnection<NetSession> conn, Character character)
         {
             conn.Session.Response.mapCharacterLeave = new MapCharacterLeaveResponse();
-            conn.Session.Response.mapCharacterLeave.characterId = character.Id;
+            conn.Session.Response.mapCharacterLeave.characterId = character.entityId;
             conn.SendResponse();
 
         }
@@ -143,7 +143,7 @@ namespace GameServer.Models
         // 怪物刷新的时候 要通知给客户端 怪物刷新啦
         internal void MonsterEnter(Monster monster)
         {
-            Log.InfoFormat("MonsterEnter: Map:{0} monsterId:{1}", this.Define.ID, monster.Id);
+            Log.InfoFormat("MonsterEnter: MapID:{0} MonsterEntityID:{1}", this.Define.ID, monster.entityId);
             foreach(var kv in this.MapCharacters)
             {
                 this.SendCharacterEnterMap(kv.Value.connection, monster.Info);

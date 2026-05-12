@@ -56,7 +56,7 @@ namespace Assets.Scripts.Managers
         public void AddCharacter(NCharacterInfo cha)
         {
             // 打印角色的所有信息数据
-            Debug.LogFormat("AddCharacter : {0} : {1} Map:{2} Entity:{3}", cha.Id, cha.Name, cha.mapId, cha.Entity.String());
+            Debug.LogFormat("AddCharacter : CharacterID:{0} CharacterName:{1} MapID:{2} Entity:{3}", cha.Id, cha.Name, cha.mapId, cha.Entity.String());
             // 通过NCharacter中的信息 实例化Character变成一个Entity
             Character character = new Character(cha);
             // 统一用 entityId 作为字典的 key（与服务端和 EntityManager 保持一致）

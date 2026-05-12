@@ -56,11 +56,14 @@ namespace GameServer.Entities
                 this.SetEntityData(value);
             }
         }
+
         public Entity(Vector3Int pos,Vector3Int dir)
         {
+            // 填充网络数据(还差ID和Speed 但是不是在这里赋值)
             this.entityData = new NEntity();
             this.entityData.Position = pos;
             this.entityData.Direction = dir;
+            // 填充本地内存数据
             this.SetEntityData(this.entityData);
         }
         public Entity(NEntity entity)
