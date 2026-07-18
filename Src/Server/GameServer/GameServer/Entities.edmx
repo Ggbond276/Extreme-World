@@ -228,6 +228,7 @@
           <Property Name="Equips" Type="Binary" Nullable="false" FixedLength="true" MaxLength="28" />
           <NavigationProperty Name="Quests" Relationship="ExtremeWorldModel.TCharacterTCharacterQuest" FromRole="TCharacter" ToRole="TCharacterQuest" />
           <Property Name="EXP" Type="Int64" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="PlayerCharacter">
           <End Type="ExtremeWorldModel.TPlayer" Role="TPlayer" Multiplicity="1" />

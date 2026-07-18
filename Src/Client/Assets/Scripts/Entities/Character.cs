@@ -13,6 +13,11 @@ namespace Entities
         public NCharacterInfo Info;
 
         public CharacterDefine Define;
+
+        public int Id
+        {
+            get { return this.Info.Id; }
+        }
         public string Name
         {
             get

@@ -129,6 +129,8 @@
     <Compile Include="Assets\Scripts\UI\UICharacterSelect\UICharInfo.cs" />
     <Compile Include="Assets\Scripts\Utilities\Singleton.cs" />
     <Compile Include="Assets\Scripts\UI\ListView\ListViewItem.cs" />
+    <Compile Include="Assets\Scripts\UI\UIInputBox\UIInputBox.cs" />
+    <Compile Include="Assets\Scripts\UI\UIInputBox\InputBox.cs" />
     <Compile Include="Assets\Scripts\Services\QuestService.cs" />
   </ItemGroup>
   <ItemGroup>

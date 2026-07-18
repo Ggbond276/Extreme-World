@@ -1,5 +1,6 @@
 using Assets.Scripts.Managers;
 using Entities;
+using Models;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -125,9 +126,9 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
 
         // --- 第四板块：权限分配（区分主角与路人） ---
         PlayerInputController pc = go.GetComponent<PlayerInputController>();
-        if (character.Info.Id == Models.User.Instance.CurrentCharacter.Id)
+        if (character.IsPlayer)
         {
-            Models.User.Instance.CurrentCharacterObject = go;
+            User.Instance.CurrentCharacterObject = go;
             // 第二次进入的问题是这里的主摄像机实体为空
             MainPlayerCamera.Instance.player = go;
 

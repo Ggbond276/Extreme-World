@@ -86,7 +86,7 @@ namespace Assets.Scripts.Services
             foreach (var cha in response.Characters)
             {
                 // 如果进入的角色 ID 是我自己，更新本地 User 单例中的角色快照
-                if (User.Instance.CurrentCharacter == null || User.Instance.CurrentCharacter.EntityId == cha.EntityId)
+                if (User.Instance.CurrentCharacter == null || (cha.Type  == CharacterType.Player &&  User.Instance.CurrentCharacter.EntityId == cha.EntityId) )
                 {
                     User.Instance.CurrentCharacter = cha;
                 }
@@ -112,7 +112,7 @@ namespace Assets.Scripts.Services
             Debug.LogFormat("OnMapCharacterLeave: {0}", response.characterId);
 
             // 如果离开的 ID 不是我自己
-            if (response.characterId != User.Instance.CurrentCharacter.Entity.Id)
+            if (response.characterId != User.Instance.CurrentCharacter.EntityId)
             {
                 // 从角色管理器中移除该实体的逻辑和表现模型
                 CharacterManager.Instance.RemoveCharacter(response.characterId);
