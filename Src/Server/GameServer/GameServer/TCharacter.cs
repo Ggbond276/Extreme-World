@@ -19,6 +19,7 @@ namespace GameServer
         {
             this.Items = new HashSet<TCharacterItem>();
             this.Quests = new HashSet<TCharacterQuest>();
+            this.Friends = new HashSet<TCharacterFriend>();
         }
     
         public int ID { get; set; }
@@ -40,5 +41,7 @@ namespace GameServer
         public virtual TCharacterBag Bag { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TCharacterQuest> Quests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TCharacterFriend> Friends { get; set; }
     }
 }

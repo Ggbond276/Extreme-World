@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 05/07/2026 20:52:53
+-- Date Created: 07/23/2026 11:33:28
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -69,6 +69,8 @@
 
 --    ALTER TABLE `CharacterQuests` DROP CONSTRAINT `FK_TCharacterTCharacterQuest`;
 
+--    ALTER TABLE `TCharacterFriendSet` DROP CONSTRAINT `FK_TCharacterTCharacterFriend`;
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -86,6 +88,8 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `CharacterBag`;
 
     DROP TABLE IF EXISTS `CharacterQuests`;
+
+    DROP TABLE IF EXISTS `TCharacterFriendSet`;
 
 SET foreign_key_checks = 1;
 
@@ -128,6 +132,7 @@ CREATE TABLE `Characters`(
 	`Gold` bigint NOT NULL, 
 	`Equips` tinyblob NOT NULL, 
 	`EXP` bigint NOT NULL, 
+	`Level` int NOT NULL, 
 	`Player_ID` int NOT NULL);
 
 ALTER TABLE `Characters` ADD PRIMARY KEY (`ID`);
@@ -170,6 +175,21 @@ CREATE TABLE `CharacterQuests`(
 	`Status` int NOT NULL);
 
 ALTER TABLE `CharacterQuests` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
+CREATE TABLE `TCharacterFriendSet`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`FriendID` int NOT NULL, 
+	`FriendName` longtext NOT NULL, 
+	`Class` int NOT NULL, 
+	`Level` int NOT NULL, 
+	`CharacterID` int NOT NULL, 
+	`TCharacterID` int NOT NULL);
+
+ALTER TABLE `TCharacterFriendSet` ADD PRIMARY KEY (`Id`);
 
 
 
@@ -268,6 +288,24 @@ ADD CONSTRAINT `FK_TCharacterTCharacterQuest`
 
 CREATE INDEX `IX_FK_TCharacterTCharacterQuest`
     ON `CharacterQuests`
+    (`TCharacterID`);
+
+
+
+-- Creating foreign key on `TCharacterID` in table 'TCharacterFriendSet'
+
+ALTER TABLE `TCharacterFriendSet`
+ADD CONSTRAINT `FK_TCharacterTCharacterFriend`
+    FOREIGN KEY (`TCharacterID`)
+    REFERENCES `Characters`
+        (`ID`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TCharacterTCharacterFriend'
+
+CREATE INDEX `IX_FK_TCharacterTCharacterFriend`
+    ON `TCharacterFriendSet`
     (`TCharacterID`);
 
 
