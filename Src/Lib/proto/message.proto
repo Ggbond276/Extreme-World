@@ -214,6 +214,10 @@ message NetMessageRequest{
 	QuestSubmitRequest questSubmit = 14;
 	QuestAbandonRequest questAbandon = 15;
 
+	FriendAddRequest friendAdd = 16;
+	FriendListRequest friendList = 17;
+	FriendRemoveRequest friendRemove = 18;
+
 }
 
 message NetMessageResponse{
@@ -235,6 +239,10 @@ message NetMessageResponse{
 	QuestAcceptResponse questAccept = 13;
 	QuestSubmitResponse questSubmit = 14;
 	QuestAbandonResponse questAbandon = 15;
+
+    FriendAddResponse friendAdd = 16;
+	FriendListResponse friendList = 17;
+	FriendRemoveResponse friendRemove = 18;
 
 	StatusNotify statusNotify = 100;
 }
@@ -434,4 +442,58 @@ message QuestAbandonResponse
 {
 	RESULT result = 1;
 	string errormsg = 2;
+}
+
+////////////////////////////////////////////////////////////////
+//
+//  FriendSystem
+//
+////////////////////////////////////////////////////////////////
+message NFriendInfo
+{
+	int32 id = 1;
+	NCharacterInfo friendInfo = 2;
+	int32 status = 3;
+}
+
+message FriendAddRequest
+{
+	int32 from_id = 1;
+	string from_name = 2;
+	int32 to_id = 3;
+	string to_name = 4;
+}
+
+
+message FriendAddResponse
+{
+	RESULT result = 1;
+	string errormsg = 2;
+	FriendAddRequest request = 3;
+}
+
+
+message FriendListRequest
+{
+
+}
+
+message FriendListResponse
+{
+	RESULT result = 1;
+	string errormsg = 2;
+	repeated NFriendInfo friends = 3;
+}
+
+message FriendRemoveRequest
+{
+	int32 id = 1;
+	int32 friendId = 2;
+}
+
+message FriendRemoveResponse
+{
+	RESULT result = 1;
+	string errormsg = 2;
+	int32 id = 3;
 }

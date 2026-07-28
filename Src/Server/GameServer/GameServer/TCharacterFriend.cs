@@ -19,7 +19,6 @@ namespace GameServer
         public string FriendName { get; set; }
         public int Class { get; set; }
         public int Level { get; set; }
-        public int CharacterID { get; set; }
         public int TCharacterID { get; set; }
     
         public virtual TCharacter Onwer { get; set; }

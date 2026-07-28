@@ -95,12 +95,12 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="TCharacterID" Type="int" Nullable="false" />
     <Property Name="QuestID" Type="int" Nullable="false" />
     <Property Name="Target1" Type="int" Nullable="false" />
     <Property Name="Target2" Type="int" Nullable="false" />
     <Property Name="Target3" Type="int" Nullable="false" />
     <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="TCharacterID" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="TCharacterFriendSet">
     <Key>
@@ -111,7 +111,6 @@
     <Property Name="FriendName" Type="longtext" Nullable="false" />
     <Property Name="Class" Type="int" Nullable="false" />
     <Property Name="Level" Type="int" Nullable="false" />
-    <Property Name="CharacterID" Type="int" Nullable="false" />
     <Property Name="TCharacterID" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="UserPlayer">
@@ -311,12 +310,12 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Owner" Relationship="ExtremeWorldModel.TCharacterTCharacterQuest" FromRole="TCharacterQuest" ToRole="TCharacter" />
-          <Property Name="TCharacterID" Type="Int32" Nullable="false" />
           <Property Name="QuestID" Type="Int32" Nullable="false" />
           <Property Name="Target1" Type="Int32" Nullable="false" />
           <Property Name="Target2" Type="Int32" Nullable="false" />
           <Property Name="Target3" Type="Int32" Nullable="false" />
           <Property Name="Status" Type="Int32" Nullable="false" />
+		  <Property Name="TCharacterID" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="TCharacterTCharacterQuest">
           <End Type="ExtremeWorldModel.TCharacter" Role="TCharacter" Multiplicity="1" />
@@ -339,7 +338,6 @@
           <Property Name="FriendName" Type="String" Nullable="false" />
           <Property Name="Class" Type="Int32" Nullable="false" />
           <Property Name="Level" Type="Int32" Nullable="false" />
-          <Property Name="CharacterID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Onwer" Relationship="ExtremeWorldModel.TCharacterTCharacterFriend" FromRole="TCharacterFriend" ToRole="TCharacter" />
           <Property Name="TCharacterID" Type="Int32" Nullable="false" />
         </EntityType>
@@ -419,12 +417,12 @@
       <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TCharacterQuest)">
         <MappingFragment StoreEntitySet="CharacterQuests">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="TCharacterID" ColumnName="TCharacterID" />
           <ScalarProperty Name="QuestID" ColumnName="QuestID" />
           <ScalarProperty Name="Target1" ColumnName="Target1" />
           <ScalarProperty Name="Target2" ColumnName="Target2" />
           <ScalarProperty Name="Target3" ColumnName="Target3" />
           <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="TCharacterID" ColumnName="TCharacterID" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -436,7 +434,6 @@
           <ScalarProperty Name="FriendName" ColumnName="FriendName" />
           <ScalarProperty Name="Class" ColumnName="Class" />
           <ScalarProperty Name="Level" ColumnName="Level" />
-          <ScalarProperty Name="CharacterID" ColumnName="CharacterID" />
           <ScalarProperty Name="TCharacterID" ColumnName="TCharacterID" />
         </MappingFragment>
       </EntityTypeMapping>

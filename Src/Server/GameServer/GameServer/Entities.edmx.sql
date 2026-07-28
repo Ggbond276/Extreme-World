@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 07/23/2026 11:33:28
+-- Date Created: 07/28/2026 22:58:59
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -167,12 +167,12 @@ ALTER TABLE `CharacterBag` ADD PRIMARY KEY (`Id`);
 
 CREATE TABLE `CharacterQuests`(
 	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
-	`TCharacterID` int NOT NULL, 
 	`QuestID` int NOT NULL, 
 	`Target1` int NOT NULL, 
 	`Target2` int NOT NULL, 
 	`Target3` int NOT NULL, 
-	`Status` int NOT NULL);
+	`Status` int NOT NULL, 
+	`TCharacterID` int NOT NULL);
 
 ALTER TABLE `CharacterQuests` ADD PRIMARY KEY (`Id`);
 
@@ -186,7 +186,6 @@ CREATE TABLE `TCharacterFriendSet`(
 	`FriendName` longtext NOT NULL, 
 	`Class` int NOT NULL, 
 	`Level` int NOT NULL, 
-	`CharacterID` int NOT NULL, 
 	`TCharacterID` int NOT NULL);
 
 ALTER TABLE `TCharacterFriendSet` ADD PRIMARY KEY (`Id`);
