@@ -126,6 +126,7 @@
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\MonsterManager.cs" />
     <Compile Include="Managers\QuestManager.cs" />
+    <Compile Include="Managers\SessionManager.cs" />
     <Compile Include="Managers\ShopManager.cs" />
     <Compile Include="Managers\Spawner.cs" />
     <Compile Include="Managers\SpawnManager.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Models\Quest.cs" />
     <Compile Include="Network\ExtensionMethods.cs" />
     <Compile Include="Network\INetSession.cs" />
+    <Compile Include="Network\IPostResponser.cs" />
     <Compile Include="Network\NetConnection.cs" />
     <Compile Include="Network\NetEventArgs.cs" />
     <Compile Include="Network\NetService.cs" />

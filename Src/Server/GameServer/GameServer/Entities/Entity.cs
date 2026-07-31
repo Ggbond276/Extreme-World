@@ -10,10 +10,13 @@ namespace GameServer.Entities
 {
     class Entity
     {
+        // 实体ID
         public int entityId
         {
             get { return this.entityData.Id; }
         }
+
+        // Position
         private Vector3Int position;
         public Vector3Int Position
         {
@@ -23,6 +26,8 @@ namespace GameServer.Entities
                 this.entityData.Position = position;
             }
         }
+
+        // Direction
         private Vector3Int direction;
         public Vector3Int Direction
         {
@@ -33,6 +38,8 @@ namespace GameServer.Entities
                 this.entityData.Direction = direction;
             }
         }
+
+        // Speed
         private int speed;
         public int Speed
         {
@@ -43,6 +50,8 @@ namespace GameServer.Entities
                 this.entityData.Speed = speed;
             }
         }
+
+        // EntityData
         private NEntity entityData;
         public NEntity EntityData
         {

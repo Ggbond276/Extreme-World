@@ -129,6 +129,7 @@ namespace Network
             }
         }
 
+        // NetConnection只是做一个简单的发送的职责
         public void SendResponse()
         {
             // 打包字节流

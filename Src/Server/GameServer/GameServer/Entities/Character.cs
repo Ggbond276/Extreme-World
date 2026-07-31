@@ -2,6 +2,7 @@
 using GameServer.Core;
 using GameServer.Manager;
 using GameServer.Managers;
+using Network;
 using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ class Character
 */
 namespace GameServer.Entities
 {
-    class Character : CharacterBase
+    class Character : CharacterBase, IPostResponser
     {
        // 数据库中拉取的数据是存放有背包相关的数据的
         public TCharacter Data;
@@ -81,7 +82,11 @@ namespace GameServer.Entities
             }
         }
 
-
+        public void PostResponse(NetMessageResponse response)
+        {
+            // 装货 具体的装货逻辑 自己内部实现
+            statusManager.PostResponse(response);
+        }
         //构造方法
         public Character(CharacterType type,TCharacter cha): 
             base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))

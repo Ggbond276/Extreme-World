@@ -1,4 +1,5 @@
 ﻿using GameServer.Entities;
+using Network;
 using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GameServer.Managers
 {
-    class StatusManager
+    class StatusManager  : IPostResponser
     {
         public Character Owner;
         
@@ -29,17 +30,21 @@ namespace GameServer.Managers
             });
         }
         // 这个方法将变化的消息塞进了大卡车
-        public void ApplyReponse(NetMessageResponse Response)
+        public void PostResponse(NetMessageResponse Response)
         {
+            // 这个是自己新增的 不知道是准确
+            if (this.Owner == null || this.Status == null)
+                return; 
+
             if (Response.statusNotify == null)
                 Response.statusNotify = new StatusNotify();
+
             foreach(var status in this.Status)
             {
                 Response.statusNotify.Status.Add(status);
             }
             this.Status.Clear();
         }
-
 
 
         // 金币状态发生变化

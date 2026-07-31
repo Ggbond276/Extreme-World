@@ -213,6 +213,7 @@ namespace GameServer.Services
 
             sender.Session.Character = character;
             MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
+            SessionManager.Instance.AddSession(request.characterIdx, sender);
         }
 
         /// <summary>
@@ -232,6 +233,8 @@ namespace GameServer.Services
             sender.Session.Response.gameLeave.Result = Result.Success;
             sender.Session.Response.gameLeave.Errormsg = "None";
             sender.SendResponse();
+
+            SessionManager.Instance.RemoveSession(character.Id);
         }
 
         /// <summary>
