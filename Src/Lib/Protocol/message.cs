@@ -89,6 +89,9 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(15, Name = @"exp")]
         public long Exp { get; set; }
 
+        [global::ProtoBuf.ProtoMember(16, Name = @"friends")]
+        public global::System.Collections.Generic.List<NFriendInfo> Friends { get; } = new global::System.Collections.Generic.List<NFriendInfo>();
+
     }
 
     [global::ProtoBuf.ProtoContract()]

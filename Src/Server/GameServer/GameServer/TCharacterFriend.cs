@@ -21,6 +21,6 @@ namespace GameServer
         public int Level { get; set; }
         public int TCharacterID { get; set; }
     
-        public virtual TCharacter Onwer { get; set; }
+        public virtual TCharacter Owner { get; set; }
     }
 }

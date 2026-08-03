@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 07/28/2026 22:58:59
+-- Date Created: 08/01/2026 19:44:22
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0

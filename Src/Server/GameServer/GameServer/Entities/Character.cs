@@ -57,7 +57,7 @@ namespace GameServer.Entities
         public ItemManager ItemManager;
         public StatusManager statusManager;
         public QuestManager questManager;
-
+        public FriendManager friendManager;
         public long Gold
         {
             get { return this.Data.Gold; }
@@ -86,6 +86,7 @@ namespace GameServer.Entities
         {
             // 装货 具体的装货逻辑 自己内部实现
             statusManager.PostResponse(response);
+            friendManager.PostResponse(response);
         }
         //构造方法
         public Character(CharacterType type,TCharacter cha): 
@@ -100,7 +101,8 @@ namespace GameServer.Entities
             this.questManager = new QuestManager(this);
             // 状态管理器初始化
             this.statusManager = new StatusManager(this);
-
+            // 好友管理器初始化
+            this.friendManager = new FriendManager(this);
 
 
             // Id
@@ -129,7 +131,8 @@ namespace GameServer.Entities
             this.ItemManager.GetItemInfos(this.Info.Items);
             // 任务数据填充
             this.questManager.GetQuestInfo(this.Info.Quests);
-
+            // 好友数据填充
+            this.friendManager.GetFriendInfo(this.Info.Friends);
             // 配置数据填充
             this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
 

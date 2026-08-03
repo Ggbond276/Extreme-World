@@ -246,6 +246,7 @@ namespace GameServer.Services
         {
             CharacterManager.Instance.RemoveCharacter(character.entityId);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
+            character.friendManager.NotifyOnlineStatus(false);
         }
     }
 }

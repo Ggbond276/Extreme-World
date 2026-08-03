@@ -98,6 +98,7 @@ message NCharacterInfo {
 	bytes Equips = 13;
 	repeated NQuestInfo quests = 14;
 	int64 exp = 15;
+	repeated NFriendInfo friends = 16;
 }
 
 message NItemInfo

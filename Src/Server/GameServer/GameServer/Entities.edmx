@@ -338,7 +338,7 @@
           <Property Name="FriendName" Type="String" Nullable="false" />
           <Property Name="Class" Type="Int32" Nullable="false" />
           <Property Name="Level" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Onwer" Relationship="ExtremeWorldModel.TCharacterTCharacterFriend" FromRole="TCharacterFriend" ToRole="TCharacter" />
+          <NavigationProperty Name="Owner" Relationship="ExtremeWorldModel.TCharacterTCharacterFriend" FromRole="TCharacterFriend" ToRole="TCharacter" />
           <Property Name="TCharacterID" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="TCharacterTCharacterFriend">

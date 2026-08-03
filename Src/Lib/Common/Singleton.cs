@@ -39,6 +39,17 @@ namespace Common
             get
             {
                 return Equals(instance, default(T)) ? (instance = new T()) : instance;
+
+                // 其实上面复杂的三元表达式就是下面这段最普通的代码
+                //if (instance == null)
+                //{
+                //    instance = new T();
+                //    return instance;
+                //}
+                //else
+                //{
+                //    return instance;
+                //}
             }
         }
     }

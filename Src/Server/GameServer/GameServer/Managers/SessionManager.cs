@@ -10,6 +10,9 @@ namespace GameServer.Managers
 {
     class SessionManager : Singleton<SessionManager>
     {
+        /// <summary>
+        /// 这里使用玩家的DBId作为键值
+        /// </summary>
         public Dictionary<int, NetConnection<NetSession>> Sessions = new Dictionary<int, NetConnection<NetSession>>();
 
         /// <summary>
@@ -39,5 +42,7 @@ namespace GameServer.Managers
             this.Sessions.TryGetValue(characterId, out NetConnection<NetSession> session);
             return session;
         }
+
+
     }
 }
