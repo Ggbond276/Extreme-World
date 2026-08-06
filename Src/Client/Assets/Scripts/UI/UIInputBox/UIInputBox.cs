@@ -23,7 +23,13 @@ public class UIInputBox : MonoBehaviour
     public event SubmitHandler OnSubmit;
     public UnityAction OnCancel;
 
-    // 外部传入参数 渲染组件
+    /// <summary>
+    /// 外部传入参数，渲染组件
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="prompt"></param>
+    /// <param name="buttonConfirm"></param>
+    /// <param name="buttonCancel"></param>
     public void Init(string title, string prompt, string buttonConfirm, string buttonCancel)
     {
         if (!string.IsNullOrEmpty(title)) this.text_title.text = title;

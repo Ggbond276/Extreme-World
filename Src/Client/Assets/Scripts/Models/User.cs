@@ -24,15 +24,27 @@ namespace Models
         {
             this.userInfo = info;
         }
-        // 谁来注册这个委托就可以实时监听到金币的变化
+       
+        /// <summary>
+        /// 注册这两个委托可以分别监听金币和经验的变化
+        /// </summary>
         public static event Action<long> OnGoldChanged;
         public static event Action<long> OnExpChanged;
+
+        /// <summary>
+        /// 调用这个方法可以增加金币
+        /// </summary>
+        /// <param name="value"></param>
         internal void AddGold(int value)
         {
             this.CurrentCharacter.Gold += value;
             OnGoldChanged?.Invoke(CurrentCharacter.Gold);
         }
 
+        /// <summary>
+        /// 调用这个方法可以增加经验
+        /// </summary>
+        /// <param name="value"></param>
         internal void AddExp(int value)
         {
             this.CurrentCharacter.Exp += value;

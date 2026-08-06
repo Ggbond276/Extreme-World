@@ -40,9 +40,6 @@ namespace GameServer.Services
             Character character = sender.Session.Character;
 
             // 2. 查找目标玩家 ID
-            // 很多时候客户端只有玩家名字，没有传 ID (ToId == 0)。
-            // TODO: 如果 request.ToId == 0，请遍历 CharacterManager.Instance.Characters，
-            // 如果找到角色的名字 (cha.Value.Data.Name) 等于 request.ToName，就把它的 ID 赋值给 request.ToId，并 break 跳出循环。
             if (request.ToId == 0)
             {
                 request.ToId = CharacterManager.Instance.GetDBIdByName(request.ToName);
@@ -97,7 +94,7 @@ namespace GameServer.Services
             // 先找到之前申请添加的那个玩家
             NetConnection<NetSession> requesterConnection = SessionManager.Instance.GetSession(response.Request.FromId);
 
-            // 申请人不在线直接return
+            // 情况1：申请人不在线直接return
             if (requesterConnection == null)
             {
                 sender.Session.Response.friendAdd = new FriendAddResponse();
@@ -107,8 +104,7 @@ namespace GameServer.Services
                 return;
             }
                 
-
-            // 如果消息是拒绝
+            // 情况2：如果消息是拒绝
             if(response.Result != Result.Success)
             {
                 // 拒绝的消息应给返回给请求者
@@ -117,8 +113,7 @@ namespace GameServer.Services
                 return;
             }
 
-            // 接下来我们处理同意的情况
-
+            // 情况3：接下来我们处理同意的情况
             Character requester = CharacterManager.Instance.GetCharacter(response.Request.FromId);
             Character replier = CharacterManager.Instance.GetCharacter(response.Request.ToId);
             // 将申请者加入到 请求者的好友列表
@@ -136,8 +131,8 @@ namespace GameServer.Services
         /// </summary>
         public void OnFriendRemoveRequest(NetConnection<NetSession> sender, FriendRemoveRequest request)
         {
-            int requesterId = sender.Session.Character.Id;
-            int targetId = request.friendId;
+            int requesterId = sender.Session.Character.Id; // 请求删除者
+            int targetId = request.friendId; // 被删除者
 
             sender.Session.Character.friendManager.RemoveFriend(targetId);
 
@@ -146,7 +141,6 @@ namespace GameServer.Services
             {
                 // 在线需要处理两份数据 Manager数据和 数据库数据
                 targetConnection.Session.Character.friendManager.RemoveFriend(requesterId);
-                targetConnection.Session.Character.friendManager.friendChanged = true;
             } else
             {
                 // 离线只需要处理数据库数据 并不需要处理内存Manager数据

@@ -99,7 +99,6 @@ namespace GameServer.Managers
             this.friendChanged = true;
         }
 
-
         /// <summary>
         /// 将Manager中的数据打包成网络消息返回
         /// </summary>
@@ -144,7 +143,8 @@ namespace GameServer.Managers
             // 优点：绝对安全。如果字典里没有这个键，它会新增；如果已经有了，它会直接覆盖，绝对不会抛出异常。
             //严谨度提升：理论上，在执行添加好友操作前，你应该已经调用过第72行的 isFriend(int id) 拦截过重复添加了。所以执行到第95行时，字典里一定没有这个好友。你可以考虑换成 this.friends.Add(newFriend.FriendId, newFriend);。
             //这样如果在并发极端情况下（比如两人同时狂点添加），如果不小心漏过了判断，Add 方法会抛出异常，帮你暴露出潜在的逻辑漏洞，而不是默默地覆盖掉数据。
-            this.friends[newFriend.FriendId] = newFriend;   
+            this.friends[newFriend.FriendId] = newFriend;
+            this.friendChanged = true;
         }
 
         /// <summary>
@@ -174,6 +174,8 @@ namespace GameServer.Managers
 
             // 再到Manager容器中删除好友记录
             this.friends.Remove(friendId);
+
+            this.friendChanged = true;
         }
 
         /// <summary>

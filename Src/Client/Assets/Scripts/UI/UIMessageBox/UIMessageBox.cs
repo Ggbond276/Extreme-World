@@ -2,6 +2,10 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/// <summary>
+/// 通用提示框的 UI 表现层脚本
+/// 职责：只负责根据传入的数据修改自身的文本、图标、按钮状态，以及广播按钮点击事件
+/// </summary>
 public class UIMessageBox : MonoBehaviour {
 
     public Text title;
@@ -16,18 +20,10 @@ public class UIMessageBox : MonoBehaviour {
 
     public UnityAction OnYes;
     public UnityAction OnNo;
-    
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+    /// <summary>
+    /// 初始化弹窗的界面表现
+    /// </summary>
     public void Init(string title, string message, MessageBoxType type = MessageBoxType.Information, string btnOK = "", string btnCancel = "")
     {
         if (!string.IsNullOrEmpty(title)) this.title.text = title;
@@ -45,13 +41,19 @@ public class UIMessageBox : MonoBehaviour {
         this.buttonNo.gameObject.SetActive(type == MessageBoxType.Confirm);
     }
 
-  public  void OnClickYes()
+    /// <summary>
+    /// 内部点击确认逻辑：触发外部委托 -> 销毁弹窗自身
+    /// </summary>
+    public void OnClickYes()
     {
         if (this.OnYes != null)
             this.OnYes();
         Destroy(this.gameObject);
     }
 
+    /// <summary>
+    /// 内部点击取消逻辑：销毁弹窗自身 -> 触发外部委托
+    /// </summary>
     public void OnClickNo()
     {
         Destroy(this.gameObject);
