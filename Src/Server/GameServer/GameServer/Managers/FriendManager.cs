@@ -46,6 +46,7 @@ namespace GameServer.Managers
 
                 // 根据数据库信息创建好友
                 Friend friend = new Friend(dbFriend);
+
                 Character onlineCharacter = CharacterManager.Instance.GetCharacter(dbFriend.FriendID);
 
                 // 对好友的在线状态赋值
@@ -140,6 +141,18 @@ namespace GameServer.Managers
             DBService.Instance.save();
             // 再将好友数据添加到Manager列表中
             Friend newFriend = new Friend(tf);
+
+            // 这里忘记在线情况的赋值了 缺少了在线判定
+            NetConnection<NetSession> friendConnection = SessionManager.Instance.GetSession(replier.Data.ID);
+
+            if(friendConnection != null)
+            {
+                newFriend.isOnline = true;
+            } else
+            {
+                newFriend.isOnline = false;
+            }
+
             // 优点：绝对安全。如果字典里没有这个键，它会新增；如果已经有了，它会直接覆盖，绝对不会抛出异常。
             //严谨度提升：理论上，在执行添加好友操作前，你应该已经调用过第72行的 isFriend(int id) 拦截过重复添加了。所以执行到第95行时，字典里一定没有这个好友。你可以考虑换成 this.friends.Add(newFriend.FriendId, newFriend);。
             //这样如果在并发极端情况下（比如两人同时狂点添加），如果不小心漏过了判断，Add 方法会抛出异常，帮你暴露出潜在的逻辑漏洞，而不是默默地覆盖掉数据。

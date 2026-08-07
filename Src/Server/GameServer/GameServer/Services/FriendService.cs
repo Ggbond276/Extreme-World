@@ -175,14 +175,15 @@ namespace GameServer.Services
             // 主动删除者删除目标好友
             sender.Session.Character.friendManager.RemoveFriend(targetId);
 
-
-
+            // 处理被动删除者
             NetConnection<NetSession> targetConnection = SessionManager.Instance.GetSession(targetId);
+
             if(targetConnection != null)
             {
                 // 在线删除：需要处理两份数据 Manager数据和 数据库数据
                 Log.InfoFormat("OnFriendRemoveRequest : 目标被删者 ID:{0} 在线, 同步清理其内存中的好友数据", targetId);
                 targetConnection.Session.Character.friendManager.RemoveFriend(requesterId);
+                targetConnection.SendResponse();
             } else
             {
                 // 离线删除：只需要处理数据库数据 并不需要处理内存Manager数据
@@ -208,6 +209,7 @@ namespace GameServer.Services
                 }
             }
 
+
             Log.InfoFormat("OnFriendRemoveRequest : 删除流程执行完毕, 返回成功响应给请求者 ID:{0}", requesterId);
             sender.Session.Response.friendRemove = new FriendRemoveResponse();
             sender.Session.Response.friendRemove.Result = Result.Success;
@@ -216,90 +218,5 @@ namespace GameServer.Services
 
 
         }
-        //public void OnFriendRemoveRequest(NetConnection<NetSession> sender, FriendRemoveRequest request)
-        //{
-        //    // 这个方法用来处理 离线删除的情况
-        //    // 所以正常来说 不管离线还是在线 我们都可以这样处理
-
-        //    // 我们要删除申请者的好友 将删除好友交给他的Manager去处理
-        //    sender.Session.Character.friendManager.RemoveFriend(request.friendId);
-        //    // 删除被删除者的好友
-
-        //    // 查找到这条记录 好友是申请者 主人是被删除者
-        //    TCharacterFriend targetRecord = null;
-        //    foreach(var record in DBService.Instance.Entities.TCharacterFriendSet)
-        //    {
-        //        if(record.FriendID == sender.Session.Character.Id && record.TCharacterID == request.friendId)
-        //        {
-        //            targetRecord = record;
-        //            break;
-        //        }
-        //    }
-        //    // 找到记录之后删除记录（记录其实就是一个类而已可以使用Remove删除 但是使用Remove要将那个对象遍历出来）
-        //    DBService.Instance.Entities.TCharacterFriendSet.Remove(targetRecord);
-
-
-
-
-        //    // 如果被删除者在线 我们需要对被删除者的内存也进行清理
-        //    NetConnection<NetSession> onlineConnection = SessionManager.Instance.GetSession(request.friendId);
-        //    if(onlineConnection != null)
-        //    {
-        //        Character character = CharacterManager.Instance.GetCharacter(request.friendId);
-        //        // request.Id真的是请求者的Id 吗
-        //        character.friendManager.RemoveFriend(request.Id);
-        //        // 如果被删除者在线 我们需要发送消息通知他 由他的postProcess来通知他 为什么要使用PostProcess呢这里
-        //        character.friendManager.friendChanged = true;
-        //        character.friendManager.PostResponse(onlineConnection.Session.Response);
-        //    }
-
-
-        //    // 返回消息给主动删除的玩家
-        //    sender.Session.Response.friendRemove = new FriendRemoveResponse();
-        //    sender.Session.Response.friendRemove.Result = Result.Success;
-        //    sender.Session.Response.friendRemove.Id = request.friendId;
-        //    sender.SendResponse();
-        //}
-        //public void OnFriendRemoveRequest(NetConnection<NetSession> sender, FriendRemoveRequest request)
-        //{
-        //    // 想要删除一个好友 暂且我们假设要在线才能删除 虽然这个逻辑不是很合理
-        //    // 因为正常来说 不管在不在线都是要可以删除的
-        //    // 为什么要在线删除 原因是我们如果不在线删除 我拿不到character 也就没法调用他Manager中的删除方法
-        //    // 就没有办法对数据库中的数据进行增删改查的操作 关于对方玩家不在线的删除逻辑 这个是一个新的好友系统设计
-        //    // 我们以后再做考虑
-        //    NetConnection<NetSession> targetConnection = SessionManager.Instance.GetSession(request.friendId);
-
-        //    // 如果当前玩家不在线
-        //    if (targetConnection == null)
-        //    {
-        //        sender.Session.Response.friendRemove = new FriendRemoveResponse();
-        //        sender.Session.Response.friendRemove.Result = Result.Failed;
-        //        sender.Session.Response.friendRemove.Errormsg = "当前好友不在线";
-        //        sender.SendResponse();
-        //        return;
-        //    }
-
-        //    // 接下来处理玩家在线的情况
-        //    // 我们需要分别发送信息给双方玩家
-        //    Character requesterCharacter = sender.Session.Character;
-        //    // Character targetCharacter = CharacterManager.Instance.GetCharacter(request.friendId);
-        //    // 去Manager中查找字典是会消耗性能的 我们直接从targetConnection中获取 有助于提高性能
-        //    Character targetCharacter = targetConnection.Session.Character;
-        //    requesterCharacter.friendManager.RemoveFriend(request.friendId);
-        //    targetCharacter.friendManager.RemoveFriend(request.Id);
-
-        //    NetConnection<NetSession> requesterConnection = sender;
-
-        //    requesterConnection.Session.Response.friendRemove = new FriendRemoveResponse();
-        //    requesterConnection.Session.Response.friendRemove.Result = Result.Success;
-        //    requesterConnection.Session.Response.friendRemove.Id = request.friendId;
-        //    requesterConnection.SendResponse();
-
-        //    targetConnection.Session.Response.friendRemove = new FriendRemoveResponse();
-        //    targetConnection.Session.Response.friendRemove.Result = Result.Success;
-        //    targetConnection.Session.Response.friendRemove.Id = request.Id;
-        //    targetConnection.SendResponse();
-
-        //}
     }
 }

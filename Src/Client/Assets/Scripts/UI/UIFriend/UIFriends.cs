@@ -78,6 +78,10 @@ public class UIFriends : UIWindow
     private void ClearFriendList()
     {
         this.listMain.RemoveAll();
+        for (int i = this.listMain.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(this.listMain.transform.GetChild(i).gameObject);
+        }
     }
 
 
