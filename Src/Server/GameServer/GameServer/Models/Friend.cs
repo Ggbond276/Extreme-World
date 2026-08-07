@@ -40,12 +40,15 @@ namespace GameServer.Models
         public NFriendInfo ToNFriendInfo()
         {
             NFriendInfo friendInfo = new NFriendInfo();
+
             friendInfo.Id = this.FriendId;
+
             NCharacterInfo characterInfo = new NCharacterInfo();
             characterInfo.Name = this.FriendName;
             characterInfo.Class = (CharacterClass)this.Class;
             characterInfo.Level = this.Level;
             friendInfo.friendInfo = characterInfo;
+
             friendInfo.Status = this.isOnline ? 1 : 0;
 
             return friendInfo;

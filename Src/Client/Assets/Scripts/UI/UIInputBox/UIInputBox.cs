@@ -46,6 +46,9 @@ public class UIInputBox : MonoBehaviour
         this.button_cancel.onClick.AddListener(OnClickCancel);
     }
 
+    /// <summary>
+    ///  点击确认
+    /// </summary>
     public void OnClickYes()
     {
         // 第一个守卫
@@ -55,7 +58,7 @@ public class UIInputBox : MonoBehaviour
             return;
         }
 
-        // 第二个守卫
+        // 第二个守卫：1.如果有人注册了委托事件 2.并且委托事件的返回值是false
         if (OnSubmit != null && !OnSubmit(this.text_input.text, out string errorMsg) )
         {
             this.text_errorMsg.text = errorMsg;
@@ -65,6 +68,9 @@ public class UIInputBox : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    /// <summary>
+    ///  点击取消
+    /// </summary>
     public void OnClickCancel()
     {
         this.OnCancel?.Invoke();

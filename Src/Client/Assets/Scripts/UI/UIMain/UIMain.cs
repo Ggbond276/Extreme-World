@@ -44,32 +44,55 @@ public class UIMain : MonoSingleton<UIMain>
         UIManager.Instance.Show<UIBag>();
     }
 
-    // 点击打开商店1
+    /// <summary>
+    /// 打开商店1
+    /// </summary>
     public void OnClickShop1()
     {
         UIShop shop = UIManager.Instance.Show<UIShop>();
         shop.SetShop(DataManager.Instance.Shops[1]);
     }
-    // 点击打开商店2
+
+    /// <summary>
+    /// 打开商店2
+    /// </summary>
     public void OnClickShop2()
     {
         UIShop shop = UIManager.Instance.Show<UIShop>();
         shop.SetShop(DataManager.Instance.Shops[2]);
     }
-    // 点击打开装备栏
+
+    /// <summary>
+    /// 打开装备栏
+    /// </summary>
     public void OnClickCharEquip()
     {
         UIManager.Instance.Show<UICharEquip>();
     }
-    // 点击打开任务系统
+
+    /// <summary>
+    /// 打开任务系统
+    /// </summary>
     public void OnClickQuestSystem()
     {
         UIManager.Instance.Show<UIQuestSystem>();
     }
-    // 打开任务对话面板
+
+    /// <summary>
+    /// 打开任务对话面板
+    /// </summary>
+    /// <param name="targetQuest"></param>
     public void OnOpenQuestDialog(Quest targetQuest)
     {
          UIQuestDialog dlg = UIManager.Instance.Show<UIQuestDialog>();
          dlg.SetQuest(targetQuest);
+    }
+
+    /// <summary>
+    /// 打开好友系统面板
+    /// </summary>
+    public void OnClickFriendSystem()
+    {
+        UIManager.Instance.Show<UIFriends>();
     }
 }   

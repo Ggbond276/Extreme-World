@@ -3,12 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 所有 UI 面板的抽象基类，封装了统一的关闭行为和事件回调
+/// </summary>
 public abstract class UIWindow : MonoBehaviour
 {
     // 需要知道是谁 点击的结果是什么
     public delegate void CloseHandler(UIWindow sender, WindowResult result);
     // 因为UI界面不管点击什么按钮都是OnClose所以统一为OnClose
     public event CloseHandler OnClose;
+
+
+    /// <summary>
+    /// 获取当前脚本的具体类型 (用于传给 UIManager 作为字典的 Key)
+    /// </summary>
     public virtual Type type
     {
         get
@@ -16,6 +24,10 @@ public abstract class UIWindow : MonoBehaviour
             return this.GetType();
         }
     }
+
+    /// <summary>
+    /// 窗口关闭的结果枚举
+    /// </summary>
     public enum WindowResult
     {
         None = 0,
@@ -23,7 +35,10 @@ public abstract class UIWindow : MonoBehaviour
         No,
     }
 
-    // 这个是点击关闭和点击Yes关闭的方法内核
+    /// <summary>
+    /// 核心方法：关闭当前窗口
+    /// </summary>
+    /// <param name="result">关闭操作携带的标识</param>
     public void Close(WindowResult result = WindowResult.None)
     {
         // 这个内核实际上也是调用了Manager的方法
@@ -33,12 +48,18 @@ public abstract class UIWindow : MonoBehaviour
             this.OnClose(this, result);
         this.OnClose = null;
     }
-    // 点击关闭按钮时触发
+
+    /// <summary>
+    /// 供关闭按钮 (X) 绑定的点击事件
+    /// </summary>
     public virtual void OnCloseClick()
     {
         this.Close(WindowResult.No);
     }
-    // 点击确定按钮时触发
+
+    /// <summary>
+    /// 供确认按钮 (Yes/OK) 绑定的点击事件
+    /// </summary>
     public virtual void OnYesClick()
     {
         this.Close(WindowResult.Yes);

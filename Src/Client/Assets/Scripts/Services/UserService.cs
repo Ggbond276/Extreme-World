@@ -287,10 +287,12 @@ namespace Services
                 User.Instance.CurrentCharacter = response.Character;
                 NCharacterInfo Info = response.Character;
                 ItemManager.Instance.Init(Info.Items);
-                // 初始化背包
                 BagManager.Instance.Init(Info.Bag);
                 EquipManager.Instance.Init(Info.Equips);
                 QuestManager.Instance.Init(Info.Quests);
+                FriendManager.Instance.Init(Info.Friends);
+
+
                 #region 测试物品和背包的数据已经被传输过来了
                 //foreach (var item in ItemManager.Instance.Items)
                 //{

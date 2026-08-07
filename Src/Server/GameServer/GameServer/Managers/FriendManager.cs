@@ -19,7 +19,7 @@ namespace GameServer.Managers
         /// <summary>
         /// 这里使用Character的DBId作为键值
         /// </summary>
-        public Dictionary<int, Friend> friends = new Dictionary<int, Friend>();
+        private Dictionary<int, Friend> friends = new Dictionary<int, Friend>();
 
         public bool friendChanged = false;
 
@@ -46,7 +46,7 @@ namespace GameServer.Managers
 
                 // 根据数据库信息创建好友
                 Friend friend = new Friend(dbFriend);
-                Character onlineCharacter = CharacterManager.Instance.GetCharacter(dbFriend.Id);
+                Character onlineCharacter = CharacterManager.Instance.GetCharacter(dbFriend.FriendID);
 
                 // 对好友的在线状态赋值
                 if(onlineCharacter != null)
@@ -76,8 +76,8 @@ namespace GameServer.Managers
                 if(friendConnection != null)
                 {
                     // 通知这个好友 我在线
-                    // 怎么通知呢 我把我的ID给他 还有我上下线的状态给他
-                    int targetId = this.Owner.Id;
+                    // 怎么通知呢 我把我的ID给他 还有我上下线的状态给他(这里出现bug的原因是Onwer的ID居然还没有赋值 所以找出来的ID是0)
+                    int targetId = this.Owner.Data.ID;
                     // 他会根据我的ID去他的Manager中寻找到我
                     // 然后修改一下我的上下线状态(但是上线下线的修改涉及到修改内部容器 所以我们需要暴露一个方法出去专门用来修改内部容器的状态)
                     friendConnection.Session.Character.friendManager.UpdateFriendStatus(targetId, status);
@@ -157,6 +157,7 @@ namespace GameServer.Managers
             // 高级写法
             // TCharacterFriend dbFriend = this.Owner.Data.Friends.FirstOrDefault(f => f.FriendID == friendId);
             TCharacterFriend dbFriend = null;
+
             foreach(TCharacterFriend friend in this.Owner.Data.Friends)
             {
                 if(friend.FriendID == friendId)
@@ -168,7 +169,8 @@ namespace GameServer.Managers
 
             if(dbFriend != null)
             {
-                this.Owner.Data.Friends.Remove(dbFriend);
+                //this.Owner.Data.Friends.Remove(dbFriend);
+                DBService.Instance.Entities.TCharacterFriendSet.Remove(dbFriend);
                 DBService.Instance.save();
             }
 
@@ -203,6 +205,6 @@ namespace GameServer.Managers
             }
 
         }
-        
+       
     }
 }

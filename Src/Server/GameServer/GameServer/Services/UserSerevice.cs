@@ -191,7 +191,7 @@ namespace GameServer.Services
             //打印日志
             Log.InfoFormat("UserGameEnterRequest : CharacterID: {0} CharacterName: {1}  MapID: {2} ", dbchar.ID, dbchar.Name, dbchar.MapID);
             // 将角色添加到角色管理器(实体ID的分配时机就是在进入游戏的时候分配的)
-            Character character = CharacterManager.Instance.AddCharascter(dbchar);
+            Character character = CharacterManager.Instance.AddCharacter(dbchar);
 
             // 返回信息
             sender.Session.Response.gameEnter = new UserGameEnterResponse();
@@ -213,7 +213,7 @@ namespace GameServer.Services
 
             sender.Session.Character = character;
             MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
-            SessionManager.Instance.AddSession(request.characterIdx, sender);
+            SessionManager.Instance.AddSession(character.Id, sender);
         }
 
         /// <summary>
@@ -247,6 +247,7 @@ namespace GameServer.Services
             CharacterManager.Instance.RemoveCharacter(character.entityId);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             character.friendManager.NotifyOnlineStatus(false);
+            SessionManager.Instance.RemoveSession(character.Id);
         }
     }
 }

@@ -353,7 +353,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7413638977467184750}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5126563034969619580}
+        m_TargetAssemblyTypeName: UIFriends, Assembly-CSharp
+        m_MethodName: OnClickFriendAdd
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &894265398967638140
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,7 +379,7 @@ GameObject:
   - component: {fileID: 6859741410410191443}
   - component: {fileID: 2098470382769588984}
   m_Layer: 5
-  m_Name: Button_Add (1)
+  m_Name: Button_Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -474,7 +486,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6859741410410191443}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5126563034969619580}
+        m_TargetAssemblyTypeName: UIFriends, Assembly-CSharp
+        m_MethodName: OnClickFriendChat
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1607047888273507649
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,6 +669,7 @@ GameObject:
   - component: {fileID: 3555346594372195550}
   - component: {fileID: 4610583982214736170}
   - component: {fileID: 4277161329458688448}
+  - component: {fileID: 5126563034969619580}
   m_Layer: 5
   m_Name: UIFriends
   m_TagString: Untagged
@@ -735,6 +760,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5126563034969619580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2175275510618201562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c80ebc6f16f5b1438d51eb0c94f8222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPrefab: {fileID: 4061359539523972383, guid: 5aef3ea05389ad04b9534b5035f02075,
+    type: 3}
+  listMain: {fileID: 2798508915012279020}
 --- !u!1 &2296930341973206931
 GameObject:
   m_ObjectHideFlags: 0
@@ -1050,7 +1090,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4609377246399321463}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5126563034969619580}
+        m_TargetAssemblyTypeName: UIWindow, Assembly-CSharp
+        m_MethodName: OnCloseClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2664881843577119116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1373,6 +1425,7 @@ GameObject:
   - component: {fileID: 8551288798909491181}
   - component: {fileID: 1538542848553456279}
   - component: {fileID: 2574098712417106737}
+  - component: {fileID: 2798508915012279020}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1439,6 +1492,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &2798508915012279020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5028774584933451770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa8d5cd3b79ebb439ba63d50b421ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  selectedItem: {fileID: 0}
 --- !u!1 &5555896546016923783
 GameObject:
   m_ObjectHideFlags: 0
@@ -1887,7 +1954,7 @@ GameObject:
   - component: {fileID: 4974279798604984238}
   - component: {fileID: 6187258871421209302}
   m_Layer: 5
-  m_Name: Button_Add (2)
+  m_Name: Button_Delete
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1994,7 +2061,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4974279798604984238}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5126563034969619580}
+        m_TargetAssemblyTypeName: UIFriends, Assembly-CSharp
+        m_MethodName: OnClickFriendRemove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8716238302714356001
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,13 +49,11 @@ public class LoadingManager : MonoBehaviour
         yield return DataManager.Instance.LoadData();
         #endregion
 
-        #region 4.启动UserService 
-        //perfrom initialization operations related to user service functions
+      
         MapService.Instance.Init();
         UserService.Instance.Init();
-        // TestManager.Instance.Init();
         ShopManager.Instance.Init();
-        #endregion
+        FriendService.Instance.Init();
 
         #region 5.进度条加载
         //Fake Loading Simulate

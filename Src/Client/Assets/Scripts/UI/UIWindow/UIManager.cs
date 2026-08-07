@@ -4,17 +4,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// 全局UI管理器，负责管理所有UI面板的加载、显示、缓存和销毁
+/// </summary>
 public class UIManager : Singleton<UIManager>
 {
+
+    /// <summary>
+    /// UI 元素的配置信息模型
+    /// </summary>
     class UIElement
     {
-        public string Resources;
-        public bool Cache;
-        public GameObject Instance;
+        public string Resources; // 预制体在 Resources 文件夹下的路径
+        public bool Cache; // 关闭时是否缓存（true=隐藏不销毁，false=直接销毁）
+        public GameObject Instance; // 实例化出来的 GameObject 引用
     }
-    // 1.Type是什么
+
+    // 字典：以 UI 脚本的类型 (Type) 作为身份证，映射它的配置信息
     private Dictionary<Type, UIElement> UIResources = new Dictionary<Type, UIElement>();
 
+
+    /// <summary>
+    /// 构造函数：在此处注册所有受系统管理的 UI 面板
+    /// </summary>
     public UIManager()
     {
         // 这里写构造前的逻辑
@@ -25,14 +38,24 @@ public class UIManager : Singleton<UIManager>
         this.UIResources.Add(typeof(UICharEquip), new UIElement() { Resources = "UI/UICharEquip", Cache = false });
         this.UIResources.Add(typeof(UIQuestSystem), new UIElement() { Resources = "UI/UIQuestSystem", Cache = false });
         this.UIResources.Add(typeof(UIQuestDialog), new UIElement() { Resources = "UI/UIQuestDialog", Cache = false });
+        // 【注意】你的好友面板必须在这里注册！
+        this.UIResources.Add(typeof(UIFriends), new UIElement() { Resources = "UI/UIFriends", Cache = false });
     }
 
-    // 这里应该是一个上波浪号 2.析构函数到底是什么
+    /// <summary>
+    /// 析构函数：在垃圾回收(GC)清理该对象时调用，用于释放非托管资源或兜底清理
+    /// </summary>
     ~UIManager()
     {
         // 这里写销毁前的逻辑
     }
 
+
+    /// <summary>
+    /// 泛型方法：显示指定的 UI 面板
+    /// </summary>
+    /// <typeparam name="T">要打开的 UI 脚本类型 (必须继承自 UIWindow)</typeparam>
+    /// <returns>返回该 UI 脚本的实例</returns>
     public T Show<T>()
     {
         // 1.拿到这个组件的身份证
@@ -65,6 +88,11 @@ public class UIManager : Singleton<UIManager>
         return default(T);
     }
 
+
+    /// <summary>
+    /// 关闭指定的 UI 面板
+    /// </summary>
+    /// <param name="type">要关闭的 UI 脚本类型</param>
     public void Close(Type type)
     {
         // 1.根据身份证确认这个组件是被Manager管理的组件

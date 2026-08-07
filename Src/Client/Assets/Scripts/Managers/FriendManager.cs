@@ -14,6 +14,16 @@ public class FriendManager : Singleton<FriendManager>
     public UnityAction OnFriendDataChanged;
 
     /// <summary>
+    ///  OnGameEnter的时候就把数据全部都传入进来了
+    /// </summary>
+    /// <param name="friends"></param>
+    public void Init(List<NFriendInfo> friends)
+    {
+        this.allFriends = friends;
+    }
+
+
+    /// <summary>
     /// 全量覆盖核心代码（friends是Service传来的新数据）
     /// </summary>
     /// <param name="friends"></param>
@@ -71,7 +81,7 @@ public class FriendManager : Singleton<FriendManager>
     /// <summary>
     ///  删除好友成功
     /// </summary>
-    internal void OnFriendRemoveSuccesss()
+    internal void OnFriendRemoveSuccess()
     {
         MessageBox.Show("删除好友成功", "删除好友");
     }

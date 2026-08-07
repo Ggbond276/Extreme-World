@@ -20,7 +20,13 @@ namespace GameServer.Managers
         /// </summary>
         public void AddSession(int characterId , NetConnection<NetSession> session) 
         {
+            Log.InfoFormat("AddSession : 正在将玩家添加到Session字典, CharacterId:{0}", characterId);
+            if (characterId == 0)
+            {
+                Log.ErrorFormat("AddSession : 异常警告 - 试图将 CharacterId 为 0 的会话写入字典，请检查调用栈", characterId);
+            }
             this.Sessions[characterId] = session;
+
         }
 
         /// <summary>
@@ -29,6 +35,7 @@ namespace GameServer.Managers
         /// <param name="characterId"></param>
         public void RemoveSession(int characterId)
         {
+            Log.InfoFormat("AddSession : 正在将玩家移除Session字典, CharacterId:{0}", characterId);
             this.Sessions.Remove(characterId);
         }
 

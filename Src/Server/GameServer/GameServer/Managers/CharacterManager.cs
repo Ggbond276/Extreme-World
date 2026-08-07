@@ -7,6 +7,7 @@ using SkillBridge.Message;
 using GameServer.Entities;
 using Common;
 using GameServer.Managers;
+using GameServer.Services;
 
 namespace GameServer.Manager
 {
@@ -39,7 +40,7 @@ namespace GameServer.Manager
         }
 
         //添加角色
-        public Character AddCharascter(TCharacter cha)
+        public Character AddCharacter(TCharacter cha)
         {
             // 创建内存角色数据(这个时候还没有EntityID)
             Character character = new Character(CharacterType.Player, cha);
@@ -65,16 +66,22 @@ namespace GameServer.Manager
         }
 
 
-        // 根据玩家的昵称查询出玩家对应的数据库ID
+        // 根据玩家的昵称查询出玩家对应的数据库ID(但是这个方法有一个严重的问题，就是一定要求玩家是在线的，如果不在线是无法查找到信息的)
         public int GetDBIdByName(string playerName)
         {
             // 1.如果传入的名字我们找不到怎么办
             // 2.遍历到需要提前退出
-            foreach(Character OnlineCharacter in this.Characters.Values)
-            {
-                if (OnlineCharacter.Data.Name == playerName)
-                    return OnlineCharacter.Data.ID;
+            //foreach(Character OnlineCharacter in this.Characters.Values)
+            //{
+            //    if (OnlineCharacter.Data.Name == playerName)
+            //        return OnlineCharacter.Data.ID;
                     
+            //}
+
+            foreach(TCharacter DbCharacter in DBService.Instance.Entities.Characters)
+            {
+                if (playerName == DbCharacter.Name)
+                    return DbCharacter.ID;
             }
             return 0;
             

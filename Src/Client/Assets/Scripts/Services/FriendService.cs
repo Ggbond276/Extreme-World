@@ -16,6 +16,7 @@ public class FriendService : Singleton<FriendService>, IDisposable
     public FriendService()
     {
         // 订阅服务器响应
+        Debug.LogFormat("FriendService : 初始化并订阅好友系统网络消息");
         MessageDistributer.Instance.Subscribe<FriendAddResponse>(this.OnAddResponse);
         MessageDistributer.Instance.Subscribe<FriendRemoveResponse>(this.OnRemoveResponse);
         MessageDistributer.Instance.Subscribe<FriendListResponse>(this.OnListResponse);
@@ -27,10 +28,13 @@ public class FriendService : Singleton<FriendService>, IDisposable
     public void Dispose()
     {
         // 取消订阅服务器响应
+        Debug.LogFormat("FriendService : 释放并取消订阅好友系统网络消息");
         MessageDistributer.Instance.Unsubscribe<FriendAddResponse>(this.OnAddResponse);
         MessageDistributer.Instance.Unsubscribe<FriendRemoveResponse>(this.OnRemoveResponse);
         MessageDistributer.Instance.Unsubscribe<FriendListResponse>(this.OnListResponse);
     }
+
+    public void Init() { }
 
     /// <summary>
     /// 发送好友添加请求
@@ -41,6 +45,8 @@ public class FriendService : Singleton<FriendService>, IDisposable
     /// <param name="fromName"></param>
     public void SendAddRequest(int toId, string toName)
     {
+        Debug.LogFormat("SendAddRequest : 向服务器发送添加好友请求，目标 ID:{0} Name:{1}, 发送者 ID:{2} Name:{3}",
+            toId, toName, User.Instance.CurrentCharacter.Id, User.Instance.CurrentCharacter.Name);
         // 发送好友添加请求至少需要知道要添加谁 网络层只负责打包信息发送 所以需要尽可能精简
         NetMessage message = new NetMessage();
         message.Request = new NetMessageRequest();
@@ -58,7 +64,9 @@ public class FriendService : Singleton<FriendService>, IDisposable
     /// <param name="isAccept"></param>
     public void SendAddResponse(bool isAccept, FriendAddRequest originRequest)
     {
-        // 这里需要使用Request吗
+        Debug.LogFormat("SendAddResponse : 向服务器发送处理好友请求的结果，是否同意:{0}, 对方 ID:{1} Name:{2}",
+            isAccept, originRequest.FromId, originRequest.FromName);
+
         NetMessage message = new NetMessage();
         message.Response = new NetMessageResponse();
         message.Response.friendAdd = new FriendAddResponse();
@@ -86,13 +94,13 @@ public class FriendService : Singleton<FriendService>, IDisposable
             // message是纯状态信息 是需要提示是成功还是失败即可
             if(response.Result == Result.Success)
             {
-                Debug.LogFormat("OnAddResponse : 玩家 ID:{0} Name:{1} 同意了您的好友请求");
+                Debug.LogFormat("OnAddResponse : 玩家同意了您的好友请求");
                 // 接下来交给Manager去显示弹窗信息
                 FriendManager.Instance.OnAddFriendSuccess();
             }
             else if(response.Result == Result.Failed)
             {
-                Debug.LogFormat("OnAddResponse : 玩家 ID:{0} Name:{1} 拒绝了您的好友请求");
+                Debug.LogFormat("OnAddResponse : 添加失败：{0}", response.Errormsg);
                 // 接下来交给Manager去显示弹窗信息
                 FriendManager.Instance.OnAddFriendFailed(response.Errormsg);
 
@@ -105,6 +113,8 @@ public class FriendService : Singleton<FriendService>, IDisposable
         }
     }
 
+
+
     /// <summary>
     /// 发送好友删除请求
     /// </summary>
@@ -112,6 +122,7 @@ public class FriendService : Singleton<FriendService>, IDisposable
     /// <param name="targetId"></param>
     public void SendRemoveRequest(int requesterId, int targetId)
     {
+        Debug.LogFormat("SendRemoveRequest : 向服务器发送删除好友请求，请求者(我方) ID:{0}，目标好友 ID:{1}", requesterId, targetId);
         // 想要删除好友肯定需要两个一个是 谁删除的 一个是要删除谁 所以有两个ID
         NetMessage message = new NetMessage();
         message.Request = new NetMessageRequest();
@@ -130,12 +141,16 @@ public class FriendService : Singleton<FriendService>, IDisposable
     {
         if(response.Result == Result.Success)
         {
-            FriendManager.Instance.OnFriendRemoveSuccesss();
+            Debug.LogFormat("OnRemoveResponse : 删除好友成功 (Result:{0})", response.Result);
+            FriendManager.Instance.OnFriendRemoveSuccess();
         } else
         {
+            Debug.LogFormat("OnRemoveResponse : 删除好友失败，错误信息:{0}", response.Errormsg);
             FriendManager.Instance.OnFriendRemoveFailed(response.Errormsg);
         }
     }
+
+
 
     /// <summary>
     ///  发送列表请求
@@ -155,6 +170,8 @@ public class FriendService : Singleton<FriendService>, IDisposable
     /// <param name="message"></param>
     private void OnListResponse(object sender, FriendListResponse response)
     {
+        int friendCount = response.Friends != null ? response.Friends.Count : 0;
+        Debug.LogFormat("OnListResponse : 成功收到服务器下发的好友列表数据，共计 {0} 名好友", friendCount);
         FriendManager.Instance.UpdateFriendList(response.Friends);
     }
 
