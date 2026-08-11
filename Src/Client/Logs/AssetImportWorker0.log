@@ -341,3 +341,50 @@ AssetImportParameters requested are different than current active one (requested
   custom:scripting/precompiled-assembly-types:Assembly-CSharp: 385016169ecd39a74ad197fed5b9c61f -> a1c9e40e083015eeb2dcad36e8e20826
   custom:scripting/monoscript/fileName/TeamManager.cs: 2b34f4cd3ec4ff4ef37f0a232f3328a7 -> 
   custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+========================================================================
+Received Import Request.
+  Time since last request: 37831.550535 seconds.
+  path: Assets/Scripts/UI/UIFriend/UIFriends.cs
+  artifactKey: Guid(4c80ebc6f16f5b1438d51eb0c94f8222) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/UI/UIFriend/UIFriends.cs using Guid(4c80ebc6f16f5b1438d51eb0c94f8222) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: 'a93a4f312865043cb3a11d49e09b78ce') in 0.069401 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 224.197431 seconds.
+  path: Assets/UI/Common/common_bg_05.png
+  artifactKey: Guid(e672b1f3eb8887c438d04cd34889e9a0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/UI/Common/common_bg_05.png using Guid(e672b1f3eb8887c438d04cd34889e9a0) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: 'b3e00422e926d9737b1a52f628b15acf') in 0.844991 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 886.638167 seconds.
+  path: Assets/UI/Common/ui_btton_m_2.png
+  artifactKey: Guid(baa4133861b53784f960215d642f1290) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/UI/Common/ui_btton_m_2.png using Guid(baa4133861b53784f960215d642f1290) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+[PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '7a04bbf9ae7cf830825dd0953ab73de9') in 0.025297 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 4289.162673 seconds.
+  path: Assets/Resources/UI/UITeamItem.prefab
+  artifactKey: Guid(2af0e214adab7334d8b617ad00ce04ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/UI/UITeamItem.prefab using Guid(2af0e214adab7334d8b617ad00ce04ec) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '2e78b370027f08785be9b39dd3250426') in 0.097058 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 32
+========================================================================
+Received Import Request.
+  Time since last request: 25.079780 seconds.
+  path: Assets/Resources/UI/UITeamSystem.prefab
+  artifactKey: Guid(5c610a9b77781a245a8b7522035a186f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/UI/UITeamSystem.prefab using Guid(5c610a9b77781a245a8b7522035a186f) Importer(815301076,1909f56bfc062723c751e8b465ee728b) [PhysX] Initialized MultithreadedTaskDispatcher with 8 workers.
+ -> (artifact id: '0bb65196dbfb46f7c17269463f1c7de0') in 0.023620 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 36
