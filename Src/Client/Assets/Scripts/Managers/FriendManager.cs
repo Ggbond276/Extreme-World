@@ -94,4 +94,15 @@ public class FriendManager : Singleton<FriendManager>
     {
         MessageBox.Show(string.IsNullOrEmpty(reason) ? "删除好友成功" : reason, "删除好友", MessageBoxType.Error);
     }
+
+    /// <summary>
+    /// 判断是否是好友
+    /// </summary>
+    /// <param name="targetId"></param>
+    /// <returns></returns>
+    public NFriendInfo GetFriend(int targetId)
+    {
+        NFriendInfo info = this.allFriends.Find(f => f.friendInfo.Id == targetId);
+        return info;
+    }
 }
