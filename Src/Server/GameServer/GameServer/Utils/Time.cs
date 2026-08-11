@@ -33,29 +33,44 @@ using System;
 using System.Runtime.InteropServices;
 class Time
 {
+
+    // ==============================================================================
+    // 引入 Windows 底层 API：为了获取极高精度的时间（绕过 C# 默认的低精度 DateTime）
+    // ==============================================================================
     [DllImport("kernel32.dll")]
     static extern bool QueryPerformanceCounter([In, Out] ref long lpPerformanceCount);
     [DllImport("kernel32.dll")]
     static extern bool QueryPerformanceFrequency([In, Out] ref long lpFrequency);
 
+    /// <summary>
+    /// 静态构造函数：在服务器刚启动、这个类第一次被用到时执行一次
+    /// </summary>
     static Time()
     {
-        startupTicks = ticks;
+        startupTicks = ticks; // 记录下服务器启动那一瞬间的时间戳
     }
+
 
     private static long _frameCount = 0;
 
     /// <summary>
-    /// The total number of frames that have passed (Read Only).
+    /// 自服务器（游戏）启动以来，已经经过的总帧数（只读）。
     /// </summary>
     public static long frameCount { get { return _frameCount; } }
 
+    /// <summary>
+    /// 记录服务器启动时的滴答数
+    /// </summary>
     static long startupTicks = 0;
 
+    /// <summary>
+    /// 记录 CPU 计时器的频率
+    /// </summary>
     static long freq = 0;
 
     /// <summary>
-    /// Tick count
+    /// 获取当前的高精度时间戳（Tick数）。
+    /// 这是整个类的核心，底层的核心算法全在计算这个精确的 Tick。
     /// </summary>
     static public long ticks
     {
@@ -88,7 +103,8 @@ class Time
     private static float _deltaTime = 0;
 
     /// <summary>
-    /// The time in seconds it took to complete the last frame (Read Only).
+    /// 完成上一帧所花费的时间，以秒为单位（只读）。
+    /// 比如服务器卡顿了一下，这个值就会变大。常用于平滑移动计算。
     /// </summary>
     public static float deltaTime
     {
@@ -101,9 +117,10 @@ class Time
 
     private static float _time = 0;
     /// <summary>
-    ///  The time at the beginning of this frame (Read Only). This is the time in seconds
-    ///  since the start of the game.
-    /// </summary> 
+    /// 【我们做组队状态同步最核心要用的属性】
+    /// 此帧开始时的时间（只读）。这是自游戏（或服务器）启动以来的时间，以秒为单位。
+    /// 给队伍盖的“时间戳”用的就是它！
+    /// </summary>
     public static float time
     {
         get
@@ -114,7 +131,7 @@ class Time
 
 
     /// <summary>
-    /// The real time in seconds since the started (Read Only).
+    /// 自服务器启动以来的真实物理时间，以秒为单位（只读）。
     /// </summary>
     public static float realtimeSinceStartup
     {
@@ -124,7 +141,10 @@ class Time
             return (_ticks - startupTicks) / 10000000f;
         }
     }
-
+    /// <summary>
+    /// 核心驱动方法：必须在服务器的主循环（比如 Update 函数）中每帧调用一次！
+    /// 它的作用就是不断地往前推移时间，更新 time 和 deltaTime。
+    /// </summary>
     public static void Tick()
     {
         long _ticks = ticks;

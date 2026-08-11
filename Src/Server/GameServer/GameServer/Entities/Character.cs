@@ -2,6 +2,7 @@
 using GameServer.Core;
 using GameServer.Manager;
 using GameServer.Managers;
+using GameServer.Models;
 using Network;
 using SkillBridge.Message;
 using System;
@@ -52,12 +53,38 @@ namespace GameServer.Entities
 {
     class Character : CharacterBase, IPostResponser
     {
-       // 数据库中拉取的数据是存放有背包相关的数据的
+        /// <summary>
+        /// 数据库数据
+        /// </summary>
         public TCharacter Data;
+        /// <summary>
+        /// 物品管理器
+        /// </summary>
         public ItemManager ItemManager;
+        /// <summary>
+        /// 状态管理器
+        /// </summary>
         public StatusManager statusManager;
+        /// <summary>
+        /// 任务管理器
+        /// </summary>
         public QuestManager questManager;
+        /// <summary>
+        /// 好友管理器
+        /// </summary>
         public FriendManager friendManager;
+        /// <summary>
+        /// 队伍
+        /// </summary>
+        public Team team;
+        /// <summary>
+        /// 队伍信息的最后同步时间
+        /// </summary>
+        public float teamSyncTime = 0f;
+
+        /// <summary>
+        /// 金币属性
+        /// </summary>
         public long Gold
         {
             get { return this.Data.Gold; }
@@ -69,7 +96,9 @@ namespace GameServer.Entities
                 this.Data.Gold = value;
             }
         }
-
+        /// <summary>
+        /// 经验属性
+        /// </summary>
         public long Exp
         {
             get { return this.Data.EXP; }
@@ -81,14 +110,42 @@ namespace GameServer.Entities
                 this.Data.EXP = value;
             }
         }
-
+        /// <summary>
+        /// 后处理器
+        /// </summary>
+        /// <param name="response"></param>
         public void PostResponse(NetMessageResponse response)
         {
-            // 装货 具体的装货逻辑 自己内部实现
+            // 状态系统后处理
             statusManager.PostResponse(response);
+            // 好友系统后处理
             friendManager.PostResponse(response);
+            // 组队系统后处理
+            if(team != null)
+            {
+                if(this.teamSyncTime < this.team.timestamp)
+                {
+                    response.teamInfo = new TeamInfoResponse();
+                    response.teamInfo.Team = this.team.ToNTeamInfo();
+                    this.teamSyncTime = this.team.timestamp;
+                } else
+                {
+                    if(this.teamSyncTime > 0)
+                    {
+                        response.teamInfo = new TeamInfoResponse();
+                        response.teamInfo = null;
+                        this.teamSyncTime = 0f;
+                    }
+                }
+            }
         }
-        //构造方法
+
+
+        /// <summary>
+        /// 构造方法
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="cha"></param>
         public Character(CharacterType type,TCharacter cha): 
             base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
         {
