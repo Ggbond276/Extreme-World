@@ -247,6 +247,10 @@ namespace GameServer.Services
             CharacterManager.Instance.RemoveCharacter(character.entityId);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             character.friendManager.NotifyOnlineStatus(false);
+            if (character.team != null)
+            {
+                TeamManager.Instance.LeaveTeam(character.team.Id, character.Data.ID, out string errorMsg);
+            }
             SessionManager.Instance.RemoveSession(character.Id);
         }
     }
