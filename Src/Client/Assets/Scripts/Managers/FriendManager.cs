@@ -102,7 +102,7 @@ public class FriendManager : Singleton<FriendManager>
     /// <returns></returns>
     public NFriendInfo GetFriend(int targetId)
     {
-        NFriendInfo info = this.allFriends.Find(f => f.friendInfo.Id == targetId);
+        NFriendInfo info = this.allFriends.Find(f => f.Id == targetId);
         return info;
     }
 }

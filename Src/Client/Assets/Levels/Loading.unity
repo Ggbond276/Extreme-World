@@ -715,7 +715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   global: 1
-  ClassImages:
+  ClassSprites:
   - {fileID: 21300000, guid: c98e37ab3fe041142aa5db6df7a4af30, type: 3}
   - {fileID: 21300000, guid: e7d2cb871334ba843b9dbb3396350d92, type: 3}
   - {fileID: 21300000, guid: 23a45e634a174e34c89952982e2ca734, type: 3}
