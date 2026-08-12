@@ -148,26 +148,85 @@ namespace GameServer.Services
         private void OnTeamLeaveRequest(NetConnection<NetSession> sender, TeamLeaveRequest request)
         {
 
-            Log.InfoFormat("");
-            // 1.让Manager将请求对象清理出队伍
-            Character requester = sender.Session.Character;
-            if (requester == null || requester.team == null) return;
+            // 安全获取会话角色信息（防止空指针崩溃）
+            Character requester = sender.Session != null ? sender.Session.Character : null;
+
+            int reqId = requester != null ? requester.Id : -1;
+            string reqName = requester != null ? requester.Data.Name : "未知角色";
+
+            // 1. 打印详尽的接收日志，方便直接对比客户端发过来的参数是否正确
+            Log.InfoFormat("OnTeamLeaveRequest: 收到离队请求 -> 协议包携带 TeamId:{0}, CharacterId:{1} | 当前会话角色 ID:{2}, Name:{3}",
+                request.TeamId, request.characterId, reqId, reqName);
+
+            // 2. 基础拦截判定
+            if (requester == null)
+            {
+                Log.WarningFormat("OnTeamLeaveRequest 拦截: 该 Connection 的 Session 中找不到对应的 Character 对象！");
+                return;
+            }
+
+            if (requester.team == null)
+            {
+                Log.WarningFormat("OnTeamLeaveRequest 拦截: 玩家 [ID:{0}, Name:{1}] 尝试离队，但他当前根本不属于任何队伍！", reqId, reqName);
+                return;
+            }
 
             int teamId = requester.team.Id;
             int requesterId = requester.Id;
 
+
+
+            // =========================================================================
+            // 🌟 【新增位置 1：解散前先备份名单】 🌟
+            // 必须在调用 LeaveTeam 之前把名单存下来！不然队长一退，队伍解散，后面的 B、C 就找不到了！
+            // =========================================================================
+            List<Character> affectedMembers = new List<Character>();
+            affectedMembers.AddRange(requester.team.Members);
+
+
+
+            Log.InfoFormat("OnTeamLeaveRequest: 校验通过 -> 准备执行离队操作, 目标队伍ID:{0}, 离队队员ID:{1}", teamId, requesterId);
+
             sender.Session.Response.teamLeave = new TeamLeaveResponse();
 
+            // 3. 交给 Manager 处理具体的队伍剔除逻辑
             if (TeamManager.Instance.LeaveTeam(teamId, requesterId, out string errorMsg))
             {
                 sender.Session.Response.teamLeave.Result = Result.Success;
-            } else
+                Log.InfoFormat("OnTeamLeaveRequest: 离队成功, 已从队伍 {0} 中移除队员 {1}", teamId, requesterId);
+
+
+                // =========================================================================
+                // 🌟 【新增位置 2：主动通知其他受影响的队友】 🌟
+                // =========================================================================
+                foreach (var member in affectedMembers)
+                {
+                    // 自己 (A) 的响应会在方法最后面单独发送，这里直接跳过自己
+                    if (member.Id == requesterId) continue;
+
+                    // 找到队友 (比如 B) 的网络连接线
+                    NetConnection<NetSession> memberConnection = SessionManager.Instance.GetSession(member.Id);
+                    if (memberConnection != null && memberConnection.Session != null)
+                    {
+                        // 完美利用你写好的后处理管线！强行把 B 的脏数据组装成 TeamInfoResponse
+                        member.PostResponse(memberConnection.Session.Response);
+
+                        // 顺着网线直接糊到 B 的脸上！B 的 UI 瞬间同步！
+                        memberConnection.SendResponse();
+                    }
+                }
+
+
+
+            }
+            else
             {
                 sender.Session.Response.teamLeave.Result = Result.Failed;
                 sender.Session.Response.teamLeave.Errormsg = errorMsg;
+                Log.WarningFormat("OnTeamLeaveRequest: 离队失败, 原因: {0}", errorMsg);
             }
-            
-            // 2.通知请求者
+
+            // 4. 将响应包发送回客户端
             sender.SendResponse();
         }
 

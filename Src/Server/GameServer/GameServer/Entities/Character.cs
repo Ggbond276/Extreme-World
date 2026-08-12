@@ -128,14 +128,15 @@ namespace GameServer.Entities
                     response.teamInfo = new TeamInfoResponse();
                     response.teamInfo.Team = this.team.ToNTeamInfo();
                     this.teamSyncTime = this.team.timestamp;
-                } else
+                } 
+               
+            } else
+            {
+                if (this.teamSyncTime > 0)
                 {
-                    if(this.teamSyncTime > 0)
-                    {
-                        response.teamInfo = new TeamInfoResponse();
-                        response.teamInfo = null;
-                        this.teamSyncTime = 0f;
-                    }
+                    response.teamInfo = new TeamInfoResponse();
+                    response.teamInfo.Team = null;
+                    this.teamSyncTime = 0f;
                 }
             }
         }

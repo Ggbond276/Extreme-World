@@ -20,6 +20,8 @@ public class LoadingManager : MonoBehaviour
     public Slider progressBar;
     public Text progressText;
     public Text progressNumber;
+
+
     IEnumerator Start()
     {
         #region  1.初始化日志 并打印相关日志
