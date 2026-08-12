@@ -31,8 +31,6 @@ namespace Assets.Scripts.UI.UITeam
         private void Start()
         {
             TeamManager.Instance.OnTeamChanged += OnTeamChanged;
-            TeamManager.Instance.OnReceiveTeamInvite += OnReceiveTeamInvite;
-            TeamManager.Instance.OnShowFloatMessage += OnShowFloatMessage;
             this.listMain.OnItemSelected += OnItemSelected;
             RefreshUI();
         }
@@ -42,11 +40,8 @@ namespace Assets.Scripts.UI.UITeam
         private void OnDestroy()
         {
             if (TeamManager.Instance != null)
-            {
                 TeamManager.Instance.OnTeamChanged -= OnTeamChanged;
-                TeamManager.Instance.OnReceiveTeamInvite -= OnReceiveTeamInvite;
-                TeamManager.Instance.OnShowFloatMessage -= OnShowFloatMessage;
-            }
+
                 
             if (this.listMain.OnItemSelected != null)
                 this.listMain.OnItemSelected -= OnItemSelected;
