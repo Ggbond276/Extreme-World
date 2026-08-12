@@ -1,3 +1,4 @@
+using Assets.Scripts.Managers;
 using Models;
 using System.Collections;
 using System.Collections.Generic;
@@ -139,6 +140,22 @@ public class UIFriends : UIWindow
             int targetId = selectedItem.Info.Id;
             FriendService.Instance.SendRemoveRequest(requesterId, targetId);
         }
+    }
+    /// <summary>
+    /// 店家Button_Team（和好友组队调用该功能）
+    /// </summary>
+    public void OnClickInviteTeam()
+    {
+
+        if(this.selectedItem != null)
+        {
+            int targetId = selectedItem.Info.Id;
+            TeamManager.Instance.SendInvite(targetId);
+        } else
+        {
+            // 这里使用messageBox告知需要选择队友组队
+        }
+            
     }
 
 }

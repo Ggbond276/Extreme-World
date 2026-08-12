@@ -26,7 +26,7 @@ namespace Assets.Scripts.Managers
         /// <summary> 
         /// 广播事件：收到他人的组队邀请时触发（UI监听此事件弹出确认框） 
         /// </summary>
-        public UnityAction<TeamInviteRequest> OnReviceTeamInvite;
+        public UnityAction<TeamInviteRequest> OnReceiveTeamInvite;
         /// <summary> 
         /// 广播事件：需要向屏幕中央抛出提示飘字时触发 
         /// </summary>
@@ -54,8 +54,8 @@ namespace Assets.Scripts.Managers
         {
 
             Debug.LogFormat("TeamManager.ReceiveTeamInvite: 收到邀请, 准备通知UI弹窗, 发起人:{0}", request.FromName);
-            if (this.OnReviceTeamInvite != null)
-                this.OnReviceTeamInvite(request);
+            if (this.OnReceiveTeamInvite != null)
+                this.OnReceiveTeamInvite(request);
         }
 
         /// <summary>

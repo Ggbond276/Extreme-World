@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5264884159007815933}
   - component: {fileID: 807552012754463128}
   - component: {fileID: 2683298493235729289}
+  - component: {fileID: 5888308698309696585}
   m_Layer: 5
   m_Name: UITeamSystem
   m_TagString: Untagged
@@ -102,6 +103,22 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5888308698309696585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234263537774695508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d42a18a58560c04286c41f28ee45ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text_title: {fileID: 4161223500458733525}
+  prefab: {fileID: 268142257658245190, guid: 2af0e214adab7334d8b617ad00ce04ec, type: 3}
+  listMain: {fileID: 7944728052033325277}
+  selectedItem: {fileID: 0}
 --- !u!1 &3310896718204295959
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,6 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2556388013609502858}
   - component: {fileID: 5122071547574535823}
+  - component: {fileID: 7944728052033325277}
   m_Layer: 5
   m_Name: TeamListContent
   m_TagString: Untagged
@@ -243,6 +261,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &7944728052033325277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3839951051196966733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa8d5cd3b79ebb439ba63d50b421ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  selectedItem: {fileID: 0}
 --- !u!1 &4629455061536346660
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,7 +395,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4872119150428991740}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5888308698309696585}
+        m_TargetAssemblyTypeName: Assets.Scripts.UI.UITeam.UITeamSystem, Assembly-CSharp
+        m_MethodName: OnClickLeaveTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4661412923409603540
 GameObject:
   m_ObjectHideFlags: 0

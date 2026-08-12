@@ -1,4 +1,5 @@
 using Assets.Scripts.UI;
+using Assets.Scripts.UI.UITeam;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,6 +41,7 @@ public class UIManager : Singleton<UIManager>
         this.UIResources.Add(typeof(UIQuestDialog), new UIElement() { Resources = "UI/UIQuestDialog", Cache = false });
         // 【注意】你的好友面板必须在这里注册！
         this.UIResources.Add(typeof(UIFriends), new UIElement() { Resources = "UI/UIFriends", Cache = false });
+        this.UIResources.Add(typeof(UITeamSystem), new UIElement() { Resources = "UI/UITeamSystem", Cache = false });
     }
 
     /// <summary>

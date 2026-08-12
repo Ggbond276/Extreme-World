@@ -116,9 +116,12 @@
     <Compile Include="Assets\Scripts\UI\UIEquip\UICharEquip.cs" />
     <Compile Include="Assets\Scripts\Services\UserService.cs" />
     <Compile Include="Assets\Scripts\Models\User.cs" />
+    <Compile Include="Assets\Scripts\UI\UITeam\UITeamItem.cs" />
+    <Compile Include="Assets\Scripts\Managers\SpriteManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\GameObjectManager.cs" />
     <Compile Include="Assets\Scripts\Services\ItemService.cs" />
     <Compile Include="Assets\Scripts\Managers\EntityManager.cs" />
+    <Compile Include="Assets\Scripts\UI\UITeam\UITeamSystem.cs" />
     <Compile Include="Assets\Scripts\Managers\TestManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIEquip\UIEquipItem.cs" />
     <Compile Include="Assets\Scripts\Utilities\MonoSingleton.cs" />

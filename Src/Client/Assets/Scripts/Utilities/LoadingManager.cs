@@ -54,6 +54,7 @@ public class LoadingManager : MonoBehaviour
         UserService.Instance.Init();
         ShopManager.Instance.Init();
         FriendService.Instance.Init();
+        TeamService.Instance.Init();
 
         #region 5.进度条加载
         //Fake Loading Simulate
