@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 08/01/2026 19:44:22
+-- Date Created: 08/17/2026 16:51:04
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -194,6 +194,48 @@ ALTER TABLE `TCharacterFriendSet` ADD PRIMARY KEY (`Id`);
 
 
 
+CREATE TABLE `TGuildSet`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`Name` longtext NOT NULL, 
+	`Level` int NOT NULL, 
+	`LeaderID` int NOT NULL, 
+	`Notice` longtext NOT NULL, 
+	`ActivityLevel` int NOT NULL, 
+	`ReqLevel` int NOT NULL, 
+	`MemberCount` int NOT NULL, 
+	`CreateTime` datetime NOT NULL);
+
+ALTER TABLE `TGuildSet` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
+CREATE TABLE `TGuildMemberSet`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`CharacterID` int NOT NULL, 
+	`Position` int NOT NULL, 
+	`JoinTime` longtext NOT NULL, 
+	`TGuildId` int NOT NULL);
+
+ALTER TABLE `TGuildMemberSet` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
+CREATE TABLE `TGuildApplySet`(
+	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
+	`CharacterID` int NOT NULL, 
+	`ApplyTime` datetime NOT NULL, 
+	`TGuildId` int NOT NULL);
+
+ALTER TABLE `TGuildApplySet` ADD PRIMARY KEY (`Id`);
+
+
+
+
+
 
 
 -- --------------------------------------------------
@@ -306,6 +348,42 @@ ADD CONSTRAINT `FK_TCharacterTCharacterFriend`
 CREATE INDEX `IX_FK_TCharacterTCharacterFriend`
     ON `TCharacterFriendSet`
     (`TCharacterID`);
+
+
+
+-- Creating foreign key on `TGuildId` in table 'TGuildApplySet'
+
+ALTER TABLE `TGuildApplySet`
+ADD CONSTRAINT `FK_TGuildTGuildApply`
+    FOREIGN KEY (`TGuildId`)
+    REFERENCES `TGuildSet`
+        (`Id`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TGuildTGuildApply'
+
+CREATE INDEX `IX_FK_TGuildTGuildApply`
+    ON `TGuildApplySet`
+    (`TGuildId`);
+
+
+
+-- Creating foreign key on `TGuildId` in table 'TGuildMemberSet'
+
+ALTER TABLE `TGuildMemberSet`
+ADD CONSTRAINT `FK_TGuildTGuildMember`
+    FOREIGN KEY (`TGuildId`)
+    REFERENCES `TGuildSet`
+        (`Id`)
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TGuildTGuildMember'
+
+CREATE INDEX `IX_FK_TGuildTGuildMember`
+    ON `TGuildMemberSet`
+    (`TGuildId`);
 
 
 

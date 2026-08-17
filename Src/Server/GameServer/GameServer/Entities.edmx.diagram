@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f3dd13422c314bf8a758e92bb74d3bcf" Name="Diagram1" ZoomLevel="75" >
+      <Diagram DiagramId="f3dd13422c314bf8a758e92bb74d3bcf" Name="Diagram1" ZoomLevel="82" >
         <EntityTypeShape EntityType="ExtremeWorldModel.TUser" Width="1.5" PointX="2.25" PointY="1.5" />
         <EntityTypeShape EntityType="ExtremeWorldModel.TPlayer" Width="1.5" PointX="5.125" PointY="1.875" />
         <AssociationConnector Association="ExtremeWorldModel.UserPlayer" />
@@ -18,6 +18,11 @@
         <AssociationConnector Association="ExtremeWorldModel.TCharacterTCharacterQuest" />
         <EntityTypeShape EntityType="ExtremeWorldModel.TCharacterFriend" Width="1.875" PointX="10.75" PointY="7.25" />
         <AssociationConnector Association="ExtremeWorldModel.TCharacterTCharacterFriend" />
+        <EntityTypeShape EntityType="ExtremeWorldModel.TGuild" Width="1.5" PointX="2.125" PointY="10.625" />
+        <EntityTypeShape EntityType="ExtremeWorldModel.TGuildMember" Width="1.5" PointX="5.125" PointY="11.875" />
+        <EntityTypeShape EntityType="ExtremeWorldModel.TGuildApply" Width="1.5" PointX="1.875" PointY="15.125" />
+        <AssociationConnector Association="ExtremeWorldModel.TGuildTGuildApply" />
+        <AssociationConnector Association="ExtremeWorldModel.TGuildTGuildMember" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
