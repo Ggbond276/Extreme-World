@@ -29,6 +29,17 @@ namespace Network
             if (message.teamInviteReq != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInviteReq); }
             if (message.teamInfo != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInfo); }
             if (message.teamLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamLeave); }
+            // 公会系统响应分发
+            if (message.guildCreate != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildCreate); }
+            if (message.guildDisband != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildDisband); }
+            if (message.guildSettingModify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildSettingModify); }
+            if (message.guildJoinApply != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildJoinApply); }
+            if (message.guildApplyProcess != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyProcess); }
+            if (message.guildLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildLeave); }
+            if (message.guildMemberList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberList); }
+            if (message.guildApplyList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyList); }
+            if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
+            if (message.guildAdmin != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildAdmin); }
         }
 
         public void Dispatch(T sender, SkillBridge.Message.NetMessageRequest message)
@@ -54,6 +65,18 @@ namespace Network
             if (message.teamInviteReq != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInviteReq); }
             if (message.teamInfo != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInfo); }
             if (message.teamLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamLeave); }
+            // 公会系统请求分发
+            if (message.guildCreate != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildCreate); }
+            if (message.guildDisband != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildDisband); }
+            if (message.guildSettingModify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildSettingModify); }
+            if (message.guildJoinApply != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildJoinApply); }
+            if (message.guildApplyProcess != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyProcess); }
+            if (message.guildLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildLeave); }
+            if (message.guildChat != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChat); } // 注意：Chat 只有 Request
+            if (message.guildMemberList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberList); }
+            if (message.guildApplyList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyList); }
+            if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
+            if (message.guildAdmin != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildAdmin); }
         }
     }
 }

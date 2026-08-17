@@ -13,6 +13,9 @@
     <EntitySet Name="CharacterBag" EntityType="ExtremeWorldModel.Store.CharacterBag" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="CharacterQuests" EntityType="ExtremeWorldModel.Store.CharacterQuests" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="TCharacterFriendSet" EntityType="ExtremeWorldModel.Store.TCharacterFriendSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TGuildSet" EntityType="ExtremeWorldModel.Store.TGuildSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TGuildMemberSet" EntityType="ExtremeWorldModel.Store.TGuildMemberSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="TGuildApplySet" EntityType="ExtremeWorldModel.Store.TGuildApplySet" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="UserPlayer" Association="ExtremeWorldModel.Store.UserPlayer">
       <End Role="User" EntitySet="Users" />
       <End Role="Player" EntitySet="Players" />
@@ -36,6 +39,14 @@
     <AssociationSet Name="TCharacterTCharacterFriend" Association="ExtremeWorldModel.Store.TCharacterTCharacterFriend">
       <End Role="TCharacter" EntitySet="Characters" />
       <End Role="TCharacterFriend" EntitySet="TCharacterFriendSet" />
+    </AssociationSet>
+    <AssociationSet Name="TGuildTGuildApply" Association="ExtremeWorldModel.Store.TGuildTGuildApply">
+      <End Role="TGuild" EntitySet="TGuildSet" />
+      <End Role="TGuildApply" EntitySet="TGuildApplySet" />
+    </AssociationSet>
+    <AssociationSet Name="TGuildTGuildMember" Association="ExtremeWorldModel.Store.TGuildTGuildMember">
+      <End Role="TGuild" EntitySet="TGuildSet" />
+      <End Role="TGuildMember" EntitySet="TGuildMemberSet" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Users">
@@ -113,6 +124,39 @@
     <Property Name="Level" Type="int" Nullable="false" />
     <Property Name="TCharacterID" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="TGuildSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="longtext" Nullable="false" />
+    <Property Name="Level" Type="int" Nullable="false" />
+    <Property Name="LeaderID" Type="int" Nullable="false" />
+    <Property Name="Notice" Type="longtext" Nullable="false" />
+    <Property Name="ActivityLevel" Type="int" Nullable="false" />
+    <Property Name="ReqLevel" Type="int" Nullable="false" />
+    <Property Name="MemberCount" Type="int" Nullable="false" />
+    <Property Name="CreateTime" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TGuildMemberSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CharacterID" Type="int" Nullable="false" />
+    <Property Name="Position" Type="int" Nullable="false" />
+    <Property Name="JoinTime" Type="longtext" Nullable="false" />
+    <Property Name="TGuildId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TGuildApplySet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CharacterID" Type="int" Nullable="false" />
+    <Property Name="ApplyTime" Type="datetime" Nullable="false" />
+    <Property Name="TGuildId" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="UserPlayer">
     <End Role="User" Type="ExtremeWorldModel.Store.Users" Multiplicity="*" />
     <End Role="Player" Type="ExtremeWorldModel.Store.Players" Multiplicity="1" />
@@ -182,6 +226,30 @@
       </Principal>
       <Dependent Role="TCharacterFriend">
         <PropertyRef Name="TCharacterID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TGuildTGuildApply">
+    <End Role="TGuild" Type="ExtremeWorldModel.Store.TGuildSet" Multiplicity="1" />
+    <End Role="TGuildApply" Type="ExtremeWorldModel.Store.TGuildApplySet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TGuild">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TGuildApply">
+        <PropertyRef Name="TGuildId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TGuildTGuildMember">
+    <End Role="TGuild" Type="ExtremeWorldModel.Store.TGuildSet" Multiplicity="1" />
+    <End Role="TGuildMember" Type="ExtremeWorldModel.Store.TGuildMemberSet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TGuild">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="TGuildMember">
+        <PropertyRef Name="TGuildId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -507,6 +575,42 @@
           <ScalarProperty Name="Class" ColumnName="Class" />
           <ScalarProperty Name="Level" ColumnName="Level" />
           <ScalarProperty Name="TCharacterID" ColumnName="TCharacterID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TGuildSet">
+      <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TGuild)">
+        <MappingFragment StoreEntitySet="TGuildSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Level" ColumnName="Level" />
+          <ScalarProperty Name="LeaderID" ColumnName="LeaderID" />
+          <ScalarProperty Name="Notice" ColumnName="Notice" />
+          <ScalarProperty Name="ActivityLevel" ColumnName="ActivityLevel" />
+          <ScalarProperty Name="ReqLevel" ColumnName="ReqLevel" />
+          <ScalarProperty Name="MemberCount" ColumnName="MemberCount" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TGuildMemberSet">
+      <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TGuildMember)">
+        <MappingFragment StoreEntitySet="TGuildMemberSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="CharacterID" ColumnName="CharacterID" />
+          <ScalarProperty Name="Position" ColumnName="Position" />
+          <ScalarProperty Name="JoinTime" ColumnName="JoinTime" />
+          <ScalarProperty Name="TGuildId" ColumnName="TGuildId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TGuildApplySet">
+      <EntityTypeMapping TypeName="IsTypeOf(ExtremeWorldModel.TGuildApply)">
+        <MappingFragment StoreEntitySet="TGuildApplySet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="CharacterID" ColumnName="CharacterID" />
+          <ScalarProperty Name="ApplyTime" ColumnName="ApplyTime" />
+          <ScalarProperty Name="TGuildId" ColumnName="TGuildId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

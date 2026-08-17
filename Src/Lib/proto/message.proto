@@ -224,6 +224,18 @@ message NetMessageRequest{
 	TeamInfoRequest teamInfo = 21;
 	TeamLeaveRequest teamLeave = 22;
 
+// ---------------- 公会系统 (Guild) ----------------
+    GuildCreateRequest guildCreate = 23;
+    GuildDisbandRequest guildDisband = 24;
+    GuildSettingModifyRequest guildSettingModify = 25;
+    GuildJoinApplyRequest guildJoinApply = 26;
+    GuildApplyProcessRequest guildApplyProcess = 27;
+    GuildLeaveRequest guildLeave = 28;
+    GuildChatRequest guildChat = 29;
+    GuildMemberListRequest guildMemberList = 30;
+    GuildApplyListRequest guildApplyList = 31;
+    GuildListRequest guildList = 32;
+    GuildAdminRequest guildAdmin = 33;
 
 }
 
@@ -256,7 +268,20 @@ message NetMessageResponse{
 	TeamInfoResponse teamInfo = 21;
 	TeamLeaveResponse teamLeave = 22;
 
+// ---------------- 公会系统 (Guild) ----------------
+    GuildCreateResponse guildCreate = 23;
+    GuildDisbandResponse guildDisband = 24;
+    GuildSettingModifyResponse guildSettingModify = 25;
+    GuildJoinApplyResponse guildJoinApply = 26;
+    GuildApplyProcessResponse guildApplyProcess = 27;
+    GuildLeaveResponse guildLeave = 28;
+    // 29 留空给 Chat
+    GuildMemberListResponse guildMemberList = 30;
+    GuildApplyListResponse guildApplyList = 31;
+    GuildListResponse guildList = 32;
+    GuildAdminResponse guildAdmin = 33;
 
+	
 	StatusNotify statusNotify = 100;
 }
 
@@ -554,8 +579,8 @@ message TeamInfoResponse
 
 message TeamLeaveRequest
 {
-	int32 team_id = 1;
-	int32 characterId = 2;
+	int32 team_id = 1; // 要离开的队伍的Id
+	int32 characterId = 2; // 要离开的队伍的队员的Id
 }
 
 message TeamLeaveResponse
@@ -563,4 +588,184 @@ message TeamLeaveResponse
 	Result result = 1;
 	string errormsg = 2;
 	int32 characterId = 3;
+}
+
+
+
+////////////////////////////////////////////////////////////////
+//
+//  GuildSystem
+//
+////////////////////////////////////////////////////////////////
+
+enum GuildPosition {
+    GUILD_POSITION_NONE = 0;        // 占位/未定义
+    GUILD_POSITION_LEADER = 1;      // 会长
+    GUILD_POSITION_VICE_LEADER = 2; // 副会长
+    GUILD_POSITION_MEMBER = 3;      // 普通成员
+}
+
+
+// 单个入会申请信息
+message NGuildApply {
+    // 交互把柄：会长点击“同意/拒绝”时，需要告诉服务器处理的是哪个倒霉蛋
+    int32 character_id = 1;     
+    
+    // UI 渲染必传字段
+    string name = 2;            
+    int32 level = 3;            
+    int32 class_type = 4;       
+    int32 is_online = 5;        // 在线状态
+}
+
+// 单个公会成员信息
+message NGuildMember {
+    // 交互把柄：对成员进行升降级、踢出操作时需要的唯一凭证
+    int32 character_id = 1;     
+    
+    // UI 渲染必传字段 (打破数据库范式，直接把 TCharacter 的数据冗余过来)
+    string name = 2;            // 玩家名称 (如：大傻子)
+    int32 level = 3;            // 等级 (如：75)
+    int32 class_type = 4;       // 职业 (建议用INT映射枚举，如 1=战士)
+    
+    // 状态数据
+    GuildPosition position = 5; // 职位 (用我们之前定义好的枚举：会长/副会长/成员)
+    int32 is_online = 6;        // 在线状态 (1 = 在线，0 = 离线)
+}
+
+
+// 公会基础信息 (用于大厅列表显示，以及公会主界面的左侧面板)
+message NGuildInfo {
+    // 交互把柄：申请加入时，客户端需要传这个 ID 给服务器
+    int32 id = 1;               
+    
+    // UI 渲染必传字段
+    string name = 2;            // 公会名称 (如：苍之光)
+    string leader_name = 3;     // ⚠️注意：DB里存的是LeaderID，这里我们直接传名字 (如：炎龙骑士)
+    int32 level = 4;            // 公会等级 (如：25)
+    int32 member_count = 5;     // 当前成员数量 (如：88)
+    int32 activity_level = 6;   // 活跃度 (建议前端用数字做枚举映射，如 1=高, 2=中)
+    int32 req_level = 7;        // 加入等级条件 (如：30)
+    string notice = 8;          // 公会宗旨
+}
+
+// 创建公会
+message GuildCreateRequest {
+    // 思考：创建一个公会，玩家必须填什么？名字和宗旨。
+    string guild_name = 1;
+    string notice = 2;
+}
+message GuildCreateResponse {
+    int32 result = 1;       // 以后统一定义 Result 枚举，这里先用 int32 占位
+    string errormsg = 2;
+    NGuildInfo guild = 3;   // 成功后，返回新公会的数据给前端渲染主界面
+}
+
+// 解散公会 (完美，零参数！服务器靠Session认人)
+message GuildDisbandRequest {}
+message GuildDisbandResponse {
+    int32 result = 1;
+    string errormsg = 2;
+}
+
+
+message GuildSettingModifyRequest {
+    // 思考：玩家改了什么就传什么
+    string new_notice = 1;      // 如果不改宗旨，传空字符串
+    int32 new_req_level = 2;    // 如果不改等级，传 -1
+}
+message GuildSettingModifyResponse {
+    int32 result = 1;
+    string errormsg = 2;
+    // 把最终落库的最新数据返回，方便前端刷新文本
+    string updated_notice = 3;
+    int32 updated_req_level = 4;
+}
+
+
+
+enum GuildApplyProcessCommand {
+    APPLY_NONE = 0;
+    ACCEPT = 1; // 同意
+    REJECT = 2; // 拒绝
+}
+message GuildApplyProcessRequest {
+    // 思考：会长点按钮时，服务器需要知道“同意/拒绝”了“哪个人”
+    GuildApplyProcessCommand command = 1;
+    int32 applicant_character_id = 2; // 交互把柄
+}
+message GuildApplyProcessResponse {
+    int32 result = 1;
+    string errormsg = 2;
+    int32 applicant_character_id = 3; // 返回给前端，前端直接把这行从 UI 列表删掉
+}
+
+
+// 申请加入某个公会
+message GuildJoinApplyRequest {
+    // 思考：申请入会，你得告诉服务器你想进哪个公会
+    int32 target_guild_id = 1; 
+}
+message GuildJoinApplyResponse {
+    int32 result = 1;
+    string errormsg = 2;
+}
+
+// 离开公会 (完美，零参数)
+message GuildLeaveRequest {}
+message GuildLeaveResponse {
+    int32 result = 1;
+    string errormsg = 2;
+}
+
+// 聊天
+message GuildChatRequest {
+    string chat_content = 1; // 发送的文本内容
+}
+// 聊天通常没有直接的 Response，而是通过服务器组播 Notify 推送给所有人，这里暂且留空
+
+
+
+enum GuildAdminCommand {
+    COMMAND_NONE = 0;
+    COMMAND_TRANSFER_LEADER = 1; // 转让会长
+    COMMAND_PROMOTE_VICE = 2;    // 任命副会长
+    COMMAND_DEMOTE_NORMAL = 3;   // 降职为普通成员 (也就是撤销副会长)
+    COMMAND_KICK_MEMBER = 4;     // 逐出公会
+}
+
+message GuildAdminRequest {
+    // 思考：会长点操作按钮时，服务器需要知道“做了什么操作”以及“针对哪个倒霉蛋”
+    GuildAdminCommand command = 1;
+    int32 target_character_id = 2; // 交互把柄
+}
+
+message GuildAdminResponse {
+    int32 result = 1;
+    string errormsg = 2;
+}
+
+
+// 拉取公会成员列表 (打开公会主界面时触发)
+message GuildMemberListRequest {}
+message GuildMemberListResponse {
+    int32 result = 1;
+    string errormsg = 2;
+    repeated NGuildMember members = 3; 
+}
+
+// 拉取申请列表 (会长打开审批面板时触发)
+message GuildApplyListRequest {}
+message GuildApplyListResponse {
+    int32 result = 1;
+    string errormsg = 2;
+    repeated NGuildApply applies = 3;
+}
+
+// 拉取全服公会大厅 (没公会的人打开面板时触发)
+message GuildListRequest {}
+message GuildListResponse {
+    int32 result = 1;
+    string errormsg = 2;
+    repeated NGuildInfo guilds = 3;
 }
