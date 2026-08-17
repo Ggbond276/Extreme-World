@@ -123,6 +123,7 @@
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\EquipManager.cs" />
     <Compile Include="Managers\FriendManager.cs" />
+    <Compile Include="Managers\GuildManager.cs" />
     <Compile Include="Managers\ItemManager.cs" />
     <Compile Include="Managers\MapManager.cs" />
     <Compile Include="Managers\MonsterManager.cs" />
@@ -134,6 +135,9 @@
     <Compile Include="Managers\StatusManager.cs" />
     <Compile Include="Managers\TeamManager.cs" />
     <Compile Include="Models\Friend.cs" />
+    <Compile Include="Models\Guild.cs" />
+    <Compile Include="Models\GuildApply.cs" />
+    <Compile Include="Models\GuildMember.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Quest.cs" />
@@ -155,6 +159,7 @@
     </Compile>
     <Compile Include="Services\DBService.cs" />
     <Compile Include="Services\FriendService.cs" />
+    <Compile Include="Services\GuildService.cs" />
     <Compile Include="Services\ItemService.cs" />
     <Compile Include="Services\MapService.cs" />
     <Compile Include="Services\QuestService.cs" />

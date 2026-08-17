@@ -656,7 +656,7 @@ message GuildCreateRequest {
     string notice = 2;
 }
 message GuildCreateResponse {
-    int32 result = 1;       // 以后统一定义 Result 枚举，这里先用 int32 占位
+    Result result = 1;       // 以后统一定义 Result 枚举，这里先用 int32 占位
     string errormsg = 2;
     NGuildInfo guild = 3;   // 成功后，返回新公会的数据给前端渲染主界面
 }
@@ -664,7 +664,7 @@ message GuildCreateResponse {
 // 解散公会 (完美，零参数！服务器靠Session认人)
 message GuildDisbandRequest {}
 message GuildDisbandResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
 }
 
@@ -675,7 +675,7 @@ message GuildSettingModifyRequest {
     int32 new_req_level = 2;    // 如果不改等级，传 -1
 }
 message GuildSettingModifyResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
     // 把最终落库的最新数据返回，方便前端刷新文本
     string updated_notice = 3;
@@ -695,7 +695,7 @@ message GuildApplyProcessRequest {
     int32 applicant_character_id = 2; // 交互把柄
 }
 message GuildApplyProcessResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
     int32 applicant_character_id = 3; // 返回给前端，前端直接把这行从 UI 列表删掉
 }
@@ -707,14 +707,14 @@ message GuildJoinApplyRequest {
     int32 target_guild_id = 1; 
 }
 message GuildJoinApplyResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
 }
 
 // 离开公会 (完美，零参数)
 message GuildLeaveRequest {}
 message GuildLeaveResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
 }
 
@@ -741,7 +741,7 @@ message GuildAdminRequest {
 }
 
 message GuildAdminResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
 }
 
@@ -749,7 +749,7 @@ message GuildAdminResponse {
 // 拉取公会成员列表 (打开公会主界面时触发)
 message GuildMemberListRequest {}
 message GuildMemberListResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
     repeated NGuildMember members = 3; 
 }
@@ -757,7 +757,7 @@ message GuildMemberListResponse {
 // 拉取申请列表 (会长打开审批面板时触发)
 message GuildApplyListRequest {}
 message GuildApplyListResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
     repeated NGuildApply applies = 3;
 }
@@ -765,7 +765,7 @@ message GuildApplyListResponse {
 // 拉取全服公会大厅 (没公会的人打开面板时触发)
 message GuildListRequest {}
 message GuildListResponse {
-    int32 result = 1;
+    Result result = 1;
     string errormsg = 2;
     repeated NGuildInfo guilds = 3;
 }

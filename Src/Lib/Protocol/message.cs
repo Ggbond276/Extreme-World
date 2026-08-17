@@ -1242,7 +1242,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1270,7 +1270,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1302,7 +1302,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1340,7 +1340,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1371,7 +1371,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1396,7 +1396,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1440,7 +1440,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1465,7 +1465,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1493,7 +1493,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]
@@ -1521,7 +1521,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"result")]
-        public int Result { get; set; }
+        public Result Result { get; set; }
 
         [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
         [global::System.ComponentModel.DefaultValue("")]

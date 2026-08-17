@@ -1,5 +1,7 @@
 ﻿using Common;
+using GameServer.Entities;
 using GameServer.Managers;
+using GameServer.Models;
 using Network;
 using SkillBridge.Message;
 using System;
@@ -100,7 +102,28 @@ namespace GameServer.Services
         /// </summary>
         private void OnGuildMemberListRequest(NetConnection<NetSession> sender, GuildMemberListRequest request)
         {
-            throw new NotImplementedException();
+            sender.Session.Response.guildMemberList = new GuildMemberListResponse();
+
+            Character character = sender.Session.Character;
+            int characterId = character.Data.ID;
+
+            int guildId = GuildManager.Instance.GetGuildIdByCharacter(characterId);
+            Guild guild = GuildManager.Instance.GetGuild(guildId);
+
+            if (guild != null)
+            {
+                sender.Session.Response.guildMemberList.Members.AddRange(guild.GetNGuildMembers());
+                sender.Session.Response.guildMemberList.Result = Result.Success;
+            }
+            else
+            {
+                // 公会不存在了，优雅地告知前端
+                sender.Session.Response.guildMemberList.Result = Result.Failed;
+                sender.Session.Response.guildMemberList.Errormsg = "公会不存在或已解散";
+            }
+
+            sender.SendResponse();
+
         }
 
         /// <summary>
@@ -108,7 +131,37 @@ namespace GameServer.Services
         /// </summary>
         private void OnGuildApplyListRequest(NetConnection<NetSession> sender, GuildApplyListRequest request)
         {
-            throw new NotImplementedException();
+            sender.Session.Response.guildApplyList = new GuildApplyListResponse();
+
+            Character character = sender.Session.Character;
+            int characterId = character.Data.ID;
+
+            int guildId = GuildManager.Instance.GetGuildIdByCharacter(characterId);
+            Guild guild = GuildManager.Instance.GetGuild(guildId);
+
+            if (guild != null)
+            {
+                //  核心防御：权限校验！必须通过成员字典查到自己，且职位必须大于等于副会长 (假设业务逻辑里 1是会长，2是副会长)
+                if (guild.Members.TryGetValue(characterId, out GuildMember myMember) &&
+                    myMember.Data.Position <= (int)GuildPosition.GuildPositionViceLeader)
+                {
+                    sender.Session.Response.guildApplyList.Applies.AddRange(guild.GetNGuildApplies());
+                    sender.Session.Response.guildApplyList.Result = Result.Success;
+                }
+                else
+                {
+                    sender.Session.Response.guildApplyList.Result = Result.Failed;
+                    sender.Session.Response.guildApplyList.Errormsg = "权限不足：只有会长或副会长可查看申请列表";
+                }
+            }
+            else
+            {
+                // 公会不存在了，优雅地告知前端
+                sender.Session.Response.guildApplyList.Result = Result.Failed;
+                sender.Session.Response.guildApplyList.Errormsg = "公会不存在或已解散";
+            }
+
+            sender.SendResponse();
         }
 
         /// <summary>
@@ -116,7 +169,15 @@ namespace GameServer.Services
         /// </summary>
         private void OnGuildListRequest(NetConnection<NetSession> sender, GuildListRequest request)
         {
-            throw new NotImplementedException();
+            sender.Session.Response.guildList = new GuildListResponse();
+
+            List<NGuildInfo> nGuilds = GuildManager.Instance.GetGuildsInfo();
+
+            sender.Session.Response.guildList.Guilds.AddRange(nGuilds);
+            sender.Session.Response.guildList.Result = Result.Success;
+
+            sender.SendResponse();
+
         }
 
         /// <summary>

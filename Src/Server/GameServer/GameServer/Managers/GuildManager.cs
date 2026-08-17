@@ -1,6 +1,7 @@
 ﻿using Common;
 using GameServer.Models;
 using GameServer.Services;
+using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace GameServer.Managers
     {
 
         public Dictionary<int, Guild> Guilds = new Dictionary<int, Guild>();
+        public Dictionary<int, int> CharacterGuildIdMap = new Dictionary<int, int>();
 
         /// <summary>
         /// 初始化内存数据方法
@@ -22,6 +24,11 @@ namespace GameServer.Managers
             var allTGuilds = DBService.Instance.Entities.TGuildSet.ToList();
             var allTGuildMembers = DBService.Instance.Entities.TGuildMemberSet.ToList();
             var allTGuildApplies = DBService.Instance.Entities.TGuildApplySet.ToList();
+
+            foreach(var member in allTGuildMembers)
+            {
+                this.CharacterGuildIdMap[member.CharacterID] = member.TGuildId;
+            }
 
             var memberByGuild = allTGuildMembers.GroupBy(m => m.TGuildId).ToDictionary(g => g.Key, g => g.ToList());
             var applyByGuild = allTGuildApplies.GroupBy(m => m.TGuildId).ToDictionary(g => g.Key, g => g.ToList());
@@ -40,7 +47,48 @@ namespace GameServer.Managers
             }
         }
 
+        /// <summary>
+        /// 获取全服公会列表的网络数据
+        /// </summary>
+        /// <returns></returns>
+        public List<NGuildInfo> GetGuildsInfo()
+        {
+            List<NGuildInfo> result = new List<NGuildInfo>();
+            
+            foreach(Guild guild in this.Guilds.Values) 
+            {
+                result.Add(guild.ToNGuildInfo());
+            }
 
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guildId"></param>
+        /// <returns></returns>
+        public Guild GetGuild(int guildId)
+        {
+            if(this.Guilds.TryGetValue(guildId, out Guild guild))
+            {
+                return guild;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        public int GetGuildIdByCharacter(int characterId) {
+            if (this.CharacterGuildIdMap.TryGetValue(characterId, out int guildId))
+            {
+                return guildId;
+            }
+            return 0; // 没查到就是没公会
+        }
 
     }
 }

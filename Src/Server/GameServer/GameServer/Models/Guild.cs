@@ -73,6 +73,36 @@ namespace GameServer.Models
 
             return nGuildInfo;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<NGuildMember> GetNGuildMembers()
+        {
+            List<NGuildMember> nGuildMembers = new List<NGuildMember>();
+            foreach(GuildMember guildMember in this.Members.Values)
+            {
+                nGuildMembers.Add(guildMember.ToNGuildMember());
+            }
+
+            return nGuildMembers;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<NGuildApply> GetNGuildApplies()
+        {
+            List<NGuildApply> nGuildApplies = new List<NGuildApply>();
+            foreach (GuildApply guildApply in this.Applies.Values)
+            {
+                nGuildApplies.Add(guildApply.ToNGuildApply());
+            }
+
+            return nGuildApplies;
+        }
  
     }
 }

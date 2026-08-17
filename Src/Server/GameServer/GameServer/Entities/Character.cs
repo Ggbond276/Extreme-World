@@ -81,7 +81,10 @@ namespace GameServer.Entities
         /// 队伍信息的最后同步时间
         /// </summary>
         public float teamSyncTime = 0f;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public int GuildId { get; set; } = 0;
         /// <summary>
         /// 金币属性
         /// </summary>
@@ -153,6 +156,9 @@ namespace GameServer.Entities
 
             // 数据库数据(子类数据)
             this.Data = cha;
+            // Id
+            this.Id = cha.ID;
+
             // 道具管理器初始化
             this.ItemManager = new ItemManager(this);
             // 任务管理器初始化
@@ -161,10 +167,10 @@ namespace GameServer.Entities
             this.statusManager = new StatusManager(this);
             // 好友管理器初始化
             this.friendManager = new FriendManager(this);
+            //
+            this.GuildId = GuildManager.Instance.GetGuildIdByCharacter(Id);
 
-
-            // Id
-            this.Id = cha.ID;
+           
 
             // 网络协议数据
             this.Info = new NCharacterInfo();
