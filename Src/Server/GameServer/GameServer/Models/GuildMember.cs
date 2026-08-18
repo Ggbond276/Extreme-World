@@ -32,16 +32,28 @@ namespace GameServer.Models
         /// <returns></returns>
         public NGuildMember ToNGuildMember()
         {
-            // 空指针异常问题
             int characterId = this.Data.CharacterID;
-            Character character = CharacterManager.Instance.GetCharacter(characterId);
+
+            // 接入户籍大管家，彻底解决离线玩家的空指针异常
+            CharacterInfo info = CharacterInfoManager.Instance.GetCharacterInfo(characterId);
 
             NGuildMember nGuildMember = new NGuildMember();
-
             nGuildMember.CharacterId = characterId;
-            nGuildMember.Name = character.Data.Name;
-            nGuildMember.Level = character.Data.Level;
-            nGuildMember.ClassType = character.Data.Class;
+
+            // 增加一层防御性编程
+            if (info != null)
+            {
+                nGuildMember.Name = info.Name;
+                nGuildMember.Level = info.Level;
+                nGuildMember.ClassType = info.Class;
+            }
+            else
+            {
+                nGuildMember.Name = "未知玩家";
+                nGuildMember.Level = 0;
+                nGuildMember.ClassType = 0;
+            }
+
             nGuildMember.Position = (GuildPosition)this.Data.Position;
             nGuildMember.IsOnline = SessionManager.Instance.GetSession(characterId) != null ? 1 : 0;
 

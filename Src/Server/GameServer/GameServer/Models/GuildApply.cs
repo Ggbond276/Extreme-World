@@ -34,14 +34,29 @@ namespace GameServer.Models
         {
 
             int characterId = this.Data.CharacterID;
-            // 离线玩家的空指针问题
-            Character character = CharacterManager.Instance.GetCharacter(characterId);
+
+            // 完美排雷：不再向 CharacterManager 索要活体对象，而是向户籍大管家索要名片！
+            // 无论玩家是否在线，都能以 O(1) 的速度瞬间拿到完整数据
+            CharacterInfo info = CharacterInfoManager.Instance.GetCharacterInfo(characterId);
 
             NGuildApply nGuildApply = new NGuildApply();
             nGuildApply.CharacterId = characterId;
-            nGuildApply.Name = character.Data.Name;
-            nGuildApply.Level = character.Data.Level;
-            nGuildApply.ClassType = character.Data.Class;
+
+            // 增加一层防御性编程，防止数据库出现极其罕见的孤儿脏数据
+            if (info != null)
+            {
+                nGuildApply.Name = info.Name;
+                nGuildApply.Level = info.Level;
+                nGuildApply.ClassType = info.Class;
+            }
+            else
+            {
+                nGuildApply.Name = "未知玩家";
+                nGuildApply.Level = 0;
+                nGuildApply.ClassType = 0;
+            }
+
+            // 在线状态依然通过 Session 判断，这个逻辑是完全正确的
             nGuildApply.IsOnline = SessionManager.Instance.GetSession(characterId) != null ? 1 : 0;
 
             return nGuildApply;

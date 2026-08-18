@@ -64,7 +64,7 @@ namespace GameServer.Managers
         }
 
         /// <summary>
-        /// 
+        /// 用guildId获取公会实体
         /// </summary>
         /// <param name="guildId"></param>
         /// <returns></returns>
@@ -78,7 +78,7 @@ namespace GameServer.Managers
         }
 
         /// <summary>
-        /// 
+        /// 根据用户的ID查询所在的公会
         /// </summary>
         /// <param name="characterId"></param>
         /// <returns></returns>

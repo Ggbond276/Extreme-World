@@ -244,6 +244,9 @@ namespace GameServer.Services
         /// <param name="character">需要离开游戏的角色对象</param>
         public void CharacterLeave(Character character)
         {
+            // 1. 第一时间拍下离线快照，更新到户籍科！
+            CharacterInfoManager.Instance.SyncOfflineInfo(character);
+
             CharacterManager.Instance.RemoveCharacter(character.entityId);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
             character.friendManager.NotifyOnlineStatus(false);
