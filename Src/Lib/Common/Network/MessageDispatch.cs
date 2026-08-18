@@ -40,6 +40,12 @@ namespace Network
             if (message.guildApplyList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyList); }
             if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
             if (message.guildAdmin != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildAdmin); }
+
+            // 公会组播广播分发
+            if (message.guildMemberAddNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberAddNotify); }
+            if (message.guildMemberLeaveNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberLeaveNotify); }
+            if (message.guildInfoChangeNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildInfoChangeNotify); }
+            if (message.guildChatNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChatNotify); }
         }
 
         public void Dispatch(T sender, SkillBridge.Message.NetMessageRequest message)

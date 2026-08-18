@@ -281,7 +281,13 @@ message NetMessageResponse{
     GuildListResponse guildList = 32;
     GuildAdminResponse guildAdmin = 33;
 
-	
+	// 新增：公会组播大喇叭格子
+    GuildMemberAddNotify guildMemberAddNotify = 34;
+    GuildMemberLeaveNotify guildMemberLeaveNotify = 35;
+    GuildInfoChangeNotify guildInfoChangeNotify = 36;
+    GuildChatNotify guildChatNotify = 37;
+
+
 	StatusNotify statusNotify = 100;
 }
 
@@ -654,6 +660,7 @@ message GuildCreateRequest {
     // 思考：创建一个公会，玩家必须填什么？名字和宗旨。
     string guild_name = 1;
     string notice = 2;
+	int32 req_level = 3;
 }
 message GuildCreateResponse {
     Result result = 1;       // 以后统一定义 Result 枚举，这里先用 int32 占位
@@ -768,4 +775,29 @@ message GuildListResponse {
     Result result = 1;
     string errormsg = 2;
     repeated NGuildInfo guilds = 3;
+}
+
+
+// ---------------- 公会广播通知 (Notify) ----------------
+
+// 通知：有新成员加入了公会 (所有人都会收到，UI 列表新增一行)
+message GuildMemberAddNotify {
+    NGuildMember new_member = 1; // 直接把新人的完整名片推下去
+}
+
+// 通知：有成员离开了公会 (自己退会、或被踢出，所有人收到，UI 列表删掉这行)
+message GuildMemberLeaveNotify {
+    int32 character_id = 1; // 告诉前端把哪个倒霉蛋删掉
+}
+
+// 通知：公会基础信息发生了变化 (如：等级提升、宗旨修改)
+message GuildInfoChangeNotify {
+    NGuildInfo guild_info = 1; // 把最新的公会大盘数据推下去覆盖
+}
+
+// 通知：公会频道聊天
+message GuildChatNotify {
+    int32 sender_id = 1;
+    string sender_name = 2;
+    string chat_content = 3;
 }

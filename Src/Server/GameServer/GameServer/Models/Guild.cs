@@ -1,5 +1,7 @@
 ﻿using GameServer.Entities;
 using GameServer.Manager;
+using GameServer.Managers;
+using Network;
 using SkillBridge.Message;
 using System;
 using System.Collections.Generic;
@@ -75,7 +77,7 @@ namespace GameServer.Models
         }
 
         /// <summary>
-        /// 
+        /// 获取公会成员网络信息
         /// </summary>
         /// <returns></returns>
         public List<NGuildMember> GetNGuildMembers()
@@ -90,7 +92,7 @@ namespace GameServer.Models
         }
 
         /// <summary>
-        /// 
+        /// 获取公会申请网络信息
         /// </summary>
         /// <returns></returns>
         public List<NGuildApply> GetNGuildApplies()
@@ -103,6 +105,80 @@ namespace GameServer.Models
 
             return nGuildApplies;
         }
- 
+
+
+        /// <summary>
+        /// 获取当前公会所有【在线成员】的 Session 连接池
+        /// </summary>
+        public List<NetConnection<NetSession>> GetOnlineSessions()
+        {
+            List<NetConnection<NetSession>> connections = new List<NetConnection<NetSession>>();
+
+            foreach (var member in this.Members.Values)
+            {
+                int characterId = member.Data.CharacterID;
+                var session = SessionManager.Instance.GetSession(characterId);
+
+                if (session != null)
+                {
+                    connections.Add(session);
+                }
+            }
+            return connections;
+        }
+
+
+        /// <summary>
+        /// 获取当前公会所有【在线管理层】的 Session 连接池 (用于审批红点推送等)
+        /// </summary>
+        public List<NetConnection<NetSession>> GetOnlineAdminSessions()
+        {
+            List<NetConnection<NetSession>> connections = new List<NetConnection<NetSession>>();
+            foreach (var member in this.Members.Values)
+            {
+                // 职位权限判定：小于普通成员(3) 且 大于无(0)
+                if (member.Data.Position < (int)GuildPosition.GuildPositionMember
+                    && member.Data.Position > (int)GuildPosition.GuildPositionNone)
+                {
+                    int characterId = member.Data.CharacterID;
+                    var session = SessionManager.Instance.GetSession(characterId);
+
+                    if (session != null)
+                    {
+                        connections.Add(session);
+                    }
+                }
+            }
+            return connections;
+        }
+
+        /// <summary>
+        /// 获取当前公会的成员
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        public GuildMember GetGuildMember(int characterId)
+        {
+            if(this.Members.TryGetValue(characterId, out GuildMember guildmember))
+            {
+                return guildmember;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取当前公会的申请
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        public GuildApply GetGuildApply(int characterId)
+        {
+            if(this.Applies.TryGetValue(characterId, out GuildApply guildApply))
+            {
+                return guildApply;
+            }
+            return null;
+        }
+
     }
 }
