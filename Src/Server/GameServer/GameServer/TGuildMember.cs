@@ -17,7 +17,7 @@ namespace GameServer
         public int Id { get; set; }
         public int CharacterID { get; set; }
         public int Position { get; set; }
-        public string JoinTime { get; set; }
+        public System.DateTime JoinTime { get; set; }
         public int TGuildId { get; set; }
     
         public virtual TGuild Guild { get; set; }

@@ -68,8 +68,8 @@ namespace GameServer.Models
             nGuildInfo.Name = this.Data.Name;
             nGuildInfo.LeaderName = leaderName;
             nGuildInfo.Level = this.Data.Level;
-            nGuildInfo.MemberCount = this.Data.MemberCount;
-            nGuildInfo.ActivityLevel = this.Data.ActivityLevel;
+            nGuildInfo.MemberCount = this.Members.Count;
+            nGuildInfo.ActivityLevel = (GuildActivityLevel)this.GetActivityLevel();
             nGuildInfo.ReqLevel = this.Data.ReqLevel;
             nGuildInfo.Notice = this.Data.Notice;
 
@@ -180,5 +180,39 @@ namespace GameServer.Models
             return null;
         }
 
+        /// <summary>
+        /// 移除内存成员方法
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        public bool RemoveGuildMember(int characterId)
+        {
+            if(this.Members.ContainsKey(characterId))
+            {
+                this.Members.Remove(characterId);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 动态获取公会活跃度
+        /// </summary>
+        public int GetActivityLevel()
+        {
+            // TODO: 预留接口 - 动态计算公会活跃度
+            // 计划算法思路：遍历 this.Members，结合离线时间数据，统计最近 X 天内的登录人数。
+            // 比如：近3天登录人数 > 30 人返回 3 (火爆)；> 10 人返回 2 (正常)；否则返回 1 (低迷)。
+
+            // 当前暂未实现，默认写死返回低活跃度 (假设协议里 1 代表低活跃)
+            return 1;
+        }
+
+        public void AddMember(GuildMember guildMember)
+        {
+            if (this.Members.ContainsKey(guildMember.Data.CharacterID))
+                return;
+            this.Members[guildMember.Data.CharacterID] = guildMember;
+        }
     }
 }

@@ -639,6 +639,11 @@ message NGuildMember {
     int32 is_online = 6;        // 在线状态 (1 = 在线，0 = 离线)
 }
 
+enum GuildActivityLevel {
+    GUILD_ACTIVITY_LOW = 0;    // 低活跃度 (默认/初创状态)
+    GUILD_ACTIVITY_NORMAL = 1; // 正常活跃度
+    GUILD_ACTIVITY_HIGH = 2;   // 高活跃度 (火爆状态)
+}
 
 // 公会基础信息 (用于大厅列表显示，以及公会主界面的左侧面板)
 message NGuildInfo {
@@ -650,7 +655,7 @@ message NGuildInfo {
     string leader_name = 3;     // ⚠️注意：DB里存的是LeaderID，这里我们直接传名字 (如：炎龙骑士)
     int32 level = 4;            // 公会等级 (如：25)
     int32 member_count = 5;     // 当前成员数量 (如：88)
-    int32 activity_level = 6;   // 活跃度 (建议前端用数字做枚举映射，如 1=高, 2=中)
+    GuildActivityLevel activity_level = 6;   // 活跃度 (建议前端用数字做枚举映射，如 1=高, 2=中)
     int32 req_level = 7;        // 加入等级条件 (如：30)
     string notice = 8;          // 公会宗旨
 }

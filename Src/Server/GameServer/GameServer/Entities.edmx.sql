@@ -44,7 +44,7 @@
 -- -----------------------------------------------------------
 -- Entity Designer DDL Script for MySQL Server 4.1 and higher
 -- -----------------------------------------------------------
--- Date Created: 08/17/2026 16:51:04
+-- Date Created: 08/18/2026 23:50:33
 
 -- Generated from EDMX file: C:\Users\op\Documents\MMORPG项目学习\Extreme-World\Src\Server\GameServer\GameServer\Entities.edmx
 -- Target version: 3.0.0.0
@@ -71,6 +71,10 @@
 
 --    ALTER TABLE `TCharacterFriendSet` DROP CONSTRAINT `FK_TCharacterTCharacterFriend`;
 
+--    ALTER TABLE `TGuildApplySet` DROP CONSTRAINT `FK_TGuildTGuildApply`;
+
+--    ALTER TABLE `TGuildMemberSet` DROP CONSTRAINT `FK_TGuildTGuildMember`;
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -90,6 +94,12 @@ SET foreign_key_checks = 0;
     DROP TABLE IF EXISTS `CharacterQuests`;
 
     DROP TABLE IF EXISTS `TCharacterFriendSet`;
+
+    DROP TABLE IF EXISTS `TGuildSet`;
+
+    DROP TABLE IF EXISTS `TGuildMemberSet`;
+
+    DROP TABLE IF EXISTS `TGuildApplySet`;
 
 SET foreign_key_checks = 1;
 
@@ -200,9 +210,7 @@ CREATE TABLE `TGuildSet`(
 	`Level` int NOT NULL, 
 	`LeaderID` int NOT NULL, 
 	`Notice` longtext NOT NULL, 
-	`ActivityLevel` int NOT NULL, 
 	`ReqLevel` int NOT NULL, 
-	`MemberCount` int NOT NULL, 
 	`CreateTime` datetime NOT NULL);
 
 ALTER TABLE `TGuildSet` ADD PRIMARY KEY (`Id`);
@@ -215,7 +223,7 @@ CREATE TABLE `TGuildMemberSet`(
 	`Id` int NOT NULL AUTO_INCREMENT UNIQUE, 
 	`CharacterID` int NOT NULL, 
 	`Position` int NOT NULL, 
-	`JoinTime` longtext NOT NULL, 
+	`JoinTime` datetime NOT NULL, 
 	`TGuildId` int NOT NULL);
 
 ALTER TABLE `TGuildMemberSet` ADD PRIMARY KEY (`Id`);

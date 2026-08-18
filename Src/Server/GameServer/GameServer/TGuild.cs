@@ -26,9 +26,7 @@ namespace GameServer
         public int Level { get; set; }
         public int LeaderID { get; set; }
         public string Notice { get; set; }
-        public int ActivityLevel { get; set; }
         public int ReqLevel { get; set; }
-        public int MemberCount { get; set; }
         public System.DateTime CreateTime { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

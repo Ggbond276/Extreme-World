@@ -133,9 +133,7 @@
     <Property Name="Level" Type="int" Nullable="false" />
     <Property Name="LeaderID" Type="int" Nullable="false" />
     <Property Name="Notice" Type="longtext" Nullable="false" />
-    <Property Name="ActivityLevel" Type="int" Nullable="false" />
     <Property Name="ReqLevel" Type="int" Nullable="false" />
-    <Property Name="MemberCount" Type="int" Nullable="false" />
     <Property Name="CreateTime" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="TGuildMemberSet">
@@ -145,7 +143,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="CharacterID" Type="int" Nullable="false" />
     <Property Name="Position" Type="int" Nullable="false" />
-    <Property Name="JoinTime" Type="longtext" Nullable="false" />
+    <Property Name="JoinTime" Type="datetime" Nullable="false" />
     <Property Name="TGuildId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="TGuildApplySet">
@@ -441,9 +439,7 @@
           <Property Name="Level" Type="Int32" Nullable="false" />
           <Property Name="LeaderID" Type="Int32" Nullable="false" />
           <Property Name="Notice" Type="String" Nullable="false" />
-          <Property Name="ActivityLevel" Type="Int32" Nullable="false" />
           <Property Name="ReqLevel" Type="Int32" Nullable="false" />
-          <Property Name="MemberCount" Type="Int32" Nullable="false" />
           <Property Name="CreateTime" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="GuildApplies" Relationship="ExtremeWorldModel.TGuildTGuildApply" FromRole="TGuild" ToRole="TGuildApply" />
           <NavigationProperty Name="GuildMembers" Relationship="ExtremeWorldModel.TGuildTGuildMember" FromRole="TGuild" ToRole="TGuildMember" />
@@ -455,7 +451,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CharacterID" Type="Int32" Nullable="false" />
           <Property Name="Position" Type="Int32" Nullable="false" />
-          <Property Name="JoinTime" Type="String" Nullable="false" />
+          <Property Name="JoinTime" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Guild" Relationship="ExtremeWorldModel.TGuildTGuildMember" FromRole="TGuildMember" ToRole="TGuild" />
           <Property Name="TGuildId" Type="Int32" Nullable="false" />
         </EntityType>
@@ -586,9 +582,7 @@
           <ScalarProperty Name="Level" ColumnName="Level" />
           <ScalarProperty Name="LeaderID" ColumnName="LeaderID" />
           <ScalarProperty Name="Notice" ColumnName="Notice" />
-          <ScalarProperty Name="ActivityLevel" ColumnName="ActivityLevel" />
           <ScalarProperty Name="ReqLevel" ColumnName="ReqLevel" />
-          <ScalarProperty Name="MemberCount" ColumnName="MemberCount" />
           <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
         </MappingFragment>
       </EntityTypeMapping>

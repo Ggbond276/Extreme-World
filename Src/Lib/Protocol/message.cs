@@ -1218,7 +1218,7 @@ namespace SkillBridge.Message
         public int MemberCount { get; set; }
 
         [global::ProtoBuf.ProtoMember(6, Name = @"activity_level")]
-        public int ActivityLevel { get; set; }
+        public GuildActivityLevel ActivityLevel { get; set; }
 
         [global::ProtoBuf.ProtoMember(7, Name = @"req_level")]
         public int ReqLevel { get; set; }
@@ -1762,6 +1762,17 @@ namespace SkillBridge.Message
         GuildPositionViceLeader = 2,
         [global::ProtoBuf.ProtoEnum(Name = @"GUILD_POSITION_MEMBER")]
         GuildPositionMember = 3,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum GuildActivityLevel
+    {
+        [global::ProtoBuf.ProtoEnum(Name = @"GUILD_ACTIVITY_LOW")]
+        GuildActivityLow = 0,
+        [global::ProtoBuf.ProtoEnum(Name = @"GUILD_ACTIVITY_NORMAL")]
+        GuildActivityNormal = 1,
+        [global::ProtoBuf.ProtoEnum(Name = @"GUILD_ACTIVITY_HIGH")]
+        GuildActivityHigh = 2,
     }
 
     [global::ProtoBuf.ProtoContract()]

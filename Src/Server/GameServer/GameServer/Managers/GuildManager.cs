@@ -1,4 +1,6 @@
 ﻿using Common;
+using GameServer.Entities;
+using GameServer.Manager;
 using GameServer.Models;
 using GameServer.Services;
 using SkillBridge.Message;
@@ -14,6 +16,9 @@ namespace GameServer.Managers
     {
 
         public Dictionary<int, Guild> Guilds = new Dictionary<int, Guild>();
+        /// <summary>
+        /// Key : CharacterId Value : GuildId
+        /// </summary>
         public Dictionary<int, int> CharacterGuildIdMap = new Dictionary<int, int>();
 
         /// <summary>
@@ -89,6 +94,200 @@ namespace GameServer.Managers
             }
             return 0; // 没查到就是没公会
         }
+        /// <summary>
+        /// 离开公会 (主动退出)
+        /// 清理数据库成员映射、内存公会字典以及在线角色的内存状态
+        /// </summary>
+        /// <param name="guildId">公会ID</param>
+        /// <param name="characterId">角色ID</param>
+        /// <returns>退出是否成功</returns>
+        internal bool LeaveGuild(int guildId, int characterId)
+        {
+            Guild guild = this.GetGuild(guildId);
+            GuildMember guildMember = guild.GetGuildMember(characterId);
+            Character onlineCharacter = CharacterManager.Instance.GetCharacter(characterId);
+            if (guild == null) 
+                return false;
 
+            try
+            {
+                var dbMember = DBService.Instance.Entities.TGuildMemberSet.FirstOrDefault(m => m.TGuildId == guildId && m.CharacterID == characterId);
+                if(dbMember != null)
+                {
+                    DBService.Instance.Entities.TGuildMemberSet.Remove(dbMember);
+                }
+
+                DBService.Instance.save();
+
+
+                bool success = guild.RemoveGuildMember(characterId);
+                if (!success) 
+                    return false;
+
+
+
+                // 因为有的时候玩家会有掉线的情况 掉线就不用修改内存数据了
+                if (onlineCharacter != null) 
+                    onlineCharacter.GuildId = 0;
+
+                // 从映射字典中抹除
+                if(this.CharacterGuildIdMap.ContainsKey(characterId)) 
+                    this.CharacterGuildIdMap.Remove(characterId);
+
+                return true;
+                
+
+            }
+            catch (Exception ex)
+            {
+                // 如果数据库挂了，或者字段不匹配，抓取异常并报错，防止服务器直接崩掉
+                Log.Error($"LeaveGuild 数据库执行异常: {ex.Message}");
+                return false;
+            }
+        }
+        /// <summary>
+        /// 创建公会
+        /// 双表落库 (公会表与成员表)，并初始化内存大本营数据
+        /// </summary>
+        /// <param name="guildName">公会名称</param>
+        /// <param name="notice">公会宗旨</param>
+        /// <param name="reqLevel">入会等级限制</param>
+        /// <param name="character">创建者(会长)对象</param>
+        /// <returns>创建成功的公会内存对象，失败返回 null</returns>
+        internal Guild CreateGuild(string guildName, string notice, int reqLevel, Character character)
+        {
+            DateTime now = DateTime.Now;
+
+            try
+            {
+                var dbGuild = new TGuild()
+                {
+                    Name = guildName,
+                    Level = 0,
+                    LeaderID = character.Data.ID,
+                    Notice = notice,
+                    ReqLevel = reqLevel,
+                    CreateTime = now
+                };
+
+                DBService.Instance.Entities.TGuildSet.Add(dbGuild);
+                DBService.Instance.save();
+
+                var dbMember = new TGuildMember()
+                {
+                    CharacterID = character.Data.ID,
+                    Position = (int)GuildPosition.GuildPositionLeader,
+                    JoinTime = now,
+                    TGuildId = dbGuild.Id,
+                };
+
+                DBService.Instance.Entities.TGuildMemberSet.Add(dbMember);
+                DBService.Instance.save();
+
+                // 将新公会加入到字典
+                Guild newguild = new Guild(dbGuild);
+                this.Guilds[newguild.Data.Id] = newguild;
+
+                this.CharacterGuildIdMap[character.Data.ID] = newguild.Data.Id; 
+
+
+                // 将成员添加到公会的成员列表
+                GuildMember newGuildMember = new GuildMember(dbMember);
+                newguild.AddMember(newGuildMember);
+
+                character.GuildId = newguild.Data.Id;
+
+                return newguild;
+
+            }
+            catch (Exception ex)
+            {
+
+                Log.Error($"CreateGuild 数据库执行异常: {ex.Message}");
+                return null;
+            }
+        }
+        /// <summary>
+        /// 解散公会
+        /// 级联清理所有公会成员、申请列表及公会本体，并踢出所有在线成员
+        /// </summary>
+        /// <param name="guildId">要解散的公会ID</param>
+        /// <param name="characterId">执行操作的会长角色ID</param>
+        /// <returns>解散是否成功</returns>
+        internal bool DisbandGuild(int guildId, int characterId)
+        {
+            Guild guild = this.GetGuild(guildId);
+            if (guild == null)
+                return false;
+
+            try
+            {
+                // 查询出跟公会相关的所有成员字段列表
+                var dbMembers = DBService.Instance.Entities.TGuildMemberSet.Where(m => m.TGuildId == guildId).ToList();
+                var dbApplies = DBService.Instance.Entities.TGuildApplySet.Where(m => m.TGuildId == guildId).ToList();
+                var dbGuild = DBService.Instance.Entities.TGuildSet.FirstOrDefault(m => m.Id == guildId);
+                // 删除与公会相关的所有字段
+                if (dbMembers.Count > 0)
+                    DBService.Instance.Entities.TGuildMemberSet.RemoveRange(dbMembers);
+                if (dbApplies.Count > 0)
+                    DBService.Instance.Entities.TGuildApplySet.RemoveRange(dbApplies);
+                if (dbGuild != null)
+                    DBService.Instance.Entities.TGuildSet.Remove(dbGuild);
+
+                DBService.Instance.save();
+
+                foreach (var memberId in guild.Members.Keys )
+                {
+                    this.CharacterGuildIdMap.Remove(memberId);
+
+                    Character onlineCharacter = CharacterManager.Instance.GetCharacter(memberId);
+                    if (onlineCharacter != null)
+                        onlineCharacter.GuildId = 0;
+                }
+
+                this.Guilds.Remove(guildId);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"DisbandGuild 数据库执行异常: {ex.Message}");
+                return false;
+            }
+        }
+        /// <summary>
+        /// 修改公会设置 (入会条件与宗旨)
+        /// </summary>
+        /// <param name="guildId">公会ID</param>
+        /// <param name="newNotice">新宗旨 (传空表示不修改)</param>
+        /// <param name="newReqLevel">新等级限制 (-1表示不修改)</param>
+        /// <returns>修改是否成功</returns>
+        internal bool ModifyGuildSettings(int guildId, string newNotice, int newReqLevel)
+        {
+            Guild guild = this.GetGuild(guildId);
+            if (guild == null)
+                return false;
+
+            try
+            {
+                var dbGuild = DBService.Instance.Entities.TGuildSet.FirstOrDefault(m => m.Id == guildId);
+                if (dbGuild == null)
+                    return false;
+
+                if (!string.IsNullOrEmpty(newNotice))
+                    dbGuild.Notice = newNotice;
+                if (newReqLevel != -1)
+                    dbGuild.ReqLevel = newReqLevel;
+                DBService.Instance.save();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"ModifyGuildSettings 数据库执行异常: {ex.Message}");
+                return false;
+                throw;
+            }
+        }
     }
 }
