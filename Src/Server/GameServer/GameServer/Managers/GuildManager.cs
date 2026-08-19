@@ -289,5 +289,109 @@ namespace GameServer.Managers
                 throw;
             }
         }
+        /// <summary>
+        /// 有人发送入会申请
+        /// </summary>
+        /// <param name="targetGuildId"></param>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        internal bool ApplyGuild(int targetGuildId, int characterId)
+        {
+            Guild guild = this.GetGuild(targetGuildId);
+            if (guild == null)
+                return false;
+
+            if (guild.Applies.ContainsKey(characterId))
+                return false;
+
+            try
+            {
+                var dbApply = new TGuildApply();
+                dbApply.TGuildId = targetGuildId;
+                dbApply.CharacterID = characterId;
+                dbApply.ApplyTime = DateTime.Now;
+
+                DBService.Instance.Entities.TGuildApplySet.Add(dbApply);
+                DBService.Instance.save();
+
+                GuildApply newApply = new GuildApply(dbApply);
+                guild.Applies[characterId] = newApply;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"ApplyGuild 数据库事务执行异常: {ex.Message}");
+                return false;
+            }
+        }
+        /// <summary>
+        /// 对入会申请进行处理
+        /// </summary>
+        /// <param name="guildId"></param>
+        /// <param name="applicantId"></param>
+        /// <param name="isAccept"></param>
+        /// <returns></returns>
+        internal bool ProcessApply(int guildId, int applicantId, bool isAccept)
+        {
+            Guild guild = this.GetGuild(guildId);
+            if (guild == null)
+                return false;
+
+            try
+            {
+                // 找到并删除申请
+                var dbApply = DBService.Instance.Entities.TGuildApplySet.FirstOrDefault(a => a.TGuildId == guildId && a.CharacterID == applicantId);
+                if(dbApply == null)
+                {
+                    return false;
+                }
+
+                DBService.Instance.Entities.TGuildApplySet.Remove(dbApply);
+
+                // 找到并删除成员
+                TGuildMember dbMember = null;
+                if(isAccept)
+                {
+                    dbMember = new TGuildMember();
+                    dbMember.TGuildId = guildId;
+                    dbMember.CharacterID = applicantId;
+                    dbMember.Position = (int)GuildPosition.GuildPositionMember;
+                    dbMember.JoinTime = DateTime.Now;
+                    DBService.Instance.Entities.TGuildMemberSet.Add(dbMember);
+                }
+
+                DBService.Instance.save();
+
+                if(guild.Applies.ContainsKey(applicantId))
+                {
+                    guild.Applies.Remove(applicantId);
+                }
+
+                if(isAccept && dbMember != null)
+                {
+                    GuildMember newGuildMember = new GuildMember(dbMember);
+                    guild.AddMember(newGuildMember);
+
+                    this.CharacterGuildIdMap[applicantId] = guildId;
+
+                    Character onlineCharacter = CharacterManager.Instance.GetCharacter(applicantId);
+                    if(onlineCharacter != null)
+                    {
+                        onlineCharacter.GuildId = guildId;
+                    }
+                   
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // 事务一旦失败，EF 自动丢弃 pending 状态，数据库无任何残留
+                // 我们的 catch 直接返回 false，告诉 Service 层失败，保证内存字典也不会被错误污染
+                Log.Error($"ProcessApply 数据库事务执行异常: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
