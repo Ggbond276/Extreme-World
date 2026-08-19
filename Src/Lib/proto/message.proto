@@ -268,26 +268,29 @@ message NetMessageResponse{
 	TeamInfoResponse teamInfo = 21;
 	TeamLeaveResponse teamLeave = 22;
 
-// ---------------- 公会系统 (Guild) ----------------
+// ---------------- 公会系统操作响应 (Response) ----------------
     GuildCreateResponse guildCreate = 23;
     GuildDisbandResponse guildDisband = 24;
     GuildSettingModifyResponse guildSettingModify = 25;
     GuildJoinApplyResponse guildJoinApply = 26;
     GuildApplyProcessResponse guildApplyProcess = 27;
     GuildLeaveResponse guildLeave = 28;
-    // 29 留空给 Chat
+    // 29 留空给 Chat 的对称位置 
     GuildMemberListResponse guildMemberList = 30;
     GuildApplyListResponse guildApplyList = 31;
     GuildListResponse guildList = 32;
     GuildAdminResponse guildAdmin = 33;
 
-	// 新增：公会组播大喇叭格子
+	// ---------------- 公会系统全局推送 (Notify) ----------------
     GuildMemberAddNotify guildMemberAddNotify = 34;
-    GuildMemberLeaveNotify guildMemberLeaveNotify = 35;
-    GuildInfoChangeNotify guildInfoChangeNotify = 36;
-    GuildChatNotify guildChatNotify = 37;
+    GuildMemberRemoveNotify guildMemberRemoveNotify = 35;
+    GuildApplyAddNotify guildApplyAddNotify = 36;
+    GuildApplyRemoveNotify guildApplyRemoveNotify = 37;
+    GuildApplyResultNotify guildApplyResultNotify = 38;
+    GuildInfoChangeNotify guildInfoChangeNotify = 39;
+    GuildChatNotify guildChatNotify = 40;
 
-
+	
 	StatusNotify statusNotify = 100;
 }
 
@@ -600,209 +603,216 @@ message TeamLeaveResponse
 
 ////////////////////////////////////////////////////////////////
 //
-//  GuildSystem
+//  GuildSystem (公会系统)
 //
 ////////////////////////////////////////////////////////////////
 
 enum GuildPosition {
-    GUILD_POSITION_NONE = 0;        // 占位/未定义
+    GUILD_POSITION_NONE = 0;        // 无职位
     GUILD_POSITION_LEADER = 1;      // 会长
     GUILD_POSITION_VICE_LEADER = 2; // 副会长
     GUILD_POSITION_MEMBER = 3;      // 普通成员
 }
 
+enum GuildActivityLevel {
+    GUILD_ACTIVITY_LOW = 0;         // 低活跃度
+    GUILD_ACTIVITY_NORMAL = 1;      // 正常活跃度
+    GUILD_ACTIVITY_HIGH = 2;        // 高活跃度
+}
+
+enum GuildApplyProcessCommand {
+    APPLY_NONE = 0;                 // 无操作
+    ACCEPT = 1;                     // 同意申请
+    REJECT = 2;                     // 拒绝申请
+}
+
+enum GuildAdminCommand {
+    COMMAND_NONE = 0;               // 无操作
+    COMMAND_TRANSFER_LEADER = 1;    // 转让会长
+    COMMAND_PROMOTE_VICE = 2;       // 任命副会长
+    COMMAND_DEMOTE_NORMAL = 3;      // 降职为普通成员
+    COMMAND_KICK_MEMBER = 4;        // 逐出公会
+}
 
 // 单个入会申请信息
 message NGuildApply {
-    // 交互把柄：会长点击“同意/拒绝”时，需要告诉服务器处理的是哪个倒霉蛋
-    int32 character_id = 1;     
-    
-    // UI 渲染必传字段
-    string name = 2;            
-    int32 level = 3;            
-    int32 class_type = 4;       
-    int32 is_online = 5;        // 在线状态
+    int32 character_id = 1;         // 申请人角色ID
+    string name = 2;                // 申请人名字
+    int32 level = 3;                // 申请人等级
+    int32 class_type = 4;           // 申请人职业
+    int32 is_online = 5;            // 在线状态
 }
 
 // 单个公会成员信息
 message NGuildMember {
-    // 交互把柄：对成员进行升降级、踢出操作时需要的唯一凭证
-    int32 character_id = 1;     
-    
-    // UI 渲染必传字段 (打破数据库范式，直接把 TCharacter 的数据冗余过来)
-    string name = 2;            // 玩家名称 (如：大傻子)
-    int32 level = 3;            // 等级 (如：75)
-    int32 class_type = 4;       // 职业 (建议用INT映射枚举，如 1=战士)
-    
-    // 状态数据
-    GuildPosition position = 5; // 职位 (用我们之前定义好的枚举：会长/副会长/成员)
-    int32 is_online = 6;        // 在线状态 (1 = 在线，0 = 离线)
+    int32 character_id = 1;         // 成员角色ID
+    string name = 2;                // 成员名字
+    int32 level = 3;                // 成员等级
+    int32 class_type = 4;           // 成员职业
+    GuildPosition position = 5;     // 成员职位
+    int32 is_online = 6;            // 在线状态
 }
 
-enum GuildActivityLevel {
-    GUILD_ACTIVITY_LOW = 0;    // 低活跃度 (默认/初创状态)
-    GUILD_ACTIVITY_NORMAL = 1; // 正常活跃度
-    GUILD_ACTIVITY_HIGH = 2;   // 高活跃度 (火爆状态)
-}
-
-// 公会基础信息 (用于大厅列表显示，以及公会主界面的左侧面板)
+// 公会基础信息 (大盘数据)
 message NGuildInfo {
-    // 交互把柄：申请加入时，客户端需要传这个 ID 给服务器
-    int32 id = 1;               
-    
-    // UI 渲染必传字段
-    string name = 2;            // 公会名称 (如：苍之光)
-    string leader_name = 3;     // ⚠️注意：DB里存的是LeaderID，这里我们直接传名字 (如：炎龙骑士)
-    int32 level = 4;            // 公会等级 (如：25)
-    int32 member_count = 5;     // 当前成员数量 (如：88)
-    GuildActivityLevel activity_level = 6;   // 活跃度 (建议前端用数字做枚举映射，如 1=高, 2=中)
-    int32 req_level = 7;        // 加入等级条件 (如：30)
-    string notice = 8;          // 公会宗旨
+    int32 id = 1;                   // 公会唯一ID
+    string name = 2;                // 公会名字
+    string leader_name = 3;         // 会长名字
+    int32 level = 4;                // 公会等级
+    int32 member_count = 5;         // 成员人数
+    GuildActivityLevel activity_level = 6; // 活跃度
+    int32 req_level = 7;            // 入会最低等级要求
+    string notice = 8;              // 公会宗旨
 }
 
-// 创建公会
+
+
+// 发起创建公会
 message GuildCreateRequest {
-    // 思考：创建一个公会，玩家必须填什么？名字和宗旨。
-    string guild_name = 1;
-    string notice = 2;
-	int32 req_level = 3;
+    string guild_name = 1;          // 拟创建的公会名
+    string notice = 2;              // 拟设定的宗旨
+	int32 req_level = 3;            // 拟设定的最低等级限制
 }
+// 响应创建公会结果
 message GuildCreateResponse {
-    Result result = 1;       // 以后统一定义 Result 枚举，这里先用 int32 占位
-    string errormsg = 2;
-    NGuildInfo guild = 3;   // 成功后，返回新公会的数据给前端渲染主界面
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
+    NGuildInfo guild = 3;           // 新公会的大盘数据
 }
 
-// 解散公会 (完美，零参数！服务器靠Session认人)
+// 发起解散公会
 message GuildDisbandRequest {}
+// 响应解散公会结果
 message GuildDisbandResponse {
-    Result result = 1;
-    string errormsg = 2;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
 }
 
-
+// 发起修改公会设置
 message GuildSettingModifyRequest {
-    // 思考：玩家改了什么就传什么
-    string new_notice = 1;      // 如果不改宗旨，传空字符串
-    int32 new_req_level = 2;    // 如果不改等级，传 -1
+    string new_notice = 1;          // 新宗旨
+    int32 new_req_level = 2;        // 新等级限制
 }
+// 响应修改公会设置结果
 message GuildSettingModifyResponse {
-    Result result = 1;
-    string errormsg = 2;
-    // 把最终落库的最新数据返回，方便前端刷新文本
-    string updated_notice = 3;
-    int32 updated_req_level = 4;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
 }
 
-
-
-enum GuildApplyProcessCommand {
-    APPLY_NONE = 0;
-    ACCEPT = 1; // 同意
-    REJECT = 2; // 拒绝
-}
-message GuildApplyProcessRequest {
-    // 思考：会长点按钮时，服务器需要知道“同意/拒绝”了“哪个人”
-    GuildApplyProcessCommand command = 1;
-    int32 applicant_character_id = 2; // 交互把柄
-}
-message GuildApplyProcessResponse {
-    Result result = 1;
-    string errormsg = 2;
-    int32 applicant_character_id = 3; // 返回给前端，前端直接把这行从 UI 列表删掉
-}
-
-
-// 申请加入某个公会
+// 发起申请入会
 message GuildJoinApplyRequest {
-    // 思考：申请入会，你得告诉服务器你想进哪个公会
-    int32 target_guild_id = 1; 
+    int32 target_guild_id = 1;      // 想要加入的公会ID
 }
+// 响应申请入会结果
 message GuildJoinApplyResponse {
-    Result result = 1;
-    string errormsg = 2;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
 }
 
-// 离开公会 (完美，零参数)
+// 发起审批操作
+message GuildApplyProcessRequest {
+    GuildApplyProcessCommand command = 1; // 同意或拒绝指令
+    int32 applicant_character_id = 2;     // 被审批的玩家ID
+}
+// 响应审批操作结果
+message GuildApplyProcessResponse {
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
+}
+
+// 发起退出公会
 message GuildLeaveRequest {}
+// 响应退出公会结果
 message GuildLeaveResponse {
-    Result result = 1;
-    string errormsg = 2;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
 }
 
-// 聊天
+// 发起公会聊天
 message GuildChatRequest {
-    string chat_content = 1; // 发送的文本内容
-}
-// 聊天通常没有直接的 Response，而是通过服务器组播 Notify 推送给所有人，这里暂且留空
-
-
-
-enum GuildAdminCommand {
-    COMMAND_NONE = 0;
-    COMMAND_TRANSFER_LEADER = 1; // 转让会长
-    COMMAND_PROMOTE_VICE = 2;    // 任命副会长
-    COMMAND_DEMOTE_NORMAL = 3;   // 降职为普通成员 (也就是撤销副会长)
-    COMMAND_KICK_MEMBER = 4;     // 逐出公会
+    string chat_content = 1;        // 聊天文本内容
 }
 
+// 发起成员管理操作
 message GuildAdminRequest {
-    // 思考：会长点操作按钮时，服务器需要知道“做了什么操作”以及“针对哪个倒霉蛋”
-    GuildAdminCommand command = 1;
-    int32 target_character_id = 2; // 交互把柄
+    GuildAdminCommand command = 1;  // 具体管理指令
+    int32 target_character_id = 2;  // 被操作的目标玩家ID
 }
-
+// 响应成员管理操作结果
 message GuildAdminResponse {
-    Result result = 1;
-    string errormsg = 2;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
 }
 
+// -----------------------------------------------------------
+// 客户端按需拉取数据 (Pull Only)
+// -----------------------------------------------------------
 
-// 拉取公会成员列表 (打开公会主界面时触发)
+// 拉取公会成员列表
 message GuildMemberListRequest {}
+// 响应公会成员列表数据
 message GuildMemberListResponse {
-    Result result = 1;
-    string errormsg = 2;
-    repeated NGuildMember members = 3; 
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
+    repeated NGuildMember members = 3; // 全量成员列表数据
 }
 
-// 拉取申请列表 (会长打开审批面板时触发)
+// 拉取入会申请列表
 message GuildApplyListRequest {}
+// 响应入会申请列表数据
 message GuildApplyListResponse {
-    Result result = 1;
-    string errormsg = 2;
-    repeated NGuildApply applies = 3;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
+    repeated NGuildApply applies = 3;  // 全量申请列表数据
 }
 
-// 拉取全服公会大厅 (没公会的人打开面板时触发)
+// 拉取全服公会大厅列表
 message GuildListRequest {}
+// 响应全服公会大厅列表数据
 message GuildListResponse {
-    Result result = 1;
-    string errormsg = 2;
-    repeated NGuildInfo guilds = 3;
+    RESULT result = 1;              // 处理结果
+    string errormsg = 2;            // 失败原因
+    repeated NGuildInfo guilds = 3; // 全量公会摘要列表数据
 }
 
 
-// ---------------- 公会广播通知 (Notify) ----------------
 
-// 通知：有新成员加入了公会 (所有人都会收到，UI 列表新增一行)
+// 通知：成员增加
 message GuildMemberAddNotify {
-    NGuildMember new_member = 1; // 直接把新人的完整名片推下去
+    NGuildMember new_member = 1;    // 新增成员的实体数据
 }
 
-// 通知：有成员离开了公会 (自己退会、或被踢出，所有人收到，UI 列表删掉这行)
-message GuildMemberLeaveNotify {
-    int32 character_id = 1; // 告诉前端把哪个倒霉蛋删掉
+// 通知：成员移除
+message GuildMemberRemoveNotify {
+    int32 character_id = 1;         // 被移除成员的角色ID
 }
 
-// 通知：公会基础信息发生了变化 (如：等级提升、宗旨修改)
+// 通知：申请增加
+message GuildApplyAddNotify {
+    NGuildApply new_apply = 1;      // 新增申请的实体数据
+}
+
+// 通知：申请移除
+message GuildApplyRemoveNotify {
+    int32 character_id = 1;         // 被移除申请的角色ID
+}
+
+// 通知：入会申请的结果反馈
+message GuildApplyResultNotify {
+    int32 guild_id = 1;             // 申请的目标公会ID
+    string guild_name = 2;          // 目标公会名称
+    bool is_accept = 3;             // 是否被同意入会
+}
+
+// 通知：公会基础信息变化
 message GuildInfoChangeNotify {
-    NGuildInfo guild_info = 1; // 把最新的公会大盘数据推下去覆盖
+    NGuildInfo guild_info = 1;      // 更新后的全量公会基础数据
 }
 
-// 通知：公会频道聊天
+// 通知：接收公会聊天信息
 message GuildChatNotify {
-    int32 sender_id = 1;
-    string sender_name = 2;
-    string chat_content = 3;
+    int32 sender_id = 1;            // 发言者角色ID
+    string sender_name = 2;         // 发言者名字
+    string chat_content = 3;        // 聊天内容
 }
+

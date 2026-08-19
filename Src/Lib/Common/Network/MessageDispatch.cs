@@ -29,7 +29,7 @@ namespace Network
             if (message.teamInviteReq != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInviteReq); }
             if (message.teamInfo != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInfo); }
             if (message.teamLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamLeave); }
-            // 公会系统响应分发
+            // ---------------- 公会系统操作响应 (Response) 分发 ----------------
             if (message.guildCreate != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildCreate); }
             if (message.guildDisband != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildDisband); }
             if (message.guildSettingModify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildSettingModify); }
@@ -41,9 +41,12 @@ namespace Network
             if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
             if (message.guildAdmin != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildAdmin); }
 
-            // 公会组播广播分发
+            // ---------------- 公会系统全局推送 (Notify) 分发 ----------------
             if (message.guildMemberAddNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberAddNotify); }
-            if (message.guildMemberLeaveNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberLeaveNotify); }
+            if (message.guildMemberRemoveNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberRemoveNotify); }
+            if (message.guildApplyAddNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyAddNotify); }
+            if (message.guildApplyRemoveNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyRemoveNotify); }
+            if (message.guildApplyResultNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyResultNotify); }
             if (message.guildInfoChangeNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildInfoChangeNotify); }
             if (message.guildChatNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChatNotify); }
         }
@@ -71,14 +74,14 @@ namespace Network
             if (message.teamInviteReq != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInviteReq); }
             if (message.teamInfo != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamInfo); }
             if (message.teamLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.teamLeave); }
-            // 公会系统请求分发
+            // ---------------- 公会系统请求 (Request) 分发 ----------------
             if (message.guildCreate != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildCreate); }
             if (message.guildDisband != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildDisband); }
             if (message.guildSettingModify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildSettingModify); }
             if (message.guildJoinApply != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildJoinApply); }
             if (message.guildApplyProcess != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyProcess); }
             if (message.guildLeave != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildLeave); }
-            if (message.guildChat != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChat); } // 注意：Chat 只有 Request
+            if (message.guildChat != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChat); } // 注意：Chat 只有 Request 和 Notify，没有 Response
             if (message.guildMemberList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildMemberList); }
             if (message.guildApplyList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyList); }
             if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
