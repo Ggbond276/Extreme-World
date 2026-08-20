@@ -341,11 +341,15 @@ namespace GameServer.Services
         // 原则二：全量按需拉取接口 (Pull Once)
         // ==========================================
 
+        /// <summary>
+        /// 处理：全量拉取公会成员列表请求 (基础拦截：必须在公会中)
+        /// </summary>
         private void OnGuildMemberListRequest(NetConnection<NetSession> sender, GuildMemberListRequest request)
         {
-            Log.InfoFormat("OnGuildMemberListRequest : 收到全量拉取成员列表请求, 发起人 ID:{0}", sender.Session.Character.Data.ID);
+            int characterId = sender.Session.Character.Data.ID;
+            Log.InfoFormat("OnGuildMemberListRequest : 收到全量拉取成员列表请求, 发起人 ID:{0}", characterId);
 
-            int guildId = GuildManager.Instance.GetGuildIdByCharacter(sender.Session.Character.Data.ID);
+            int guildId = GuildManager.Instance.GetGuildIdByCharacter(characterId);
             Guild guild = GuildManager.Instance.GetGuild(guildId);
             sender.Session.Response.guildMemberList = new GuildMemberListResponse();
 
@@ -357,38 +361,80 @@ namespace GameServer.Services
             }
             else
             {
-                Log.WarningFormat("OnGuildMemberListRequest : 全量拉取成员列表失败, 发起人不在公会中");
+                // 拦截：如果玩家已经被踢了或者压根没公会，直接拒绝下发
+                Log.WarningFormat("OnGuildMemberListRequest : 拦截越权拉取, 发起人不在公会中, ID:{0}", characterId);
                 sender.Session.Response.guildMemberList.Result = Result.Failed;
+                sender.Session.Response.guildMemberList.Errormsg = "你当前不在公会中";
             }
             sender.SendResponse();
         }
 
+        /// <summary>
+        /// 处理：全量拉取申请列表请求 (极严拦截：仅限管理层)
+        /// </summary>
         private void OnGuildApplyListRequest(NetConnection<NetSession> sender, GuildApplyListRequest request)
         {
-            Log.InfoFormat("OnGuildApplyListRequest : 收到全量拉取申请列表请求, 发起人 ID:{0}", sender.Session.Character.Data.ID);
+            int characterId = sender.Session.Character.Data.ID;
+            Log.InfoFormat("OnGuildApplyListRequest : 收到全量拉取申请列表请求, 发起人 ID:{0}", characterId);
 
-            int guildId = GuildManager.Instance.GetGuildIdByCharacter(sender.Session.Character.Data.ID);
+            int guildId = GuildManager.Instance.GetGuildIdByCharacter(characterId);
             Guild guild = GuildManager.Instance.GetGuild(guildId);
             sender.Session.Response.guildApplyList = new GuildApplyListResponse();
 
-            if (guild != null)
+            if (guild == null)
             {
-                sender.Session.Response.guildApplyList.Result = Result.Success;
-                sender.Session.Response.guildApplyList.Applies.AddRange(guild.GetNGuildApplies());
-                Log.InfoFormat("OnGuildApplyListRequest : 成功下发全量申请列表, 共计 {0} 条", sender.Session.Response.guildApplyList.Applies.Count);
+                Log.WarningFormat("OnGuildApplyListRequest : 拦截越权拉取, 发起人不在公会中, ID:{0}", characterId);
+                sender.Session.Response.guildApplyList.Result = Result.Failed;
+                sender.Session.Response.guildApplyList.Errormsg = "你当前不在公会中";
+                sender.SendResponse();
+                return;
             }
+
+            // 【核心拦截】：去内存里查这个人的真实职位，必须是会长或副会长！
+            GuildMember member = guild.GetGuildMember(characterId);
+            if (member == null || (member.Data.Position != (int)GuildPosition.GuildPositionLeader && member.Data.Position != (int)GuildPosition.GuildPositionViceLeader))
+            {
+                Log.WarningFormat("OnGuildApplyListRequest : 权限不足拦截！普通成员试图拉取申请列表, 发起人 ID:{0}", characterId);
+                sender.Session.Response.guildApplyList.Result = Result.Failed;
+                sender.Session.Response.guildApplyList.Errormsg = "权限不足，只有管理层可查看申请列表";
+                sender.SendResponse();
+                return;
+            }
+
+            // 校验通过，放行数据
+            sender.Session.Response.guildApplyList.Result = Result.Success;
+            sender.Session.Response.guildApplyList.Applies.AddRange(guild.GetNGuildApplies());
+            Log.InfoFormat("OnGuildApplyListRequest : 管理层权限校验通过，成功下发全量申请列表, 共计 {0} 条", sender.Session.Response.guildApplyList.Applies.Count);
+
             sender.SendResponse();
         }
 
+        /// <summary>
+        /// 处理：全量拉取大厅公会列表请求 (权限拦截：仅限未加入公会的玩家)
+        /// </summary>
         private void OnGuildListRequest(NetConnection<NetSession> sender, GuildListRequest request)
         {
-            Log.InfoFormat("OnGuildListRequest : 收到全量拉取大厅公会列表请求, 发起人 ID:{0}", sender.Session.Character.Data.ID);
+            int characterId = sender.Session.Character.Data.ID;
+            Log.InfoFormat("OnGuildListRequest : 收到全量拉取大厅公会列表请求, 发起人 ID:{0}", characterId);
 
             sender.Session.Response.guildList = new GuildListResponse();
+
+            // 【核心拦截】：检查玩家是否已经有公会
+            int guildId = GuildManager.Instance.GetGuildIdByCharacter(characterId);
+            if (guildId > 0)
+            {
+                Log.WarningFormat("OnGuildListRequest : 拦截异常拉取, 发起人已在公会中, ID:{0}, 公会 ID:{1}", characterId, guildId);
+                sender.Session.Response.guildList.Result = Result.Failed;
+                sender.Session.Response.guildList.Errormsg = "你已经加入公会，无需查看大厅";
+                sender.SendResponse();
+                return;
+            }
+
+            // 校验通过，放行大厅数据
             sender.Session.Response.guildList.Result = Result.Success;
             sender.Session.Response.guildList.Guilds.AddRange(GuildManager.Instance.GetGuildsInfo());
 
-            Log.InfoFormat("OnGuildListRequest : 成功下发公会大厅列表, 共计 {0} 个公会", sender.Session.Response.guildList.Guilds.Count);
+            Log.InfoFormat("OnGuildListRequest : 状态校验通过, 成功下发公会大厅列表, 共计 {0} 个公会", sender.Session.Response.guildList.Guilds.Count);
             sender.SendResponse();
         }
 
