@@ -82,7 +82,73 @@ namespace Assets.Scripts.Managers
         }
 
 
+        /// <summary>
+        /// 新增成员或更新已有成员职位 (覆盖语义)
+        /// </summary>
+        /// <param name="member">发生变动的成员数据</param>
+        public void AddOrUpdateMember(NGuildMember member)
+        {
+            myMembers[member.CharacterId] = member;
+            OnGuildMemberChanged?.Invoke();
+        }
+        /// <summary>
+        /// 从列表中移除指定成员
+        /// </summary>
+        /// <param name="characterId">要移除的成员ID</param>
+        public void RemoveMember(int characterId)
+        {
+            if (myMembers.ContainsKey(characterId))
+            {
+                myMembers.Remove(characterId);
+                OnGuildMemberChanged?.Invoke();
+            }
+        }
 
 
-     }
+        /// <summary>
+        /// 新增一条入会申请
+        /// </summary>
+        /// <param name="apply">新的申请数据</param>
+        public void AddApply(NGuildApply apply)
+        {
+            myApplies[apply.CharacterId] = apply;
+            OnGuildApplyChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 移除一条入会申请
+        /// </summary>
+        /// <param name="characterId">要移除申请的玩家ID</param>
+        public void RemoveApply(int characterId)
+        {
+            if (myApplies.ContainsKey(characterId))
+            {
+                myApplies.Remove(characterId);
+                OnGuildApplyChanged?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// 更新我的公会大盘基础信息
+        /// </summary>
+        /// <param name="info">最新的公会信息</param>
+        public void UpdateGuildInfo(NGuildInfo info)
+        {
+            myGuildInfo = info;
+            OnGuildInfoChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 清理我的本地公会数据 (用于自己退出公会、公会解散或被踢出时)
+        /// </summary>
+        public void ClearMyGuildData()
+        {
+            myGuildInfo = null;
+            myMembers.Clear();
+            myApplies.Clear();
+
+            OnGuildInfoChanged?.Invoke();
+            OnGuildMemberChanged?.Invoke();
+        }
+    }
 }
