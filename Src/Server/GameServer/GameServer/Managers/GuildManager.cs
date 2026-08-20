@@ -393,5 +393,69 @@ namespace GameServer.Managers
                 return false;
             }
         }
+
+        internal bool ExcuteAdminCommand(int guildId, int operatorId, int targetId, GuildAdminCommand command)
+        {
+            Guild guild = this.GetGuild(guildId);
+            if (guild == null) return false;
+
+            GuildMember opMember = guild.GetGuildMember(operatorId);
+            GuildMember targetMember = guild.GetGuildMember(targetId);
+
+            if (opMember == null || targetMember == null || operatorId == targetId)
+                return false;
+
+            try
+            {
+                var dbTarget = DBService.Instance.Entities.TGuildMemberSet.FirstOrDefault(m => m.TGuildId == guildId && m.CharacterID == targetId);
+                var dbOp = DBService.Instance.Entities.TGuildMemberSet.FirstOrDefault(m => m.TGuildId == guildId && m.CharacterID == operatorId);
+                var dbGuild = DBService.Instance.Entities.TGuildSet.FirstOrDefault(g => g.Id == guildId);
+
+                if (dbTarget == null || dbOp == null || dbGuild == null) return false;
+
+                switch (command)
+                {
+                    case GuildAdminCommand.CommandKickMember:
+                        if (opMember.Data.Position >= targetMember.Data.Position) return false;
+                        DBService.Instance.Entities.TGuildMemberSet.Remove(dbTarget);
+                        break;
+                    case GuildAdminCommand.CommandPromoteVice:
+                        if (opMember.Data.Position != (int)GuildPosition.GuildPositionLeader) return false;
+                        if (targetMember.Data.Position != (int)GuildPosition.GuildPositionMember) return false;
+                        dbTarget.Position = (int)GuildPosition.GuildPositionViceLeader;
+                        break;
+                    case GuildAdminCommand.CommandDemoteNormal:
+                        if (opMember.Data.Position != (int)GuildPosition.GuildPositionLeader) return false;
+                        if (targetMember.Data.Position != (int)GuildPosition.GuildPositionViceLeader) return false;
+                        dbTarget.Position = (int)GuildPosition.GuildPositionMember;
+                        break;
+                    case GuildAdminCommand.CommandTransferLeader:
+                        if (opMember.Data.Position != (int)GuildPosition.GuildPositionLeader) return false;
+                        dbTarget.Position = (int)GuildPosition.GuildPositionLeader;
+                        dbOp.Position = (int)GuildPosition.GuildPositionMember;
+                        dbGuild.LeaderID = targetId;
+                        break;
+                    default:
+                        return false;
+                }
+
+                DBService.Instance.save();
+
+                if(command == GuildAdminCommand.CommandKickMember)
+                {
+                    guild.RemoveGuildMember(targetId);
+                    this.CharacterGuildIdMap.Remove(targetId);
+                    Character onlineTarget = CharacterManager.Instance.GetCharacter(targetId);
+                    if (onlineTarget != null) onlineTarget.GuildId = 0;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"ExecuteAdminCommand 数据库事务执行异常: {ex.Message}");
+                throw;
+            }
+        }
     }
 }
