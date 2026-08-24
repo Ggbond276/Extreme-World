@@ -42,7 +42,26 @@ public class UIManager : Singleton<UIManager>
         // 【注意】你的好友面板必须在这里注册！
         this.UIResources.Add(typeof(UIFriends), new UIElement() { Resources = "UI/UIFriends", Cache = false });
         this.UIResources.Add(typeof(UITeamSystem), new UIElement() { Resources = "UI/UITeamSystem", Cache = false });
-    }
+
+        // ==========================================
+        // 公会系统 UI 矩阵全量注册
+        // 根据 Resources/UI/ 目录下的真实预制体命名严格对应
+        // ==========================================
+
+        // 1. 无公会状态：公会入口 / 列表大厅界面
+        this.UIResources.Add(typeof(UIGuildEntry), new UIElement() { Resources = "UI/UIGuildEntry", Cache = false });
+        this.UIResources.Add(typeof(UIGuildJoin), new UIElement() { Resources = "UI/UIGuildJoin", Cache = false });
+
+        // 2. 创建公会界面 (我们刚拼好的绝美面板)
+        this.UIResources.Add(typeof(UIGuildCreate), new UIElement() { Resources = "UI/UIGuildCreate", Cache = false });
+
+        // 3. 有公会状态：公会主界面 (包含信息、成员、审批等切页)
+        this.UIResources.Add(typeof(UIGuildMain), new UIElement() { Resources = "UI/UIGuildMain", Cache = false });
+
+        // 4. 成员交互菜单 (点击成员头像弹出的踢人/升职操作面板)
+        this.UIResources.Add(typeof(UIGuildPlayerInteract), new UIElement() { Resources = "UI/UIGuildPlayerInteract", Cache = false });
+    
+}
 
     /// <summary>
     /// 析构函数：在垃圾回收(GC)清理该对象时调用，用于释放非托管资源或兜底清理

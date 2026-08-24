@@ -716,9 +716,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   global: 1
   ClassSprites:
-  - {fileID: 21300000, guid: c98e37ab3fe041142aa5db6df7a4af30, type: 3}
-  - {fileID: 21300000, guid: e7d2cb871334ba843b9dbb3396350d92, type: 3}
-  - {fileID: 21300000, guid: 23a45e634a174e34c89952982e2ca734, type: 3}
+  - {fileID: 21300000, guid: 026ce9f78946a8d468c3e09c5a62fab8, type: 3}
+  - {fileID: 21300000, guid: 18c159c6eda91c743b31c451a0aff90c, type: 3}
+  - {fileID: 21300000, guid: a6ba7c4f3bba8f7469fb9beceab93ad0, type: 3}
+  OnlineStatusSprites:
+  - {fileID: 21300000, guid: 498155981c0aa5c42a1b0894d9ecab7e, type: 3}
+  - {fileID: 21300000, guid: 025f3d8a100abe249b65f489690c8250, type: 3}
 --- !u!4 &291348354
 Transform:
   m_ObjectHideFlags: 0

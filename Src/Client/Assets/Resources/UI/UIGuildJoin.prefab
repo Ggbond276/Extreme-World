@@ -2886,6 +2886,7 @@ GameObject:
   - component: {fileID: 404436336917895482}
   - component: {fileID: 2608985390245078711}
   - component: {fileID: 5910923164391103423}
+  - component: {fileID: 5097819965086580754}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -2952,6 +2953,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &5097819965086580754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5073537605874660438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa8d5cd3b79ebb439ba63d50b421ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  selectedItem: {fileID: 0}
 --- !u!1 &5642035026922234141
 GameObject:
   m_ObjectHideFlags: 0
@@ -3129,7 +3144,7 @@ GameObject:
   - component: {fileID: 6103106772207275096}
   - component: {fileID: 1367454132603142114}
   m_Layer: 5
-  m_Name: Text_GuildContent
+  m_Name: Text_GuildNotice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3371,7 +3386,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5676694932060091233}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2076625119446283191}
+        m_TargetAssemblyTypeName: UIWindow, Assembly-CSharp
+        m_MethodName: OnCloseClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6477037051881735141
 GameObject:
   m_ObjectHideFlags: 0
@@ -4195,6 +4222,7 @@ GameObject:
   - component: {fileID: 6804863938295899958}
   - component: {fileID: 7866577181403796783}
   - component: {fileID: 6689467563842832501}
+  - component: {fileID: 2076625119446283191}
   m_Layer: 5
   m_Name: UIGuildJoin
   m_TagString: Untagged
@@ -4287,6 +4315,31 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2076625119446283191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7523081965363571259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d374e33d0cb14f409b82e74b59412dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textGuildName: {fileID: 498102628188078676}
+  textGuildId: {fileID: 8259687692184721913}
+  textGuildLevel: {fileID: 2037276754085071663}
+  textMemberCount: {fileID: 2834091974107661457}
+  textNotice: {fileID: 1367454132603142114}
+  guildListView: {fileID: 5097819965086580754}
+  btnCreate: {fileID: 2207981582967471947}
+  btnJoin: {fileID: 5851987102988578821}
+  guildItemPrefab: {fileID: 5866078455112461113, guid: 3afd085e43a58274a94ff793443bfdb2,
+    type: 3}
+  inputFieldSearch: {fileID: 2621678930580327965}
+  btnSearch: {fileID: 2787193880005077856}
+  imageProgressFill: {fileID: 8542830587258105533}
 --- !u!1 &8244987678364736095
 GameObject:
   m_ObjectHideFlags: 0

@@ -154,4 +154,18 @@ public class UIMain : MonoSingleton<UIMain>
             TeamManager.Instance.ResponseInvite(false, request);
         };
     }
+
+    /// <summary>
+    /// 打开公会系统的按钮
+    /// </summary>
+    public void OnClickGuild()
+    {
+        if (GuildManager.Instance.HasGuild)
+        {
+            UIManager.Instance.Show<UIGuildMain>();
+        }else
+        {
+            UIManager.Instance.Show<UIGuildEntry>();
+        }
+    }
 }   

@@ -488,6 +488,7 @@ GameObject:
   - component: {fileID: 2481484839446142957}
   - component: {fileID: 9074839498865577895}
   - component: {fileID: 4327157455667131886}
+  - component: {fileID: -6629674645739348555}
   m_Layer: 5
   m_Name: UIGuildJoinItem
   m_TagString: Untagged
@@ -558,6 +559,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-6629674645739348555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5866078455112461113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b30f7409f1f5a884dafe95b6095f3f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
+  textRankValue: {fileID: 8414579990644423737}
+  textNameValue: {fileID: 8016107602770599097}
+  textLevelValue: {fileID: 1767768736734131392}
+  textMemberValue: {fileID: 7217949643907544655}
+  textActiveValue: {fileID: 5706904118184176014}
+  textRequirementValue: {fileID: 5945374287359281138}
+  ImageBg: {fileID: 4327157455667131886}
+  normalBg: {fileID: 21300000, guid: 02a2d852570d91c4ebd0bf2c38c564e2, type: 3}
+  selectedBg: {fileID: 21300000, guid: d5a0d3af9a7af124a8e91d0f7f419b6e, type: 3}
 --- !u!1 &6780570413367287646
 GameObject:
   m_ObjectHideFlags: 0

@@ -199,6 +199,9 @@ namespace Assets.Scripts.Services
         }
 
 
+
+
+
         /// <summary>
         /// 接收公会成员响应数据，将数据传递给Manager
         /// </summary>
@@ -253,7 +256,13 @@ namespace Assets.Scripts.Services
                 // 创建是唯一没有全局 Notify 的操作，只有这个操作需要在 Response 里装载大盘
                 GuildManager.Instance.UpdateGuildInfo(response.Guild);
                 GuildManager.Instance.Init();
-                MessageBox.Show("公会创建成功！", "系统提示", MessageBoxType.Information);
+                UIMessageBox msgBox =  MessageBox.Show("公会创建成功！", "系统提示", MessageBoxType.Information);
+                msgBox.OnYes = () =>
+                {
+                    UIManager.Instance.Close(typeof(UIGuildCreate));
+                    UIManager.Instance.Close(typeof(UIGuildEntry));
+                    UIManager.Instance.Show<UIGuildMain>();
+                };
             }
             else
             {
@@ -308,7 +317,6 @@ namespace Assets.Scripts.Services
             {
                 MessageBox.Show(response.Errormsg, "申请失败", MessageBoxType.Error);
             }
-
         }
 
         /// <summary>
@@ -425,6 +433,18 @@ namespace Assets.Scripts.Services
             if (notify.IsAccept)
             {
                 GuildManager.Instance.Init();
+
+                UIMessageBox msgbox = MessageBox.Show($"恭喜，您已成功加入公会【{notify.GuildName}】！", "系统提示", MessageBoxType.Information);
+                msgbox.OnYes = () =>
+                {
+                    UIManager.Instance.Close(typeof(UIGuildJoin));
+                    UIManager.Instance.Close(typeof(UIGuildEntry));
+
+                    UIManager.Instance.Show<UIGuildMain>();
+                };
+            } else
+            {
+                MessageBox.Show($"很遗憾，您加入公会【{notify.GuildName}】的申请被拒绝了。", "系统提示", MessageBoxType.Information);
             }
         }
 

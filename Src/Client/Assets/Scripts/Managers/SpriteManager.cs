@@ -14,6 +14,10 @@ namespace Assets.Scripts.Managers
         [Header("职业图标")]
         public Sprite[] ClassSprites;
 
+        [Header("在线状态")]
+        public Sprite[] OnlineStatusSprites;
+
+
         /// <summary>
         /// 传入职业枚举 获取职业图标
         /// </summary>
@@ -21,6 +25,11 @@ namespace Assets.Scripts.Managers
         /// <returns></returns>
         public Sprite GetClassSprite(CharacterClass characterClass) {
             return this.ClassSprites[(int)characterClass - 1];
+        }
+
+        public Sprite GetClassSprite(int status)
+        {
+            return this.OnlineStatusSprites[status];
         }
     }
 }

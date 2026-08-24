@@ -427,7 +427,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2826953480155074834}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6859283042390517522}
+        m_TargetAssemblyTypeName: UIGuildApplyItem, Assembly-CSharp
+        m_MethodName: OnClickDisagree
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1611259704419908186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1062,7 +1074,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2443186879917465508}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6859283042390517522}
+        m_TargetAssemblyTypeName: UIGuildApplyItem, Assembly-CSharp
+        m_MethodName: OnClickAgree
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5870232716712016426
 GameObject:
   m_ObjectHideFlags: 0
@@ -1359,6 +1383,7 @@ GameObject:
   - component: {fileID: 5225040214018101455}
   - component: {fileID: 1223972995527237794}
   - component: {fileID: 959910305778829403}
+  - component: {fileID: 6859283042390517522}
   m_Layer: 5
   m_Name: UIGuildApplyItem
   m_TagString: Untagged
@@ -1429,6 +1454,31 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6859283042390517522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7627857043609390564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5d9f0ca40241848ae5e6670ec9ea87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Owner: {fileID: 0}
+  textRankValue: {fileID: 7741127930092923546}
+  textNameValue: {fileID: 422777836683992187}
+  textLevelValue: {fileID: 3382403908303261644}
+  textClassValue: {fileID: 9090816566729879372}
+  imageClassIcon: {fileID: 6102361352568808596}
+  textStatusValue: {fileID: 4679749913572265739}
+  imageStatusIcon: {fileID: 3028018672379430142}
+  buttonAgree: {fileID: 8048350013022985804}
+  buttonDisagree: {fileID: 7582951284905833193}
+  ImageBg: {fileID: 959910305778829403}
+  normalBg: {fileID: 21300000, guid: 02a2d852570d91c4ebd0bf2c38c564e2, type: 3}
+  selectedBg: {fileID: 21300000, guid: d5a0d3af9a7af124a8e91d0f7f419b6e, type: 3}
 --- !u!1 &8956375803676314949
 GameObject:
   m_ObjectHideFlags: 0
