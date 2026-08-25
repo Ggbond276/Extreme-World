@@ -89,8 +89,10 @@ public class UIGuildMemberItem : ListViewItem, IPointerClickHandler
             // 离线灰色：#808080（也可以直接用 Color.gray）
             ColorUtility.TryParseHtmlString("#808080", out Color offlineColor);
 
-            textStatusValue.text = isOnline ? "" : "";
+            textStatusValue.text = isOnline ? "在线" : "离线";
             textStatusValue.color = isOnline ? onlineColor : offlineColor;
+
+            imageStatusIcon.overrideSprite = SpriteManager.Instance.GetStatusSprite(isOnline);
         }
     }
 
@@ -101,10 +103,14 @@ public class UIGuildMemberItem : ListViewItem, IPointerClickHandler
             this.ImageBg.overrideSprite = selected ? selectedBg : normalBg;
         }
     }
-    
-    public void OnPionterClick(PointerEventData eventData)
+
+    public new void OnPointerClick(PointerEventData eventData)
     {
-        if(eventData.button == PointerEventData.InputButton.Right)
+        //  1. 依然可以让父类去执行它原有的逻辑 (处理左键点击高亮)
+        base.OnPointerClick(eventData);
+
+        //  2. 接着执行咱们自己的右键弹出菜单逻辑
+        if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (selectedInfo.CharacterId == User.Instance.CurrentCharacter.Id) return;
 

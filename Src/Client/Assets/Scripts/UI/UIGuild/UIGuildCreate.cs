@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIGuildCreate : UIWindow
 {
     [Header("UI控件绑定")]
-    public InputField inputName;      // 名字输入框
-    public InputField inputNotice;    // 宗旨输入框
-    public Slider sliderLevel;        // 加入等级滑动条 (你拼好的那个金边条)
-    public Text textLevel;            // 滑动条左边那个 "Lv.10" 的文本
-    public Button buttonCreate;       // 确认创建按钮
+    public TMP_InputField inputName;      // 名字输入框
+    public TMP_InputField inputNotice;    // 宗旨输入框
+    public Slider sliderLevel;            // 加入等级滑动条 (你拼好的那个金边条)
+    public TextMeshProUGUI textLevel;     // 滑动条左边那个 "Lv.10" 的文本
+    public Button buttonCreate;           // 确认创建按钮
 
 
     private void Start()

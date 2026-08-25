@@ -90,6 +90,7 @@ public class UIGuildApplyItem : ListViewItem
     {
         Debug.Log($"同意玩家 {info.Name} 的入会申请");
         // TODO: 向服务器发送 GuildApplyProcessCommand.ACCEPT
+        GuildManager.Instance.ProcessApply(info.CharacterId, true);
     }
 
     // 绑定给拒绝按钮的 OnClick 事件
@@ -97,6 +98,7 @@ public class UIGuildApplyItem : ListViewItem
     {
         Debug.Log($"拒绝玩家 {info.Name} 的入会申请");
         // TODO: 向服务器发送 GuildApplyProcessCommand.REJECT
+        GuildManager.Instance.ProcessApply(info.CharacterId, false);
     }
 
 }

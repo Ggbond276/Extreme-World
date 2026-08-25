@@ -42,13 +42,17 @@ namespace GameServer.Managers
             foreach (TGuild tGuild in allTGuilds)
             {
                 Guild guild = new Guild(tGuild);
-
                 int guildId = guild.Data.Id;
 
                 memberByGuild.TryGetValue(guildId, out List<TGuildMember> tGuildMembers);
-                applyByGuild.TryGetValue(guildId, out List<TGuildApply> tGuildApply);
+                applyByGuild.TryGetValue(guildId, out List<TGuildApply> tGuildApplies);
+                if (tGuildMembers == null)
+                    tGuildMembers = new List<TGuildMember>();
+                if (tGuildApplies == null)
+                    tGuildApplies = new List<TGuildApply>();
 
-                guild.InitGuild(tGuildMembers, tGuildApply);
+                guild.InitGuild(tGuildMembers, tGuildApplies);
+                this.Guilds[guildId] = guild;
             }
         }
 
@@ -393,7 +397,14 @@ namespace GameServer.Managers
                 return false;
             }
         }
-
+        /// <summary>
+        /// 处理公会管理者指令
+        /// </summary>
+        /// <param name="guildId"></param>
+        /// <param name="operatorId"></param>
+        /// <param name="targetId"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
         internal bool ExcuteAdminCommand(int guildId, int operatorId, int targetId, GuildAdminCommand command)
         {
             Guild guild = this.GetGuild(guildId);
@@ -455,6 +466,38 @@ namespace GameServer.Managers
             {
                 Log.Error($"ExecuteAdminCommand 数据库事务执行异常: {ex.Message}");
                 throw;
+            }
+        }
+        /// <summary>
+        /// 上线状态通知
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <param name="isOnline"></param>
+        public void NotifyOnlineStatus(int characterId, bool isOnline)
+        {
+            // 1.1查字典，确认这个玩家到底有没有加入公会？没有公会就return
+            int guildId = this.GetGuildIdByCharacter(characterId);
+            if (guildId == 0) return;
+            // 1.2查内存池，确认这个公会是不是在内存中真实存在的
+            Guild guild = this.GetGuild(guildId);
+            if (guild == null) return;
+            // 1.3查成员列表，确认这个玩家是不是真的在公会每单中
+            GuildMember member = guild.GetGuildMember(characterId);
+            // 2.1提取名片，将服务器内存对象转化为网络传输对象
+            NGuildMember nGuildMember = member.ToNGuildMember();
+            // 2.2使用传入的参数修改在线状态
+            nGuildMember.IsOnline = isOnline? 1 : 0;
+            // 3.1拿到当前所有在线玩家的Session
+            var onlineConnections = guild.GetOnlineSessions();
+            // 3.2遍历发送状态，除了自己之外
+            foreach(var conn in onlineConnections)
+            {
+                if(conn != null && conn.Session.Character.Data.ID != characterId)
+                {
+                    conn.Session.Response.guildMemberAddNotify = new GuildMemberAddNotify();
+                    conn.Session.Response.guildMemberAddNotify.NewMember = nGuildMember;
+                    conn.SendResponse();
+                }
             }
         }
     }

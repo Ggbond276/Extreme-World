@@ -37,13 +37,12 @@ namespace Assets.Scripts.Managers
         public Action OnGuildApplyChanged;
         public Action OnGuildHallListChanged;
 
-
         /// <summary>
-        /// 随 OnGameEnter 触发的唯一一次初始化拉取
+        /// 1. 无参的 Init：用于游戏中动态刷新（比如刚建好公会，或者申请刚被同意）
+        /// 它的作用纯粹是清空旧列表并向服务器拉取最新名单
         /// </summary>
         public void Init()
         {
-            myGuildInfo = null;
             myMembers.Clear();
             myApplies.Clear();
             guildHallList.Clear();
@@ -51,6 +50,16 @@ namespace Assets.Scripts.Managers
             GuildService.Instance.SendGuildMemberListRequest();
             GuildService.Instance.SendGuildApplyListRequest();
             GuildService.Instance.SendGuildListRequest();
+        }
+
+        /// <summary>
+        /// 2. 带参的 Init：专门用于 OnGameEnter 登录时的初始化
+        /// </summary>
+        /// <param name="nGuildInfo"></param>
+        public void Init(NGuildInfo nGuildInfo)
+        {
+            this.myGuildInfo = nGuildInfo; // 赋值大盘数据
+            this.Init(); // 💡 神仙操作：直接调用上面的无参方法，避免代码重复！
         }
 
         public void RefreshMembers(List<NGuildMember> members)
@@ -64,7 +73,7 @@ namespace Assets.Scripts.Managers
         }
         public void RefreshApplies(List<NGuildApply> applies)
         {
-            this.myMembers.Clear();
+            this.myApplies.Clear();
             foreach(var a in applies)
             {
                 this.myApplies[a.CharacterId] = a;

@@ -165,7 +165,7 @@
     <Compile Include="Services\MapService.cs" />
     <Compile Include="Services\QuestService.cs" />
     <Compile Include="Services\TeamService.cs" />
-    <Compile Include="Services\UserSerevice.cs" />
+    <Compile Include="Services\UserService.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Core\Vector3Int.cs" />
     <Compile Include="TCharacter.cs">

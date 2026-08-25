@@ -3,7 +3,10 @@ using Entities;
 using SkillBridge.Message;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerInputController : MonoBehaviour
 {
@@ -52,7 +55,30 @@ public class PlayerInputController : MonoBehaviour
     {
         if (character == null)
             return;
+        // ==========================================
+        //  新增：UI 焦点拦截系统 
+        // ==========================================
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+        {
+            GameObject selectedObj = EventSystem.current.currentSelectedGameObject;
 
+            // 判断当前鼠标光标是不是在输入框里
+            if (selectedObj.GetComponent<InputField>() != null || selectedObj.GetComponent<TMP_InputField>() != null)
+            {
+                // 如果角色还在走，强制让他停下来，防止按住方向键点输入框导致无限滑行
+                if (state != CharacterState.Idle)
+                {
+                    state = CharacterState.Idle;
+                    this.rb.velocity = Vector3.zero;
+                    this.character.Stop();
+                    this.SendEntityEvent(EntityEvent.Idle);
+                }
+
+                // 直接拦截！不再往下读取键盘的 W/A/S/D 操作
+                return;
+            }
+        }
+        // ==========================================
         // 1.获取垂直输入（WS）
         float v = Input.GetAxis("Vertical");
         // 2. v > 0 游戏对象目前要向前运动

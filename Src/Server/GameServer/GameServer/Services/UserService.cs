@@ -214,6 +214,8 @@ namespace GameServer.Services
             sender.Session.Character = character;
             MapManager.Instance[dbchar.MapID].CharacterEnter(sender, character);
             SessionManager.Instance.AddSession(character.Id, sender);
+
+            GuildManager.Instance.NotifyOnlineStatus(character.Data.ID, true);
         }
 
         /// <summary>
@@ -249,7 +251,12 @@ namespace GameServer.Services
 
             CharacterManager.Instance.RemoveCharacter(character.entityId);
             MapManager.Instance[character.Info.mapId].CharacterLeave(character);
+
+            // 在线通知
             character.friendManager.NotifyOnlineStatus(false);
+            GuildManager.Instance.NotifyOnlineStatus(character.Data.ID, false);
+
+
             if (character.team != null)
             {
                 TeamManager.Instance.LeaveTeam(character.team.Id, character.Data.ID, out string errorMsg);

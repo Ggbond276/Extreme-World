@@ -12,6 +12,7 @@ using System.Threading;
 using Network;
 using GameServer.Services;
 using GameServer.Manager;
+using GameServer.Managers;
 
 namespace GameServer
 {
@@ -27,6 +28,7 @@ namespace GameServer
             network.Init(Port);
             DBService.Instance.Init();
             DataManager.Instance.Load();
+            CharacterInfoManager.Instance.Init();
             UserService.Instance.Init();
             MapService.Instance.Init();
             ItemService.Instance.Init();

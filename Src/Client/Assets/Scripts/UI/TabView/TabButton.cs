@@ -15,7 +15,7 @@ public class TabButton : MonoBehaviour
 
     private Image tabImage;
 
-    private void Start()
+    private void Awake()
     {
         tabImage = this.GetComponent<Image>();
         normalImage = tabImage.sprite;

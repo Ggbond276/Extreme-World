@@ -79,7 +79,7 @@ namespace Assets.Scripts.Services
         /// </summary>
         public void SendGuildApplyListRequest()
         {
-            Debug.Log("");
+            Debug.Log("SendGuildApplyListRequest : 发送拉取公会申请列表请求");
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.guildApplyList = new GuildApplyListRequest();
@@ -91,7 +91,7 @@ namespace Assets.Scripts.Services
         /// </summary>
         public void SendGuildListRequest()
         {
-            Debug.Log("");
+            Debug.Log("SendGuildListRequest : 发送拉取公会列表请求");
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.guildList = new GuildListRequest();
@@ -432,6 +432,20 @@ namespace Assets.Scripts.Services
             // 核心闭环：如果被同意加入了公会，立刻重新向服务器拉取全量数据
             if (notify.IsAccept)
             {
+
+                // ========================================================
+                // 修复：在 Init 清空数据前，从大厅列表里捞出完整的公会数据
+                // ========================================================
+                foreach (var guildInHall in GuildManager.Instance.GuildHallList)
+                {
+                    if (guildInHall.Name == notify.GuildName)
+                    {
+                        // 找到了！直接赋值给本地大盘
+                        GuildManager.Instance.UpdateGuildInfo(guildInHall);
+                        break;
+                    }
+                }
+
                 GuildManager.Instance.Init();
 
                 UIMessageBox msgbox = MessageBox.Show($"恭喜，您已成功加入公会【{notify.GuildName}】！", "系统提示", MessageBoxType.Information);

@@ -4,6 +4,7 @@ using SkillBridge.Message;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,10 @@ public class UIGuildPlayerInteract : UIWindow
 
     [Header("核心面板")]
     public Transform panelMain;
+
+    [Header("用户姓名")]
+    public TextMeshProUGUI textName; //  1. 新增：绑定顶部名字的 Text 组件 (如果是TMP请改为 TextMeshProUGUI)
+
 
     private NGuildMember targetMember;
 
@@ -35,6 +40,14 @@ public class UIGuildPlayerInteract : UIWindow
     public void SetupInteractMenu(NGuildMember target)
     {
         this.targetMember = target;
+
+
+        // 2. 修复：在这里把目标玩家的名字渲染上去！
+        if (textName != null)
+        {
+            textName.text = target.Name;
+        }
+
         RefreshPermissionUI();
 
         if (panelMain != null)
@@ -53,16 +66,22 @@ public class UIGuildPlayerInteract : UIWindow
         bool IAmLeader = (myPosition == GuildPosition.GuildPositionLeader);
         bool IAmVice = (myPosition == GuildPosition.GuildPositionViceLeader);
 
+
+        // 3. 修复：通过 transform.parent 隐藏整个 Node 节点，连同图标一起删除
         if (btnChat != null)
-            btnChat.gameObject.SetActive(true);
+            btnChat.transform.parent.gameObject.SetActive(true);
+
         if (btnTransferLeader != null)
-            btnTransferLeader.gameObject.SetActive(IAmLeader);
+            btnTransferLeader.transform.parent.gameObject.SetActive(IAmLeader);
+
         if (btnAppointVice != null)
-            btnAppointVice.gameObject.SetActive(IAmLeader && targetPosition == GuildPosition.GuildPositionMember);
+            btnAppointVice.transform.parent.gameObject.SetActive(IAmLeader && targetPosition == GuildPosition.GuildPositionMember);
+
         if (btnAppointMember != null)
-            btnAppointMember.gameObject.SetActive(IAmLeader && targetPosition == GuildPosition.GuildPositionViceLeader);
+            btnAppointMember.transform.parent.gameObject.SetActive(IAmLeader && targetPosition == GuildPosition.GuildPositionViceLeader);
+
         if (btnKick != null)
-            btnKick.gameObject.SetActive(IAmLeader || (IAmVice && targetPosition == GuildPosition.GuildPositionMember));
+            btnKick.transform.parent.gameObject.SetActive(IAmLeader || (IAmVice && targetPosition == GuildPosition.GuildPositionMember));
     }
 
 
@@ -84,6 +103,7 @@ public class UIGuildPlayerInteract : UIWindow
     private void OnClickTransfer()
     {
         GuildManager.Instance.AdminMember(targetMember.CharacterId, GuildAdminCommand.CommandTransferLeader);
+        this.Close();
     }
 
     /// <summary>

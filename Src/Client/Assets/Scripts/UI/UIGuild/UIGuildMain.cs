@@ -100,7 +100,7 @@ public class UIGuildMain : UIWindow
 
     }
     /// <summary>
-    /// 权限判定：检查当前玩家是否为管理层 (此处设定为副会长)
+    /// 权限判定：检查当前玩家是否为管理层 (会长和副会长都属于管理层)
     /// </summary>
     /// <returns>如果是副会长返回 true，否则返回 false</returns>
     private bool IsManager()
@@ -111,7 +111,7 @@ public class UIGuildMain : UIWindow
         if(GuildManager.Instance.MyMembers.ContainsKey(myId))
         {
             GuildPosition position = GuildManager.Instance.MyMembers[myId].Position;
-            return position == GuildPosition.GuildPositionViceLeader;
+            return position == GuildPosition.GuildPositionViceLeader || position == GuildPosition.GuildPositionLeader;
         }
 
         return false;
@@ -269,11 +269,11 @@ public class UIGuildMain : UIWindow
         string keyword = inputFieldSearch.text.Trim();
         if (string.IsNullOrEmpty(keyword))
             MessageBox.Show("请输入要搜索的内容");
-        if(tabView.index == 1)
+        if(tabView.index == 0)
         {
             SearchMembers(keyword);
         }
-        else if(tabView.index == 0)
+        else if(tabView.index == 1)
         {
             SearchApplies(keyword);
         }
@@ -350,6 +350,7 @@ public class UIGuildMain : UIWindow
     {
         RefreshMemberList();
         UpdateBaseInfo();
+        UpdatePermissionUI();
     }
     /// <summary>
     /// 事件回调：当入会申请列表发生增删改时触发，重新渲染审批列表

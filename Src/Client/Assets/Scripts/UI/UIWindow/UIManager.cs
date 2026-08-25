@@ -102,6 +102,21 @@ public class UIManager : Singleton<UIManager>
                 }
                 // 7.如果预制体存在且资源不为空 我们就进行实例化 也就是这个预制体可以被挂载到屏幕上了
                 info.Instance = (GameObject)GameObject.Instantiate(prefab);
+
+
+                // ==========================================
+                // 核心架构升级：认祖归宗，统一挂载到 UIMain 下面
+                // ==========================================
+                GameObject uiRoot = GameObject.Find("UIMain");
+                if (uiRoot != null)
+                {
+                    // 参数 false 极其关键！它能保证面板进去后，缩放比例(Scale)保持为 1，位置不会乱飞
+                    info.Instance.transform.SetParent(uiRoot.transform, false);
+                }
+                else
+                {
+                    Debug.LogError("UIManager: 场景中找不到名为 UIMain 的全局UI根节点！");
+                }
             }
             // 8. 返回这个T类所挂载的那个实例
             return info.Instance.GetComponent<T>();

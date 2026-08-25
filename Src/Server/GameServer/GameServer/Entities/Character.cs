@@ -167,7 +167,7 @@ namespace GameServer.Entities
             this.statusManager = new StatusManager(this);
             // 好友管理器初始化
             this.friendManager = new FriendManager(this);
-            //
+            // 分配所属公会Id
             this.GuildId = GuildManager.Instance.GetGuildIdByCharacter(Id);
 
            
@@ -191,6 +191,23 @@ namespace GameServer.Entities
             this.Info.Bag = new NBagInfo();
             this.Info.Bag.Items = this.Data.Bag.Items;
             this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
+            if (this.GuildId > 0)
+            {
+                Guild guild = GuildManager.Instance.GetGuild(this.GuildId);
+                if (guild != null)
+                {
+                    this.Info.Guild = guild.ToNGuildInfo();
+                }
+                else
+                {
+                    this.Info.Guild = null; // 或者按需处理
+                }
+            }
+            else
+            {
+                this.Info.Guild = null; // 没有公会，直接设为 null
+            }
+
             // 物品数据填充
             this.ItemManager.GetItemInfos(this.Info.Items);
             // 任务数据填充

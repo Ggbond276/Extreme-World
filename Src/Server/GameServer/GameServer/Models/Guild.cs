@@ -59,9 +59,9 @@ namespace GameServer.Models
         /// <returns></returns>
         public NGuildInfo ToNGuildInfo()
         {
-            // 不在线空指针异常问题
-            Character character = CharacterManager.Instance.GetCharacter(this.Data.LeaderID);
-            string leaderName = character.Data.Name;
+            CharacterInfo leader = CharacterInfoManager.Instance.GetCharacterInfo(this.Data.LeaderID);
+            // 防止查不到数据报错
+            string leaderName = leader != null ? leader.Name : "未知会长";
 
             NGuildInfo nGuildInfo = new NGuildInfo();
             nGuildInfo.Id = this.Data.Id;

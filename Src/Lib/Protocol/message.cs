@@ -92,6 +92,9 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(16, Name = @"friends")]
         public global::System.Collections.Generic.List<NFriendInfo> Friends { get; } = new global::System.Collections.Generic.List<NFriendInfo>();
 
+        [global::ProtoBuf.ProtoMember(17, Name = @"guild")]
+        public NGuildInfo Guild { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]

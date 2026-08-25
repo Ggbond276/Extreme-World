@@ -324,6 +324,12 @@ namespace GameServer.Services
             sender.Session.Response.guildLeave.Result = Result.Success;
             sender.SendResponse();
 
+            // 单独给退会者自己发一份 Notify！
+            // 因为他已经被底层的 LeaveGuild 移出内存字典了，下面的组播拿不到他
+            sender.Session.Response.guildMemberRemoveNotify = new GuildMemberRemoveNotify();
+            sender.Session.Response.guildMemberRemoveNotify.CharacterId = characterId;
+            sender.SendResponse();
+
             // 2. 【组播同步】给所有仍然在公会的老成员：推送移除指令 (按 ID 删除)
             var onlineConnections = guild.GetOnlineSessions();
             foreach (var connection in onlineConnections)
