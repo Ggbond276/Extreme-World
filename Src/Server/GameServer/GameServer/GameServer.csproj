@@ -120,6 +120,7 @@
     <Compile Include="GameServer.cs" />
     <Compile Include="Managers\CharacterInfoManager.cs" />
     <Compile Include="Managers\CharacterManager.cs" />
+    <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\EquipManager.cs" />

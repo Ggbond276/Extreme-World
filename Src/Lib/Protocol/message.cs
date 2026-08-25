@@ -1665,7 +1665,7 @@ namespace SkillBridge.Message
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"channel")]
-        public CharChannel Channel { get; set; }
+        public ChatChannel Channel { get; set; }
 
         [global::ProtoBuf.ProtoMember(2)]
         public int fromId { get; set; }
@@ -1932,7 +1932,7 @@ namespace SkillBridge.Message
     }
 
     [global::ProtoBuf.ProtoContract()]
-    public enum CharChannel
+    public enum ChatChannel
     {
         [global::ProtoBuf.ProtoEnum(Name = @"ALL")]
         All = -1,

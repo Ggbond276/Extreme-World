@@ -832,7 +832,7 @@ message GuildChatNotify {
 //
 ////////////////////////////////////////////////////////////////
 
-enum CharChannel
+enum ChatChannel
 {
 	ALL = -1;
 	LOCAL = 1;
@@ -845,7 +845,7 @@ enum CharChannel
 
 message NChatMessage
 {
-	CharChannel channel = 1;
+	ChatChannel channel = 1;
 	int32 fromId = 2;        // 发送者ID
     string fromName = 3;     // 发送者名字
     int32 fromClass = 4;     // 发送者职业 (用于前端UI按职业渲染颜色)
