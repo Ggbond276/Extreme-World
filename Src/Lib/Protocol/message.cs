@@ -335,6 +335,9 @@ namespace SkillBridge.Message
         [global::ProtoBuf.ProtoMember(33)]
         public GuildAdminRequest guildAdmin { get; set; }
 
+        [global::ProtoBuf.ProtoMember(40)]
+        public ChatRequest chatRequest { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -457,6 +460,12 @@ namespace SkillBridge.Message
 
         [global::ProtoBuf.ProtoMember(40)]
         public GuildChatNotify guildChatNotify { get; set; }
+
+        [global::ProtoBuf.ProtoMember(41)]
+        public ChatResponse chatResponse { get; set; }
+
+        [global::ProtoBuf.ProtoMember(42)]
+        public ChatNotify chatNotify { get; set; }
 
         [global::ProtoBuf.ProtoMember(100)]
         public StatusNotify statusNotify { get; set; }
@@ -1648,6 +1657,82 @@ namespace SkillBridge.Message
 
     }
 
+    [global::ProtoBuf.ProtoContract()]
+    public partial class NChatMessage : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"channel")]
+        public CharChannel Channel { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2)]
+        public int fromId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string fromName { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(4)]
+        public int fromClass { get; set; }
+
+        [global::ProtoBuf.ProtoMember(5)]
+        public int toId { get; set; }
+
+        [global::ProtoBuf.ProtoMember(6)]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string toName { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(7, Name = @"message")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Message { get; set; } = "";
+
+        [global::ProtoBuf.ProtoMember(8, Name = @"time")]
+        public long Time { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ChatRequest : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"message")]
+        public NChatMessage Message { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ChatResponse : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"result")]
+        public Result Result { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"errormsg")]
+        [global::System.ComponentModel.DefaultValue("")]
+        public string Errormsg { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class ChatNotify : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"message")]
+        public NChatMessage Message { get; set; }
+
+    }
+
     [global::ProtoBuf.ProtoContract(Name = @"RESULT")]
     public enum Result
     {
@@ -1844,6 +1929,25 @@ namespace SkillBridge.Message
         CommandDemoteNormal = 3,
         [global::ProtoBuf.ProtoEnum(Name = @"COMMAND_KICK_MEMBER")]
         CommandKickMember = 4,
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public enum CharChannel
+    {
+        [global::ProtoBuf.ProtoEnum(Name = @"ALL")]
+        All = -1,
+        [global::ProtoBuf.ProtoEnum(Name = @"LOCAL")]
+        Local = 1,
+        [global::ProtoBuf.ProtoEnum(Name = @"WORLD")]
+        World = 2,
+        [global::ProtoBuf.ProtoEnum(Name = @"SYSTEM")]
+        System = 4,
+        [global::ProtoBuf.ProtoEnum(Name = @"PRIVATE")]
+        Private = 8,
+        [global::ProtoBuf.ProtoEnum(Name = @"TEAM")]
+        Team = 16,
+        [global::ProtoBuf.ProtoEnum(Name = @"GUILD")]
+        Guild = 32,
     }
 
 }

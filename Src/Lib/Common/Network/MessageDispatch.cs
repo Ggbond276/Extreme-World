@@ -49,6 +49,10 @@ namespace Network
             if (message.guildApplyResultNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyResultNotify); }
             if (message.guildInfoChangeNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildInfoChangeNotify); }
             if (message.guildChatNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildChatNotify); }
+
+            // ---------------- 聊天系统 (Chat) ----------------
+            if (message.chatResponse != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.chatResponse); }
+            if (message.chatNotify != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.chatNotify); }
         }
 
         public void Dispatch(T sender, SkillBridge.Message.NetMessageRequest message)
@@ -86,6 +90,9 @@ namespace Network
             if (message.guildApplyList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildApplyList); }
             if (message.guildList != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildList); }
             if (message.guildAdmin != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.guildAdmin); }
+
+            // ---------------- 聊天系统 (Chat) ----------------
+            if (message.chatRequest != null) { MessageDistributer<T>.Instance.RaiseEvent(sender, message.chatRequest); }
         }
     }
 }

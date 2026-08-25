@@ -225,7 +225,7 @@ message NetMessageRequest{
 	TeamInfoRequest teamInfo = 21;
 	TeamLeaveRequest teamLeave = 22;
 
-// ---------------- 公会系统 (Guild) ----------------
+    // ---------------- 公会系统 (Guild) ----------------
     GuildCreateRequest guildCreate = 23;
     GuildDisbandRequest guildDisband = 24;
     GuildSettingModifyRequest guildSettingModify = 25;
@@ -238,6 +238,8 @@ message NetMessageRequest{
     GuildListRequest guildList = 32;
     GuildAdminRequest guildAdmin = 33;
 
+    // ---------------- 聊天系统 (Guild) ----------------
+	ChatRequest chatRequest = 40;
 }
 
 message NetMessageResponse{
@@ -269,7 +271,7 @@ message NetMessageResponse{
 	TeamInfoResponse teamInfo = 21;
 	TeamLeaveResponse teamLeave = 22;
 
-// ---------------- 公会系统操作响应 (Response) ----------------
+    // ---------------- 公会系统操作响应 (Response) ----------------
     GuildCreateResponse guildCreate = 23;
     GuildDisbandResponse guildDisband = 24;
     GuildSettingModifyResponse guildSettingModify = 25;
@@ -291,7 +293,14 @@ message NetMessageResponse{
     GuildInfoChangeNotify guildInfoChangeNotify = 39;
     GuildChatNotify guildChatNotify = 40;
 
-	
+
+    // ---------------- 聊天系统操作响应 (Response) ----------------
+    ChatResponse chatResponse = 41;
+
+	// ---------------- 聊天系统全局推送 (Notify) ----------------
+	ChatNotify chatNotify = 42;
+
+
 	StatusNotify statusNotify = 100;
 }
 
@@ -817,3 +826,47 @@ message GuildChatNotify {
     string chat_content = 3;        // 聊天内容
 }
 
+////////////////////////////////////////////////////////////////
+//
+//  ChatSystem
+//
+////////////////////////////////////////////////////////////////
+
+enum CharChannel
+{
+	ALL = -1;
+	LOCAL = 1;
+	WORLD = 2;
+	SYSTEM = 4;
+	PRIVATE = 8;
+	TEAM = 16;
+	GUILD = 32;
+}
+
+message NChatMessage
+{
+	CharChannel channel = 1;
+	int32 fromId = 2;        // 发送者ID
+    string fromName = 3;     // 发送者名字
+    int32 fromClass = 4;     // 发送者职业 (用于前端UI按职业渲染颜色)
+    int32 toId = 5;          // 接收者ID (私聊专用)
+    string toName = 6;       // 接收者名字 (私聊专用)
+    string message = 7;      // 消息内容
+    int64 time = 8;          // 发送时间戳
+}
+
+message ChatRequest
+{
+    NChatMessage message = 1; 
+}
+
+message ChatResponse
+{
+    RESULT result = 1;
+    string errormsg = 2;
+}
+
+message ChatNotify
+{
+    NChatMessage message = 1;
+}
