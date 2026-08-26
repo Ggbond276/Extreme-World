@@ -48,7 +48,7 @@ namespace Assets.Scripts.Services
         {
             if(response.Result == Result.Success)
             {
-                ChatManager.Instance.OnChatSendSuucee?.Invoke();
+                ChatManager.Instance.OnChatSendSuccess?.Invoke();
             } else
             {
                 // 发送失败：弹出错误提示

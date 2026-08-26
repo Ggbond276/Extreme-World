@@ -9,8 +9,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{12F44184-A422-5F27-22E6-507969043F15}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -61,8 +60,6 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.46f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Managers\ChatManager.cs" />
-    <Compile Include="Assets\Scripts\Services\ChatService.cs" />
     <Compile Include="Assets\Scripts\UI\UIMessageBox\MessageBox.cs" />
     <Compile Include="Assets\Scripts\UI\UIFriend\UIFriends.cs" />
     <Compile Include="Assets\Scripts\Network\NetClient.cs" />
@@ -71,6 +68,7 @@
     <Compile Include="Assets\Scripts\UI\UIGuild\UIGuildPlayerInteract.cs" />
     <Compile Include="Assets\Scripts\GameObject\TeleporterObject.cs" />
     <Compile Include="Assets\Scripts\Managers\DataManager.cs" />
+    <Compile Include="Assets\Scripts\UI\UIChat\UIChat.cs" />
     <Compile Include="Assets\Scripts\UI\UIWordElement\UIWorldElementManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\NPCController.cs" />
     <Compile Include="Assets\Scripts\Managers\GuildManager.cs" />
@@ -89,6 +87,7 @@
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestInfo.cs" />
     <Compile Include="Assets\Scripts\UI\UINameBar\UINameBar.cs" />
     <Compile Include="Assets\Scripts\Managers\NPCManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\ChatManager.cs" />
     <Compile Include="Assets\Scripts\Utilities\LoadingManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\MapController.cs" />
     <Compile Include="Assets\Scripts\UI\UILogin\UILogin.cs" />
@@ -118,6 +117,7 @@
     <Compile Include="Assets\Scripts\Managers\CharacterManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIQuest\UIQuestSystem.cs" />
     <Compile Include="Assets\Scripts\Services\MapService.cs" />
+    <Compile Include="Assets\Scripts\Services\ChatService.cs" />
     <Compile Include="Assets\Scripts\UI\UIBag\UIBag.cs" />
     <Compile Include="Assets\Scripts\UI\UIGuild\UIGuildEntry.cs" />
     <Compile Include="Assets\Scripts\Services\StatusService.cs" />
@@ -139,6 +139,7 @@
     <Compile Include="Assets\Scripts\Utilities\MonoSingleton.cs" />
     <Compile Include="Assets\Scripts\Managers\FriendManager.cs" />
     <Compile Include="Assets\Scripts\Services\TeamService.cs" />
+    <Compile Include="Assets\Scripts\UI\UIChat\UIChatMessage.cs" />
     <Compile Include="Assets\Scripts\UI\UICharacterSelect\UICharacterSelect.cs" />
     <Compile Include="Assets\Scripts\GameObject\MainPlayerCamera.cs" />
     <Compile Include="Assets\Scripts\Services\FriendService.cs" />

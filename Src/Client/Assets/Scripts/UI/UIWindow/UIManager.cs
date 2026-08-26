@@ -1,4 +1,5 @@
 using Assets.Scripts.UI;
+using Assets.Scripts.UI.UIChat;
 using Assets.Scripts.UI.UITeam;
 using System;
 using System.Collections;
@@ -60,8 +61,11 @@ public class UIManager : Singleton<UIManager>
 
         // 4. 成员交互菜单 (点击成员头像弹出的踢人/升职操作面板)
         this.UIResources.Add(typeof(UIGuildPlayerInteract), new UIElement() { Resources = "UI/UIGuildPlayerInteract", Cache = false });
-    
-}
+
+
+        // 在 UIManager 的构造函数中添加：
+        this.UIResources.Add(typeof(UIChat), new UIElement() { Resources = "UI/UIChat", Cache = true });
+    }
 
     /// <summary>
     /// 析构函数：在垃圾回收(GC)清理该对象时调用，用于释放非托管资源或兜底清理

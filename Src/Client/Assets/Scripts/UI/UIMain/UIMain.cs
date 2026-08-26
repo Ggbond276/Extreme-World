@@ -1,6 +1,7 @@
 using Assets.Scripts.Managers;
 using Assets.Scripts.Models;
 using Assets.Scripts.UI;
+using Assets.Scripts.UI.UIChat;
 using Assets.Scripts.UI.UITeam;
 using Models;
 using Services;
@@ -23,6 +24,9 @@ public class UIMain : MonoSingleton<UIMain>
         TeamManager.Instance.OnTeamChanged += OnTeamChanged;
         TeamManager.Instance.OnReceiveTeamInvite += OnReceiveTeamInvite;
         TeamManager.Instance.OnShowFloatMessage += OnShowFloatMessage;
+
+        // 【新增】进入游戏主界面时，立刻常驻显示聊天框
+        UIManager.Instance.Show<UIChat>();
     }
     // 注销监听
     void OnDestroy()

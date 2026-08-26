@@ -293,7 +293,7 @@ namespace Services
                 QuestManager.Instance.Init(Info.Quests);
                 FriendManager.Instance.Init(Info.Friends);
                 GuildManager.Instance.Init(Info.Guild);
-
+                ChatManager.Instance.Init();
                 #region 测试物品和背包的数据已经被传输过来了
                 //foreach (var item in ItemManager.Instance.Items)
                 //{

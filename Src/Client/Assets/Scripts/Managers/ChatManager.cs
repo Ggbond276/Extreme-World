@@ -23,7 +23,7 @@ namespace Assets.Scripts.Managers
         public List<NChatMessage> PrivateMessages = new List<NChatMessage>(); // 私聊本地缓存
 
         public UnityAction<ChatChannel> OnChatUpdated;
-        public UnityAction OnChatSendSuucee;
+        public UnityAction OnChatSendSuccess;
 
         public void Init()
         {
