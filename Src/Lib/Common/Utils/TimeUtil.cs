@@ -31,7 +31,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-class Time
+public class TimeUtil
 {
 
     // ==============================================================================
@@ -45,11 +45,22 @@ class Time
     /// <summary>
     /// 静态构造函数：在服务器刚启动、这个类第一次被用到时执行一次
     /// </summary>
-    static Time()
+    static TimeUtil()
     {
         startupTicks = ticks; // 记录下服务器启动那一瞬间的时间戳
     }
 
+    /// <summary>
+    /// 获取当前真实世界时间的毫秒级 Unix 时间戳
+    /// (常用于聊天、邮件等业务，完美匹配 Protobuf 的 int64)
+    /// </summary>
+    public static long timestamp
+    {
+        get
+        {
+            return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+    }
 
     private static long _frameCount = 0;
 
@@ -159,4 +170,6 @@ class Time
         _time = (_ticks - startupTicks) / 10000000f;
         lastTick = _ticks;
     }
+
+
 }
