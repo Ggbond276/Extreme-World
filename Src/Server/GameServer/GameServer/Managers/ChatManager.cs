@@ -44,10 +44,26 @@ namespace GameServer.Managers
                     AddToList(this.System, message);
                     break;
                 case ChatChannel.Team:
-                    AddToList(this.Team, from.team.Id, message);
+                    if (from.team != null)
+                    {
+                        AddToList(this.Team, from.team.Id, message);
+                    }
+                    else
+                    {
+                        // 严格套用 Skill 规范的错误日志
+                        Log.ErrorFormat("AddMessage : 收到无队伍玩家的队伍消息(已拦截), CharacterId:{0}", from.Id);
+                    }
                     break;
                 case ChatChannel.Guild:
-                    AddToList(this.Guild, from.GuildId, message);
+                    if (from.GuildId > 0)
+                    {
+                        AddToList(this.Guild, from.GuildId, message);
+                    }
+                    else
+                    {
+                        // 严格套用 Skill 规范的错误日志
+                        Log.ErrorFormat("AddMessage : 收到无公会玩家的公会消息(已拦截), CharacterId:{0}", from.Id);
+                    }
                     break;
             }
         }

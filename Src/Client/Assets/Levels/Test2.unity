@@ -486,31 +486,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 431682728}
     m_Modifications:
-    - target: {fileID: 2310138247574338778, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2310138247574338778, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2310138247574338778, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2310138247574338778, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2310138247574338778, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2878567781153314104, guid: 1b2609d58feab914480c242b96b0cac0,
         type: 3}
       propertyPath: m_Pivot.x
@@ -611,45 +586,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3713118744697088385, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3713118744697088385, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3713118744697088385, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3713118744697088385, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3713118744697088385, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7801632138021626401, guid: 1b2609d58feab914480c242b96b0cac0,
         type: 3}
       propertyPath: m_Name
       value: UIChat
-      objectReference: {fileID: 0}
-    - target: {fileID: 9032959080169586910, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9032959080169586910, guid: 1b2609d58feab914480c242b96b0cac0,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -22,6 +22,7 @@ namespace GameServer.Services
 
         public void Init()
         {
+            Log.Info("ChatService : 服务端聊天服务初始化并订阅网络协议");
             ChatManager.Instance.Init();
         }
 
@@ -35,21 +36,29 @@ namespace GameServer.Services
             msg.fromClass = (int)character.Info.Class;
             msg.Time = TimeUtil.timestamp;
 
-            Log.InfoFormat("OnChat: Character:{0} Channel:{1} Message:{2}", character.Id, msg.Channel, msg.Message);
+            Log.InfoFormat("OnChat : 收到玩家聊天请求, CharacterId:{0}, Channel:{1}, Message:{2}", character.Id, msg.Channel, msg.Message);
 
-            if(msg.Channel == ChatChannel.Private)
+            if (msg.Channel == ChatChannel.Private)
             {
                 var targetSession = SessionManager.Instance.GetSession(msg.toId);
                 if(targetSession == null)
                 {
+                    Log.InfoFormat("OnChat : 私聊发送失败目标不在线, ToId:{0}", msg.toId);
                     sender.Session.Response.chatResponse = new ChatResponse();
                     sender.Session.Response.chatResponse.Result = Result.Failed;
                     sender.Session.Response.chatResponse.Errormsg = "对方不在线";
                     sender.SendResponse();
                     return;
                 }
+                Log.InfoFormat("OnChat : 转发私聊消息, FromId:{0}, ToId:{1}", character.Id, msg.toId);
+
                 targetSession.Session.Response.chatNotify = new ChatNotify();
                 targetSession.Session.Response.chatNotify.Message = msg;
+                targetSession.SendResponse();
+
+                sender.Session.Response.chatResponse = new ChatResponse();
+                sender.Session.Response.chatResponse.Result = Result.Success;
+                sender.SendResponse();
             } else
             {
                 ChatManager.Instance.AddMessage(character, msg);
@@ -58,6 +67,11 @@ namespace GameServer.Services
 
                 // 1.谁发的 2.哪个频道 3.发送什么信息
                 BroadcastMessage(character, msg.Channel, notify);
+
+                // 【Bug修复 2】广播成功，给发送者回发一个 Success 响应
+                sender.Session.Response.chatResponse = new ChatResponse();
+                sender.Session.Response.chatResponse.Result = Result.Success;
+                sender.SendResponse();
             }
         }
 

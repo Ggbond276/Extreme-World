@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.UIChat
 {
@@ -69,6 +70,11 @@ namespace Assets.Scripts.UI.UIChat
                 UIChatMessage itemScript = go.GetComponent<UIChatMessage>();
                 if (itemScript != null)
                     itemScript.SetMessage(msg);
+            }
+
+            if (node_Content != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)node_Content);
             }
         }
 
@@ -150,9 +156,22 @@ namespace Assets.Scripts.UI.UIChat
                 MessageBox.Show("请选择私聊对象");
                 return;
             }
+
+            if (channel == ChatChannel.Team && TeamManager.Instance.CurrentTeam == null)
+            {
+                MessageBox.Show("您当前没有队伍，无法在队伍频道发言");
+                return;
+            }
+
+            if (channel == ChatChannel.Guild && !GuildManager.Instance.HasGuild)
+            {
+                MessageBox.Show("您当前没有公会，无法在公会频道发言");
+                return;
+            }
+
+
+            ChatManager.Instance.SendChat(channel, content, privateTargetId, privateTargetName);
         }
-
-
 
     }
 }
