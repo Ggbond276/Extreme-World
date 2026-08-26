@@ -159,6 +159,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\ChatService.cs" />
     <Compile Include="Services\DBService.cs" />
     <Compile Include="Services\FriendService.cs" />
     <Compile Include="Services\GuildService.cs" />
