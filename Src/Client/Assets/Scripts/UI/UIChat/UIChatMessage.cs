@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using SkillBridge.Message;
+using UnityEngine.EventSystems;
 
-public class UIChatMessage : MonoBehaviour
+public class UIChatMessage : MonoBehaviour, IPointerClickHandler
 {
     public TextMeshProUGUI txtMessage;
 
@@ -52,5 +53,40 @@ public class UIChatMessage : MonoBehaviour
 
         // 3. 最终拼接：聊天内容使用极深灰色(#212121)，绝对不要用纯黑，深灰色在羊皮纸上看着最舒服、不刺眼
         txtMessage.text = $"{channelTag}{nameTag}: <color=#212121>{content}</color>";
+    }
+
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+
+            int linkIndex = TMP_TextUtilities.FindIntersectingLink(txtMessage, Input.mousePosition, null);
+
+            if (linkIndex != -1)
+            {
+                TMP_LinkInfo linkInfo = txtMessage.textInfo.linkInfo[linkIndex];
+                string targetIdStr = linkInfo.GetLinkID();
+                string targetName = linkInfo.GetLinkText().Replace("[", "").Replace("]", "");
+
+                int targetId = 0;
+                if (int.TryParse(targetIdStr, out targetId))
+                {
+                    // 【防呆设计】如果点的是自己，直接 Return，不弹窗
+                    if (targetId == Models.User.Instance.CurrentCharacter.Id)
+                        return;
+
+                    // 严格遵守日志规范
+                    Debug.LogFormat("OnPointerClick : 点击玩家名字呼出交互菜单, TargetId:{0}, TargetName:{1}", targetId, targetName);
+
+                    // 呼出专属的聊天交互面板，并把数据塞进去
+                    UIChatInteract interactUI = UIManager.Instance.Show<UIChatInteract>();
+                    if (interactUI != null)
+                    {
+                        interactUI.Setup(targetId, targetName);
+                    }
+                }
+            }
+        }
     }
 }

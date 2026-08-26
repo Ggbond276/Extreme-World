@@ -1,4 +1,5 @@
 using Assets.Scripts.Managers;
+using Assets.Scripts.UI.UIChat;
 using Models;
 using SkillBridge.Message;
 using System;
@@ -82,6 +83,12 @@ public class UIGuildPlayerInteract : UIWindow
 
         if (btnKick != null)
             btnKick.transform.parent.gameObject.SetActive(IAmLeader || (IAmVice && targetPosition == GuildPosition.GuildPositionMember));
+
+        if (panelMain != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)panelMain);
+        }
     }
 
 
@@ -90,11 +97,26 @@ public class UIGuildPlayerInteract : UIWindow
     /// </summary>
     private void OnClickChat()
     {
+
+        // 假设协议中 Status == 1 表示在线，0 表示离线 (根据你的实际枚举调整)
+        if (targetMember.IsOnline != 1)
+        {
+            MessageBox.Show("对方当前不在线，无法发起私聊");
+            return;
+        }
         // TODO: 为明天的聊天系统预留的接口
         // 预期逻辑：呼出 UIManager.Instance.Show<UIChat>() -> 自动切到私聊频道 -> 将 targetMember 的名字或 ID 传给聊天系统
         Debug.Log($"准备与 {targetMember.Name} 建立私聊频道...");
 
+        UIChat chatUI = UIManager.Instance.Show<UIChat>();
+        if (chatUI != null)
+        {
+            // 2. 传入目标公会成员的 ID 和 名字，自动切到私聊频道
+            chatUI.StartPrivateChat(targetMember.CharacterId, targetMember.Name);
+        }
+
         this.Close();
+
     }
 
     /// <summary>
@@ -132,13 +154,6 @@ public class UIGuildPlayerInteract : UIWindow
         GuildManager.Instance.AdminMember(targetMember.CharacterId, GuildAdminCommand.CommandKickMember);
         this.Close();
     }
-
-
-
-
-
-
-
 
 
 }

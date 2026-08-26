@@ -58,6 +58,11 @@ namespace GameServer.Services
 
                 sender.Session.Response.chatResponse = new ChatResponse();
                 sender.Session.Response.chatResponse.Result = Result.Success;
+
+                sender.Session.Response.chatNotify = new ChatNotify();
+                sender.Session.Response.chatNotify.Message = msg;
+
+
                 sender.SendResponse();
             } else
             {

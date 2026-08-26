@@ -129,6 +129,7 @@
     <Compile Include="Assets\Scripts\Models\User.cs" />
     <Compile Include="Assets\Scripts\UI\UIGuild\UIGuildMemberItem.cs" />
     <Compile Include="Assets\Scripts\UI\UITeam\UITeamItem.cs" />
+    <Compile Include="Assets\Scripts\UI\UIChat\UIChatInteract.cs" />
     <Compile Include="Assets\Scripts\Managers\SpriteManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\GameObjectManager.cs" />
     <Compile Include="Assets\Scripts\Services\ItemService.cs" />

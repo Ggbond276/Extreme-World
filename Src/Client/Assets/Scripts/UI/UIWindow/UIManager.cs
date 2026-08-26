@@ -65,6 +65,7 @@ public class UIManager : Singleton<UIManager>
 
         // 在 UIManager 的构造函数中添加：
         this.UIResources.Add(typeof(UIChat), new UIElement() { Resources = "UI/UIChat", Cache = true });
+        this.UIResources.Add(typeof(UIChatInteract), new UIElement() { Resources = "UI/UIChatInteract", Cache = true });
     }
 
     /// <summary>

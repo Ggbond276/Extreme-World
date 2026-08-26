@@ -173,5 +173,18 @@ namespace Assets.Scripts.UI.UIChat
             ChatManager.Instance.SendChat(channel, content, privateTargetId, privateTargetName);
         }
 
+        public void StartPrivateChat(int targetId, string targetName)
+        {
+            this.privateTargetId = targetId;
+            this.privateTargetName = targetName;
+
+            if(tabView != null)
+            {
+                tabView.SelectTab(5);
+            } else
+            {
+                OnChannelSwitched(5);
+            }
+        }
     }
 }
