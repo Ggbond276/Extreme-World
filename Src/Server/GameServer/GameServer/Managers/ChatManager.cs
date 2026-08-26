@@ -47,7 +47,7 @@ namespace GameServer.Managers
                     AddToList(this.Team, from.team.Id, message);
                     break;
                 case ChatChannel.Guild:
-                    AddToList(this.Team, from.GuildId, message);
+                    AddToList(this.Guild, from.GuildId, message);
                     break;
             }
         }
