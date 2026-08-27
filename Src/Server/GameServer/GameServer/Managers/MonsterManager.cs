@@ -24,7 +24,12 @@ namespace GameServer.Managers
 
         internal void Create(int spawnMonID, int spawnLevel, NVector3 position, NVector3 direction)
         {
-            Monster monster = new Monster(spawnMonID, spawnLevel, position, direction);
+            // NVector3 (网络 DTO) → Vector3Int (内部坐标) 边界转换
+            Monster monster = new Monster(
+                spawnMonID,
+                spawnLevel,
+                new Core.Vector3Int(position.X, position.Y, position.Z),
+                new Core.Vector3Int(direction.X, direction.Y, direction.Z));
             EntityManager.Instance.AddEntity(Map.Define.ID, monster);
             monster.MapId = this.Map.Define.ID;
             Monsters[monster.entityId] = monster;

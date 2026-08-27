@@ -75,16 +75,16 @@ namespace GameServer.Models
             conn.Session.Response.mapCharacterEnter = new MapCharacterEnterResponse();
             conn.Session.Response.mapCharacterEnter.mapId = this.Define.ID;
             foreach (var kv in this.MapCharacters)
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.ToCharacterInfo());
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.ToCharacterBaseInfo());
             foreach(var kv in  this.MonsterManager.Monsters)
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.ToCharacterInfo());
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.ToCharacterBaseInfo());
             conn.SendResponse();
 
 
             foreach (var kv in this.MapCharacters)
             {
                 if (kv.Value.character != character)
-                    this.SendCharacterEnterMap(kv.Value.connection, character.ToCharacterInfo());
+                    this.SendCharacterEnterMap(kv.Value.connection, character.ToCharacterBaseInfo());
             }
         }
         void SendCharacterEnterMap(NetConnection<NetSession> conn, NCharacterInfo character)
@@ -146,7 +146,7 @@ namespace GameServer.Models
             Log.InfoFormat("MonsterEnter: MapID:{0} MonsterEntityID:{1}", this.Define.ID, monster.entityId);
             foreach(var kv in this.MapCharacters)
             {
-                this.SendCharacterEnterMap(kv.Value.connection, monster.ToCharacterInfo());
+                this.SendCharacterEnterMap(kv.Value.connection, monster.ToCharacterBaseInfo());
             }
         }
      
