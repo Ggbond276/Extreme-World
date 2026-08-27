@@ -27,10 +27,9 @@ namespace GameServer.Managers
         /// <param name="entity"></param>
         public void AddEntity(int mapId, Entity entity)
         {
-            // 添加角色数据到Character到Entity管理器
             AllEntities.Add(entity);
-            // 赋予Character一个
-            entity.EntityData.Id = ++this.idx;
+            // 赋予 Character 一个全局唯一 entityId
+            entity.entityId = ++this.idx;
 
             
             if(!MapEntites.ContainsKey(mapId))

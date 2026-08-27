@@ -46,8 +46,6 @@ namespace GameServer.Manager
             Character character = new Character(CharacterType.Player, cha);
             // 将角色添加到Entity管理器中(添加到管理器之后才有EntityID)
             EntityManager.Instance.AddEntity(cha.MapID, character);
-            // 网络数据也需要更新EntityID
-            character.Info.EntityId = character.entityId;
 
             // 将角色添加到Character管理器中
             this.Characters[character.entityId] = character;

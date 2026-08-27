@@ -94,7 +94,7 @@ namespace GameServer.Models
             nTeamInfo.Leader = this.Leader.Data.ID;
             foreach(Character cha in Members)
             {
-                nTeamInfo.Members.Add(cha.Info);
+                nTeamInfo.Members.Add(cha.ToCharacterInfo());
             }
             return nTeamInfo;
         }

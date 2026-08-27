@@ -73,7 +73,7 @@ namespace Assets.Scripts.Managers
         {
             if (Characters.ContainsKey(entityId))
             {
-                EntityManager.Instance.RemoveEntity(this.Characters[entityId].Info.Entity);
+                EntityManager.Instance.RemoveEntity(this.Characters[entityId].EntityData);
                 if (OnCharacterLeave != null)
                 {
                     this.OnCharacterLeave(Characters[entityId]);

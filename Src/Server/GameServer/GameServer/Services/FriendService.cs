@@ -42,7 +42,7 @@ namespace GameServer.Services
             Character character = sender.Session.Character;
 
             Log.InfoFormat("OnFriendAddRequest : 收到好友添加请求, 请求者 ID:{0} Name:{1}, 目标 ID:{2} Name:{3}",
-                character.Id, character.Info.Name, request.ToId, request.ToName);
+                character.Id, character.Name, request.ToId, request.ToName);
 
             // 2. 查找目标玩家 ID
             if (request.ToId == 0)

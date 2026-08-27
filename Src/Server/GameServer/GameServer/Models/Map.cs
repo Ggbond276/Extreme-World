@@ -67,7 +67,7 @@ namespace GameServer.Models
             //打印日志
             Log.InfoFormat("CharacterEnter: MapID: {0} CharacterEntityID: {1}", this.Define.ID, character.entityId);
             //给网络数据MapID赋值
-            character.Info.mapId = this.ID;
+            character.MapId = this.ID;
             //将新进入的角色和连接信息存储在MapCharacaters字典中(这里使用的是Entity.Id作为键值存放)
             this.MapCharacters[character.entityId] = new MapCharacter(conn, character);
 
@@ -75,16 +75,16 @@ namespace GameServer.Models
             conn.Session.Response.mapCharacterEnter = new MapCharacterEnterResponse();
             conn.Session.Response.mapCharacterEnter.mapId = this.Define.ID;
             foreach (var kv in this.MapCharacters)
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.Info);
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.character.ToCharacterInfo());
             foreach(var kv in  this.MonsterManager.Monsters)
-                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.Info);
+                conn.Session.Response.mapCharacterEnter.Characters.Add(kv.Value.ToCharacterInfo());
             conn.SendResponse();
 
 
             foreach (var kv in this.MapCharacters)
             {
                 if (kv.Value.character != character)
-                    this.SendCharacterEnterMap(kv.Value.connection, character.Info);
+                    this.SendCharacterEnterMap(kv.Value.connection, character.ToCharacterInfo());
             }
         }
         void SendCharacterEnterMap(NetConnection<NetSession> conn, NCharacterInfo character)
@@ -146,7 +146,7 @@ namespace GameServer.Models
             Log.InfoFormat("MonsterEnter: MapID:{0} MonsterEntityID:{1}", this.Define.ID, monster.entityId);
             foreach(var kv in this.MapCharacters)
             {
-                this.SendCharacterEnterMap(kv.Value.connection, monster.Info);
+                this.SendCharacterEnterMap(kv.Value.connection, monster.ToCharacterInfo());
             }
         }
      
