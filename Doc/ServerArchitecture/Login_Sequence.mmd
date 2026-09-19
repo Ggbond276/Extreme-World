@@ -1,0 +1,97 @@
+sequenceDiagram
+    autonumber
+    actor Client as Client
+    participant NetService as NetService
+    participant NetConn as NetConnection NetSession
+    participant NetSess as NetSession
+    participant Dist as MessageDistributer
+    participant UserSvc as UserService
+    participant DB as DBService
+    participant EF as ExtremeWorldEntities
+    participant SQL as SQL Server
+    participant DataMgr as DataManager
+    participant CharMgr as CharacterManager
+    participant EntMgr as EntityManager
+    participant SessMgr as SessionManager
+    participant MapMgr as MapManager
+    participant Char as Character
+    participant QuestMgr as QuestManager
+    participant ItemMgr as ItemManager
+    participant StatusMgr as StatusManager
+    participant FriendMgr as FriendManager
+
+    rect rgb(230, 240, 255)
+        Note over Client,SQL: Phase 1: UserLoginRequest UserService.cs:49-90
+        Client->>NetService: TCP socket connect
+        NetService->>NetConn: new NetConnection socket session
+        Note right of NetService: 创建会话窗口
+        Client->>NetConn: send UserLoginRequest
+        NetConn->>NetSess: DataReceived → PackageHandler.ReceiveData
+        NetSess->>Dist: 反序列化为 NetMessage
+        Dist->>UserSvc: OnLogin sender request
+        UserSvc->>DB: Entities.Users.Where username
+        DB->>EF: LINQ query
+        EF->>SQL: SELECT FROM TUser WHERE Username=?
+        SQL-->>EF: TUser row
+        EF-->>DB: TUser 含 TPlayer TCharacter
+        DB-->>UserSvc: TUser
+        UserSvc->>NetSess: Session.User = user 挂载账号
+        UserSvc->>NetSess: Response.userLogin = new UserLoginResponse
+        UserSvc->>NetConn: SendResponse
+        NetConn->>Client: socket send UserLoginResponse
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Client,MapMgr: Phase 2: UserGameEnterRequest UserService.cs:186-218
+        Client->>NetConn: send UserGameEnterRequest characterIdx=0
+        NetConn->>NetSess: DataReceived → 反序列化
+        NetSess->>Dist: NetMessage.Request.gameEnter
+        Dist->>UserSvc: OnGameEnter sender request
+        UserSvc->>UserSvc: dbchar = Session.User.Player.Characters.ElementAt idx
+        Note right of UserSvc: TCharacter 在内存里 从 TPlayer.Characters
+
+        UserSvc->>CharMgr: AddCharacter dbchar
+        CharMgr->>Char: new Character Player dbchar
+        activate Char
+            Char->>Char: base 初始化 Entity 物理属性
+            Char->>Char: this.Data = dbchar 数据库档案绑定
+            Char->>StatusMgr: new StatusManager this
+            StatusMgr-->>Char: statusManager
+            Char->>ItemMgr: new ItemManager this
+            ItemMgr->>Char: 遍历 Data.Items → Items 字典
+            ItemMgr-->>Char: ItemManager
+            Char->>QuestMgr: new QuestManager this
+            QuestMgr->>Char: 遍历 Data.Quests → Quests 字典
+            QuestMgr-->>Char: questManager
+            Char->>FriendMgr: new FriendManager this
+            FriendMgr->>Char: 遍历 Data.Friends → friends 字典<br/>+ NotifyOnlineStatus true
+            FriendMgr-->>Char: friendManager
+            Char->>Char: _bag = new NBagInfo
+        deactivate Char
+
+        CharMgr->>EntMgr: AddEntity dbchar.MapID character
+        EntMgr->>Char: character.entityId = ++idx 运行时唯一 ID
+        CharMgr->>CharMgr: Characters character.entityId = character
+
+        UserSvc->>Char: character.ToCharacterBaseInfo
+        Char-->>UserSvc: NCharacterInfo 拼装所有字段
+        UserSvc->>NetSess: Response.gameEnter.Character = NCharacterInfo
+        UserSvc->>NetSess: Session.Character = character 把角色挂到会话
+        UserSvc->>MapMgr: dbchar.MapID.CharacterEnter sender character
+        MapMgr->>MapMgr: MapCharacters character.entityId = MapCharacter
+        MapMgr->>Client: send MapCharacterEnterResponse
+        UserSvc->>SessMgr: AddSession character.Id sender
+        SessMgr->>SessMgr: Sessions character.Id = sender
+        UserSvc->>NetConn: SendResponse
+        NetConn->>Client: socket send UserGameEnterResponse
+    end
+
+    rect rgb(255, 240, 230)
+        Note over Client,SQL: Phase 3: Client Initialization inferred
+        Client->>Client: 收到 UserGameEnterResponse NCharacterInfo
+        Client->>Client: UserService.OnGameEnter → 触发角色初始化
+        Client->>Client: 客户端 QuestManager / ItemManager 初始化
+        Note over Client: 客户端订阅 QuestManager.OnQuestStatusChanged
+    end
+
+    Note over DataMgr: 启动时 DataManager.Load<br/>从 Data/*.txt JSON 读取<br/>QuestDefine/ItemDefine/NpcDefine 等

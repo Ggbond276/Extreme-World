@@ -1,0 +1,133 @@
+%% ============================================================
+%% Quest System - 战斗系统接入边界 (Combat Event Boundary)
+%% 来源:Doc/RefactorReview/QuestSystem_Refactor_Review_CN.md
+%% 性质:展示 Combat System 接入时的接口契约与数据流
+%% ============================================================
+
+graph TB
+    %% ============================================================
+    %% 战斗系统侧 (未来)
+    %% ============================================================
+    subgraph COMBAT["Combat System (未来实现,本次不落地)"]
+        CombatMgr["CombatManager<br/>(处理怪物战斗)"]
+        MonsterDeath["Monster.OnDeath()<br/>(怪物死亡)"]
+        CombatMgr --> MonsterDeath
+    end
+
+    %% ============================================================
+    %% Event Bus (核心接入点)
+    %% ============================================================
+    subgraph BUS["GameplayEventBus (服务器进程内,~30 行)"]
+        BusCore["BusCore<br/>Subscribe / Publish<br/>Dictionary&lt;Type, List&lt;Delegate&gt;&gt;"]
+        BusCore -.->|"订阅"| SubQ["订阅者:<br/>QuestState, AchievementManager,<br/>DailyQuestManager, Analytics..."]
+        BusCore -.->|"发布"| PubC["发布者:<br/>Combat, Item, NPC, Level..."]
+    end
+
+    %% ============================================================
+    %% 事件类型
+    %% ============================================================
+    subgraph EVENTS["事件类型 (struct,值类型)"]
+        E1["MonsterKilled<br/>{CharacterId, MonsterId, Count}"]
+        E2["ItemCollected<br/>{CharacterId, ItemId, Count}"]
+        E3["NpcTalked<br/>{CharacterId, NpcId}"]
+        E4["PlayerLevelChanged<br/>{CharacterId, OldLevel, NewLevel}"]
+    end
+
+    BusCore --> E1
+    BusCore --> E2
+    BusCore --> E3
+    BusCore --> E4
+
+    %% ============================================================
+    %% Quest System 接入点
+    %% ============================================================
+    subgraph QUESTSYS["Quest System (本报告重构目标)"]
+        direction TB
+        QState["QuestState<br/>(唯一修改入口)<br/>持有: List&lt;Quest&gt;<br/>事件: OnQuestChanged"]
+        QLogic["QuestLogic<br/>(纯函数,无副作用)<br/>Evaluate(quest, IGameplayEvent)<br/>CanAccept / CanSubmit"]
+        QRepo["QuestRepository<br/>(持久化)"]
+
+        QState -. "构造时:" .-> SubscribeOps["Subscribe&lt;MonsterKilled&gt;<br/>Subscribe&lt;ItemCollected&gt;<br/>Subscribe&lt;NpcTalked&gt;<br/>Subscribe&lt;PlayerLevelChanged&gt;"]
+        SubscribeOps -.-> BusCore
+
+        E1 -. "→" .-> QLogic
+        E2 -. "→" .-> QLogic
+        E3 -. "→" .-> QLogic
+        E4 -. "→" .-> QLogic
+
+        QLogic -- "返回 NewProgress / IsCompleted" --> QState
+        QState -- "AddProgress(idx, delta)" --> QState
+        QState -- "若完成 → Status=Complated" --> QState
+        QState -- "Publish(QuestProgressChanged)" --> BusCore
+        QState -- "Publish(QuestCompleted)" --> BusCore
+        QState -- "Save" --> QRepo
+    end
+
+    %% ============================================================
+    %% 战斗系统接入路径 (核心数据流)
+    %% ============================================================
+    MonsterDeath -- "1. 怪物死亡回调" --> CombatMgr
+    CombatMgr -- "2. Publish(MonsterKilled)" --> E1
+    E1 -- "3. Bus 派发给订阅者" --> QLogic
+    QLogic -- "4. 评估受影响的任务" --> QLogic
+    QLogic -- "5. 返回进度变更" --> QState
+    QState -- "6. 推进进度 (DbQuest.TargetN++)" --> QState
+    QState -- "7. 若完成 → Status" --> QState
+    QState -- "8. Save" --> QRepo
+    QState -- "9. Publish(QuestProgressChanged<br/>/ QuestCompleted)" --> BusCore
+    BusCore -- "10. 派发给所有订阅者" --> SubQ
+
+    %% ============================================================
+    %% 客户端推送 (QuestProgressChanged 被序列化到 QuestSubmit/Accept 响应)
+    %% ============================================================
+    subgraph CLIENT_PUSH["客户端推送 (经由 RPC 响应)"]
+        PushResp["QuestAccept/Submit 响应<br/>携带 NQuestInfo (QuestId, Status, Targets)"]
+        ClientUI["客户端 QuestManager.OnQuestStatusChanged<br/>→ UI 自动刷新"]
+        PushResp --> ClientUI
+    end
+
+    QState -. "响应中携带 NQuestInfo" .-> PushResp
+
+    %% ============================================================
+    %% 关键设计约束
+    %% ============================================================
+    subgraph CONSTRAINTS["关键设计约束"]
+        K1["① Combat 不 import Quest 命名空间"]
+        K2["② Combat 只 Publish,不直接调 QuestState"]
+        K3["③ Quest 只 Subscribe,不直接调用 Combat"]
+        K4["④ 事件 Character-scoped:<br/>payload 必带 CharacterId,<br/>订阅者按 Id 过滤"]
+        K5["⑤ QuestLogic.Evaluate 是纯函数,<br/>没有 side effect,可单元测试"]
+        K6["⑥ EventBus 本身不知道事件含义,<br/>只做 type → delegate 转发"]
+    end
+
+    %% ============================================================
+    %% 接入工作量估算
+    %% ============================================================
+    subgraph EFFORT["接入工作量估算"]
+        W1["① 在 CombatManager 里 Publish(MonsterKilled): 30 分钟"]
+        W2["② 在 QuestLogic.Evaluate 加 MonsterKilled 分支: 1 小时"]
+        W3["③ 在 QuestState 构造里 Subscribe: 30 分钟"]
+        W4["④ 测试一条 Kill 任务完整跑通: 2 小时"]
+        W5["总计: 半天 (3~4 个文件)"]
+        W1 --> W5
+        W2 --> W5
+        W3 --> W5
+        W4 --> W5
+    end
+
+    %% ============================================================
+    %% 样式
+    %% ============================================================
+    classDef future fill:#f5f5f5,stroke:#9e9e9e,color:#000,stroke-dasharray: 5 5
+    classDef bus fill:#bbdefb,stroke:#1565c0,color:#000
+    classDef event fill:#fff9c4,stroke:#f57f17,color:#000
+    classDef quest fill:#c8e6c9,stroke:#2e7d32,color:#000
+    classDef constraint fill:#ffccbc,stroke:#bf360c,color:#000
+    classDef effort fill:#e1bee7,stroke:#4a148c,color:#000
+
+    class CombatMgr,MonsterDeath future
+    class BusCore,SubQ,PubC bus
+    class E1,E2,E3,E4 event
+    class QState,QLogic,QRepo,SubscribeOps quest
+    class K1,K2,K3,K4,K5,K6 constraint
+    class W1,W2,W3,W4,W5 effort

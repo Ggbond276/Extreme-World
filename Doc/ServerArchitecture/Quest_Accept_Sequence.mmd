@@ -1,0 +1,131 @@
+sequenceDiagram
+    autonumber
+    actor Player as Player
+    participant UI as UIQuestDialog
+    participant CQM as Client QuestManager
+    participant CSvc as Client QuestService
+    participant ClientProto as Client protobuf
+    participant Socket as TCP Socket
+    participant ServerProto as Server protobuf
+    participant Dist as MessageDistributer
+    participant QSvc as QuestService
+    participant NetSess as NetSession
+    participant Char as Character
+    participant QMgr as QuestManager
+    participant DataMgr as DataManager
+    participant QModel as Quest
+    participant DBQuest as TCharacterQuest
+    participant TCharacter as TCharacter
+    participant DBSvc as DBService
+    participant EF as ExtremeWorldEntities
+    participant SQL as SQL Server
+    participant PostResp as Character.PostResponse
+    participant StatusMgr as StatusManager
+
+    rect rgb(230, 240, 255)
+        Note over Player,ClientProto: Phase 1: Client 发起
+        Player->>UI: 点击接取任务按钮
+        UI->>UI: 校验等级/职业等显示条件
+        UI->>CQM: AcceptQuest(quest)
+        CQM->>CQM: 校验已接 / 等级前置等客户端预检
+        CQM->>CSvc: SendQuestAccept(questId)
+        CSvc->>ClientProto: new QuestAcceptRequest
+        ClientProto->>Socket: 序列化为 byte 数组
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Socket,SQL: Phase 2: Server 接收 + 业务处理
+        Socket->>ServerProto: socket receive byte 数组
+        ServerProto->>ServerProto: PackageHandler.ReceiveData
+        ServerProto->>Dist: NetMessage.Request.questAccept
+        Dist->>QSvc: OnQuestAccept(sender, request)
+        activate QSvc
+            QSvc->>NetSess: sender.Session.Character
+            NetSess-->>QSvc: character 从会话拿
+            QSvc->>QSvc: questId = request.QuestId
+
+            QSvc->>Char: character.questManager.AcceptQuest
+            Char->>QMgr: AcceptQuest(questId, out Quest quest)
+
+            activate QMgr
+                QMgr->>QMgr: quest = null out 初始化
+
+                Note right of QMgr: 防外挂重复接取
+                QMgr->>QMgr: if this.Quests.ContainsKey
+
+                Note right of QMgr: 防外挂伪造 ID
+                QMgr->>DataMgr: DataManager.Instance.Quests.ContainsKey
+                DataMgr-->>QMgr: true / false
+
+                QMgr->>DBSvc: Entities.CharacterQuests.Create
+                DBSvc->>EF: Create
+                EF-->>DBSvc: new TCharacterQuest
+                DBSvc-->>QMgr: dbQuest
+
+                QMgr->>DBQuest: dbQuest.TCharacterID = Owner.Data.ID
+                QMgr->>DBQuest: dbQuest.QuestID = questId
+
+                QMgr->>QModel: new Quest(dbQuest)
+                activate QModel
+                    QModel->>QModel: DbQuest = dbQuest
+                    QModel->>DataMgr: DataManager.Instance.Quests[questId]
+                    DataMgr-->>QModel: QuestDefine
+                    QModel->>QModel: Define = QuestDefine
+                deactivate QModel
+
+                QMgr->>QModel: quest.InitQuetsDefine
+                Note right of QModel: if Target1 == None → Status=Complated<br/>else → Status=InProgress
+
+                QMgr->>QMgr: this.Quests.Add Manager 字典
+                QMgr->>TCharacter: Owner.Data.Quests.Add EF6 跟踪列表
+
+                QMgr->>DBSvc: DBService.Instance.save
+                DBSvc->>EF: SaveChanges
+                EF->>SQL: INSERT INTO TCharacterQuest
+                SQL-->>EF: OK
+                EF-->>DBSvc: OK
+
+                QMgr-->>Char: Result.Success + quest
+            deactivate QMgr
+
+            QSvc->>NetSess: Response.questAccept = new QuestAcceptResponse
+            QSvc->>QModel: quest.ToNQuestInfo
+            QModel-->>QSvc: NQuestInfo
+            QSvc->>NetSess: Response.questAccept.Quest = NQuestInfo
+            QSvc->>NetSess: Response.questAccept.Result = Result.Success
+        deactivate QSvc
+    end
+
+    rect rgb(255, 240, 230)
+        Note over QSvc,Socket: Phase 3: 发包 含 PostResponse 钩子
+        QSvc->>NetSess: sender.SendResponse
+        NetSess->>NetSess: 触发 GetResponse
+        NetSess->>PostResp: if Character != null PostResponse
+        activate PostResp
+            PostResp->>StatusMgr: statusManager.PostResponse
+            StatusMgr->>StatusMgr: Response.statusNotify.Status.AddRange
+            StatusMgr->>StatusMgr: this.Status.Clear
+            Note right of StatusMgr: 把本轮所有金币/经验/道具增量<br/>合并到 statusNotify
+            PostResp->>PostResp: friendManager.PostResponse
+        deactivate PostResp
+
+        NetSess->>NetSess: PackageHandler.PackMessage byte 数组
+        NetSess->>Socket: socket.BeginSend
+    end
+
+    rect rgb(245, 245, 245)
+        Note over Player,UI: Phase 4: Client 收到响应 inferred
+        Socket->>ClientProto: socket receive byte 数组
+        ClientProto->>ClientProto: 反序列化为 NetMessage
+        ClientProto->>CSvc: 触发 QuestService.OnQuestAccept 回调
+        CSvc->>CQM: 写入新任务到本地字典 + 触发 OnQuestStatusChanged
+        CQM->>CQM: allQuests[newQuestId] = quest
+        CQM->>UI: OnQuestStatusChanged event
+        UI->>UI: 自动刷新 新任务出现在任务列表
+        Note over UI: UI 订阅了 OnQuestStatusChanged<br/>无需手动 poll
+    end
+
+    Note over QSvc: QuestService.cs:35-64 OnQuestAccept
+    Note over QMgr: QuestManager.cs:56-82 AcceptQuest
+    Note over QModel: Quest.cs:31-41 InitQuetsDefine<br/>Quest.cs:42-56 ToNQuestInfo
+    Note over DBSvc: DBService.cs:26-32 save

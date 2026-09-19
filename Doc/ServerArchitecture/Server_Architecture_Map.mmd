@@ -1,0 +1,249 @@
+%% ============================================================
+%% Extreme-World Server - Architecture Map
+%% Source: Doc/ServerArchitecture/Server_Architecture_Mental_Model_CN.md
+%% Purpose: Visual map of the actual server architecture
+%% ============================================================
+
+graph TB
+    %% ============================================================
+    %% LAYER 1: 客户端 (Client)
+    %% ============================================================
+    subgraph CLIENT["Client (Unity)"]
+        CUI["UI<br/>UIQuestDialog / UIQuestSystem /<br/>UIWorldElementManager"]
+        CQM["QuestManager<br/>(客户端单例)"]
+        CSvc["QuestService<br/>(客户端 RPC sender)"]
+        CProto["protobuf message<br/>(QuestAcceptRequest)"]
+    end
+
+    %% ============================================================
+    %% LAYER 2: 网络传输
+    %% ============================================================
+    subgraph WIRE["Wire (TCP + protobuf)"]
+        Bytes["byte[]<br/>反序列化为 NetMessage"]
+    end
+
+    %% ============================================================
+    %% LAYER 3: 网络层
+    %% ============================================================
+    subgraph NETWORK["Network (服务器)"]
+        NetSvc["NetService<br/>Network/NetService.cs"]
+        NetConn["NetConnection&lt;NetSession&gt;<br/>Network/NetConnection.cs"]
+        NetSess["NetSession<br/>Network/NetSession.cs<br/>(.User, .Character, .Response)"]
+    end
+
+    %% ============================================================
+    %% LAYER 4: RPC 分发
+    %% ============================================================
+    subgraph DISPATCH["RPC Dispatch"]
+        Dist["MessageDistributer&lt;<br/>NetConnection&lt;NetSession&gt;&gt;<br/>Lib/Common/Network/MessageDistributer.cs"]
+    end
+
+    %% ============================================================
+    %% LAYER 5: Service 层 (网络入口)
+    %% ============================================================
+    subgraph SERVICES["Services (RPC Entry, 单例)"]
+        USvc["UserService<br/>登录/注册/进出游戏"]
+        QSvc["QuestService<br/>任务 RPC 入口"]
+        ISvc["ItemService<br/>道具 RPC 入口"]
+        FSvc["FriendService<br/>好友 RPC 入口"]
+        TSvc["TeamService<br/>队伍 RPC 入口"]
+        GSvc["GuildService<br/>公会 RPC 入口"]
+        MapSvc["MapService<br/>地图 RPC 入口"]
+        CSvc2["ChatService<br/>聊天 RPC 入口"]
+    end
+
+    %% ============================================================
+    %% LAYER 6: 业务实体 (Character)
+    %% ============================================================
+    subgraph ENTITY["Character (运行时实体, per-character)"]
+        Character["Character<br/>Entities/Character.cs<br/>.Data → TCharacter"]
+        DataRef["TCharacter Data (引用)"]
+    end
+
+    %% ============================================================
+    %% LAYER 7: 业务管理器 (per-character Manager)
+    %% ============================================================
+    subgraph MANAGERS["Managers (per-character)"]
+        QMgr["QuestManager<br/>.Quests : Dictionary"]
+        IMgr["ItemManager<br/>.Items : Dictionary"]
+        SMgr["StatusManager<br/>(IPostResponser)"]
+        FMgr["FriendManager<br/>(IPostResponser)"]
+        Team["Team<br/>(运行时)"]
+    end
+
+    %% ============================================================
+    %% LAYER 8: 运行时包装 (Model)
+    %% ============================================================
+    subgraph MODELS["Models (运行时包装)"]
+        QModel["Quest<br/>.DbQuest → TCharacterQuest<br/>.Define → QuestDefine"]
+        IModel["Item<br/>.dbItem → TCharacterItem"]
+        FModel["Friend<br/>.DbFriend → TCharacterFriend"]
+    end
+
+    %% ============================================================
+    %% LAYER 9: ORM 实体 (Database 侧)
+    %% ============================================================
+    subgraph ORM["ORM Entities (EF6 partial class)"]
+        TUser["TUser<br/>(账号)"]
+        TPlayer["TPlayer<br/>(账号→角色集合)"]
+        TCharacter["TCharacter<br/>(角色)"]
+        TCharBag["TCharacterBag"]
+        TCharItem["TCharacterItem[]"]
+        TCharQuest["TCharacterQuest[]"]
+        TCharFriend["TCharacterFriend[]"]
+    end
+
+    %% ============================================================
+    %% LAYER 10: 持久化服务
+    %% ============================================================
+    subgraph PERSIST["Persistence (DB)"]
+        DBSvc["DBService<br/>Singleton, 封装 EF6<br/>Services/DBService.cs"]
+        EF["ExtremeWorldEntities<br/>(EF6 DbContext)"]
+        SQL["SQL Server"]
+    end
+
+    %% ============================================================
+    %% LAYER 11: 静态配置
+    %% ============================================================
+    subgraph CONFIG["Static Configuration (只读)"]
+        DMgr["DataManager<br/>Singleton<br/>Managers/DataManager.cs"]
+        QDef["QuestDefine"]
+        NDef["NpcDefine"]
+        IDef["ItemDefine"]
+        MapDef["MapDefine"]
+        JSON["JSON 文件<br/>Data/*.txt"]
+    end
+
+    %% ============================================================
+    %% LAYER 12: 进程级单例 (其他 Manager)
+    %% ============================================================
+    subgraph GLOBALS["进程级单例"]
+        CharMgr["CharacterManager<br/>(在线大管家)"]
+        EntMgr["EntityManager<br/>(全局 entityId 分配)"]
+        SessMgr["SessionManager<br/>(id → NetConnection)"]
+        MapMgr["MapManager<br/>(地图 → Map)"]
+        GuildMgr["GuildManager"]
+        ShopMgr["ShopManager"]
+        ChMgr["ChatManager"]
+        CIMgr["CharacterInfoManager<br/>(离线快照)"]
+    end
+
+    %% ============================================================
+    %% 数据流: Client → Server (请求)
+    %% ============================================================
+    CUI --> CQM
+    CQM --> CSvc
+    CSvc --> CProto
+    CProto --> Bytes
+
+    Bytes --> NetSvc
+    NetSvc --> NetConn
+    NetConn --> NetSess
+    NetSess --> Dist
+
+    Dist --> QSvc
+    Dist --> USvc
+    Dist --> ISvc
+    Dist --> FSvc
+    Dist --> TSvc
+    Dist --> GSvc
+    Dist --> MapSvc
+    Dist --> CSvc2
+
+    %% ============================================================
+    %% 数据流: Service → Character → Manager → Model → ORM
+    %% ============================================================
+    QSvc --> Character
+    ISvc --> Character
+    FSvc --> Character
+
+    Character --> DataRef
+    Character --> QMgr
+    Character --> IMgr
+    Character --> SMgr
+    Character --> FMgr
+    Character --> Team
+
+    QMgr --> QModel
+    IMgr --> IModel
+    FMgr --> FModel
+
+    QModel --> TCharQuest
+    IModel --> TCharItem
+    FModel --> TCharFriend
+
+    DataRef --> TCharacter
+    TCharacter --> TCharBag
+    TCharacter --> TCharItem
+    TCharacter --> TCharQuest
+    TCharacter --> TCharFriend
+    TPlayer --> TCharacter
+    TUser --> TPlayer
+
+    %% ============================================================
+    %% 数据流: ORM → DBService → EF6 → SQL
+    %% ============================================================
+    TCharQuest --> DBSvc
+    TCharItem --> DBSvc
+    TCharFriend --> DBSvc
+    TCharacter --> DBSvc
+
+    DBSvc --> EF
+    EF --> SQL
+
+    %% ============================================================
+    %% 数据流: 配置加载
+    %% ============================================================
+    JSON --> DMgr
+    DMgr --> QDef
+    DMgr --> NDef
+    DMgr --> IDef
+    DMgr --> MapDef
+
+    QDef -.-> QModel
+    IDef -.-> IModel
+    NDef -.->|"NPC 服务"| MapMgr
+    MapDef -.-> MapMgr
+
+    %% ============================================================
+    %% 全局索引关系
+    %% ============================================================
+    Character -.->|"entityId 注册"| CharMgr
+    Character -.->|"登记会话"| SessMgr
+    Character -.->|"加入地图"| MapMgr
+    Character -.->|"离线快照"| CIMgr
+
+    %% ============================================================
+    %% 响应回路 (PostResponse)
+    %% ============================================================
+    SMgr -.->|"PostResponse 增量广播"| NetSess
+    FMgr -.->|"PostResponse 增量广播"| NetSess
+
+    %% ============================================================
+    %% 样式
+    %% ============================================================
+    classDef client fill:#fff9c4,stroke:#f57f17,color:#000
+    classDef wire fill:#f5f5f5,stroke:#9e9e9e,color:#000
+    classDef net fill:#e1f5ff,stroke:#0277bd,color:#000
+    classDef dispatch fill:#e1f5ff,stroke:#0277bd,color:#000
+    classDef svc fill:#bbdefb,stroke:#1565c0,color:#000
+    classDef entity fill:#c8e6c9,stroke:#2e7d32,color:#000
+    classDef mgr fill:#c8e6c9,stroke:#2e7d32,color:#000
+    classDef model fill:#dcedc8,stroke:#558b2f,color:#000
+    classDef orm fill:#ffccbc,stroke:#bf360c,color:#000
+    classDef persist fill:#ffccbc,stroke:#bf360c,color:#000
+    classDef config fill:#f8bbd0,stroke:#ad1457,color:#000
+    classDef global fill:#e1bee7,stroke:#4a148c,color:#000
+
+    class CUI,CQM,CSvc,CProto client
+    class Bytes wire
+    class NetSvc,NetConn,NetSess net
+    class Dist dispatch
+    class USvc,QSvc,ISvc,FSvc,TSvc,GSvc,MapSvc,CSvc2 svc
+    class Character,DataRef entity
+    class QMgr,IMgr,SMgr,FMgr,Team mgr
+    class QModel,IModel,FModel model
+    class TUser,TPlayer,TCharacter,TCharBag,TCharItem,TCharQuest,TCharFriend orm
+    class DBSvc,EF,SQL persist
+    class DMgr,QDef,NDef,IDef,MapDef,JSON config
+    class CharMgr,EntMgr,SessMgr,MapMgr,GuildMgr,ShopMgr,ChMgr,CIMgr global

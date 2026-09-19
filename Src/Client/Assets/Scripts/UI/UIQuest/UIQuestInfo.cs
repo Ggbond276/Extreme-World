@@ -9,59 +9,58 @@ using UnityEngine.UI;
 public class UIQuestInfo : MonoBehaviour
 {
     [Header("任务描述")]
-    public Text description;
+    public Text description; // 任务名称/描述展示文本组件
 
     [Header("任务目标")]
-    public Text target;
+    public Text target; // 任务目标/概述展示文本组件
 
     [Header("任务奖励物品")]
-    public Image reward1;
-    public Image reward2;
-    public Image reward3;
+    public Image reward1; // 奖励道具插槽 1
+    public Image reward2; // 奖励道具插槽 2
+    public Image reward3; // 奖励道具插槽 3
 
     [Header("列表容器")]
-    public Text rewardMoney;
-    public Text rewardEXP;
+    public Text rewardMoney; // 金币奖励展示文本组件
+    public Text rewardEXP; // 经验奖励展示文本组件
 
+
+    /// <summary>
+    /// 将任务实体的配置数据绑定并渲染到任务详情面板上。
+    /// 执行后：面板文本（名称、目标、金币、经验）被更新赋值，奖励道具槽位根据配置动态加载图标或自动隐藏空白槽位。
+    /// </summary>
     internal void SetQuestInfo(Quest quest)
     {
-        // 1. 基础排空：防止任务本身为空，或者策划把整行配表删了导致 Define 为空
-        if (quest == null || quest.Define == null) return;
+        if (quest == null || quest.Define == null) return; // 基础校验：若任务对象或配表定义为空则直接阻断，防止空引用崩溃
 
-        QuestDefine questDefine = quest.Define;
+        QuestDefine questDefine = quest.Define; // 提取静态配置数据引用
 
-        // 2. 文本排空：使用 ?? "" 兜底。如果策划没填，就显示空白，绝对不会报空指针
-        this.description.text = questDefine.Name ?? "";
-        this.target.text = questDefine.OverView ?? "";
+        this.description.text = questDefine.Name ?? ""; // 渲染任务标题：采用空合并操作符兜底，防止策划未配字段引发异常
+        this.target.text = questDefine.OverView ?? "";  // 渲染任务概述：采用空合并操作符兜底，防止空文本显示异常
 
-        // 3. 数值显示：数值类型（int）就算没填也是 0，ToString() 是绝对安全的
-        this.rewardMoney.text = questDefine.RewardGold.ToString();
-        this.rewardEXP.text = questDefine.RewardExp.ToString();
+        this.rewardMoney.text = questDefine.RewardGold.ToString(); // 渲染金币奖励：值类型安全转为字符串
+        this.rewardEXP.text = questDefine.RewardExp.ToString(); // 渲染经验奖励：值类型安全转为字符串
 
-        // 4. 道具安全加载：提取成独立方法，既防报错，又能自动隐藏没配奖励的空框框
-        SetRewardItem(this.reward1, questDefine.RewardItem1);
-        SetRewardItem(this.reward2, questDefine.RewardItem2);
-        SetRewardItem(this.reward3, questDefine.RewardItem3);
+        SetRewardItem(this.reward1, questDefine.RewardItem1); // 处理奖励道具槽位 1 的渲染与显隐
+        SetRewardItem(this.reward2, questDefine.RewardItem2); // 处理奖励道具槽位 2 的渲染与显隐
+        SetRewardItem(this.reward3, questDefine.RewardItem3); // 处理奖励道具槽位 3 的渲染与显隐
     }
 
     /// <summary>
-    /// 安全加载奖励图标，并处理 UI 显隐
+    /// 安全加载指定奖励道具图标并处理 UI 槽位的显隐状态。
+    /// 执行后：若道具合法且能查到配置，对应槽位激活并贴上图标 Sprite；若道具未配置或 ID 非法，槽位 GameObject 自动隐藏。
     /// </summary>
     private void SetRewardItem(Image itemImage, int itemId)
     {
-        // 防呆设计：如果 Unity 面板里忘了拖拽这个 Image 组件，直接跳过，不报错
-        if (itemImage == null) return;
+        if (itemImage == null) return; // 容错拦截：Inspector 面板未拖拽绑定对应 Image 组件时跳过，避免报空
 
-        // 核心安全逻辑：道具 ID 大于 0，且在字典中安全查到数据
-        if (itemId > 0 && DataManager.Instance.Items.TryGetValue(itemId, out var itemDefine))
+        if (itemId > 0 && DataManager.Instance.Items.TryGetValue(itemId, out var itemDefine)) // 业务校验：道具 ID 合法且能在配置字典中检索到静态数据
         {
-            itemImage.overrideSprite = Resloader.Load<Sprite>(itemDefine.Icon);
-            itemImage.gameObject.SetActive(true); // 数据正常，显示该框框
+            itemImage.overrideSprite = Resloader.Load<Sprite>(itemDefine.Icon); // 通过资源加载器同步加载 Sprite 并覆盖展示
+            itemImage.gameObject.SetActive(true); // 数据合法且加载成功，激活道具展示节点
         }
-        else
+        else // 分支：未配置奖励（如 ID 为 0）或配表数据不存在
         {
-            // 如果策划没配奖励（比如填了0），或者填了错的ID，直接把这个图片隐藏掉！
-            itemImage.gameObject.SetActive(false);
+            itemImage.gameObject.SetActive(false); // 隐藏未生效的道具图标节点，避免界面残留空白占位框
         }
     }
 }

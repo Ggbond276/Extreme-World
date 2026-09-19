@@ -1,0 +1,142 @@
+%% ============================================================
+%% Quest System - 目标架构总览 (Target Architecture)
+%% 来源:Doc/RefactorReview/QuestSystem_Refactor_Review_CN.md
+%% 性质:架构设计图,未落地实现
+%% ============================================================
+
+graph TB
+    %% ============================================================
+    %% 客户端层
+    %% ============================================================
+    subgraph CLIENT["客户端 (Unity)"]
+        UI["UI 层<br/>(UIQuestDialog / UIQuestSystem /<br/>UIQuestInfo / UIQuestItem / UIQuestStatus)"]
+        VM["ViewModel 层<br/>(QuestListItem / NpcQuestIndicator)<br/>只暴露 UI 需要的数据"]
+        QM["QuestManager<br/>(客户端单例)<br/>持有 State + 暴露 OnQuestChanged 事件"]
+        QSvc["QuestService<br/>(客户端 RPC 入口)"]
+        NetClient["NetClient"]
+    end
+
+    %% ============================================================
+    %% 网络
+    %% ============================================================
+    subgraph WIRE["网络 (Protobuf)"]
+        RPCReq["QuestAcceptRequest<br/>QuestSubmitRequest<br/>(线路协议,保持不变)"]
+        RPCResp["QuestAcceptResponse<br/>QuestSubmitResponse<br/>(线路协议,保持不变)"]
+    end
+
+    %% ============================================================
+    %% 服务器层
+    %% ============================================================
+    subgraph SERVER["服务器 (.NET)"]
+        direction TB
+        QService["QuestService<br/>(服务器 RPC 入口)<br/>接收 RPC → 调 Logic → 改 State → 发奖 → 发事件"]
+
+        QLogic["QuestLogic<br/>(纯函数 / 静态类)<br/>CanAccept / CanSubmit / Evaluate<br/>无副作用,可单元测试"]
+
+        QState["QuestState<br/>(状态容器 + 唯一修改入口)<br/>ApplyAccept / ApplySubmit / AddProgress<br/>暴露 OnQuestChanged"]
+
+        RService["RewardService<br/>(奖励发放,唯一改 Gold/Exp/Item 的入口)<br/>Grant(reward, character)"]
+
+        QRepo["QuestRepository<br/>(EF6 仓储包装,可选)<br/>Create / Update / Save"]
+
+        %% 现有系统
+        ItemMgr["ItemManager<br/>(已有,不修改)"]
+        GoldSetter["Character.Gold / Exp<br/>setter 已广播,不修改"]
+        DBService["DBService<br/>(EF6 DbContext,已有)"]
+        DataMgr["DataManager<br/>(静态表,已有)"]
+    end
+
+    %% ============================================================
+    %% Event Bus (服务器进程内)
+    %% ============================================================
+    subgraph BUS["服务器 Gameplay Event Bus (进程内)"]
+        Bus["GameplayEventBus<br/>(~30 行 Dictionary)"]
+        EvtAccept["QuestAccepted"]
+        EvtProgress["QuestProgressChanged"]
+        EvtComplete["QuestCompleted"]
+        EvtMonster["MonsterKilled (未来)"]
+        EvtItem["ItemCollected (未来)"]
+        EvtLevel["PlayerLevelChanged (未来)"]
+        EvtNpc["NpcTalked (未来)"]
+
+        Bus --> EvtAccept
+        Bus --> EvtProgress
+        Bus --> EvtComplete
+        Bus -.->|"未来"| EvtMonster
+        Bus -.->|"未来"| EvtItem
+        Bus -.->|"未来"| EvtLevel
+        Bus -.->|"未来"| EvtNpc
+    end
+
+    %% ============================================================
+    %% 客户端数据流
+    %% ============================================================
+    UI -- "读取" --> VM
+    VM -- "读取" --> QM
+    UI -- "RequestAccept(questId) (Intent)" --> QM
+    QM -- "SendQuestAccept" --> QSvc
+    QSvc -- "NetMessage" --> NetClient
+
+    %% ============================================================
+    %% 网络流
+    %% ============================================================
+    NetClient -- "QuestAcceptRequest" --> RPCReq
+    RPCReq --> QService
+    QService -- "QuestAcceptResponse" --> RPCResp
+    RPCResp --> NetClient
+    NetClient -- "OnQuestAccept" --> QSvc
+
+    %% ============================================================
+    %% 服务器内部数据流
+    %% ============================================================
+    QService -- "1. CanAccept?" --> QLogic
+    QLogic -- "true/false" --> QService
+    QService -- "2. ApplyAccept(questId)" --> QState
+    QState -- "DbQuest 变更" --> QRepo
+    QRepo -- "EF6" --> DBService
+    QState -- "OnQuestChanged" --> QService
+    QService -- "3. EventBus.Publish" --> Bus
+    Bus -- "QuestAccepted" --> QState
+
+    %% 提交流程
+    QService -- "CanSubmit?" --> QLogic
+    QService -- "ApplySubmit(questId)" --> QState
+    QService -- "4. RewardService.Grant" --> RService
+    RService -- "Gold += " --> GoldSetter
+    RService -- "AddItem" --> ItemMgr
+    RService -- "Save" --> QRepo
+
+    %% ============================================================
+    %% 客户端接收
+    %% ============================================================
+    QSvc -- "OnAccept(info)" --> QM
+    QM -- "OnQuestChanged event" --> UI
+    QM -- "OnQuestChanged event" --> VM
+    VM -- "刷新" --> UI
+
+    %% ============================================================
+    %% 未来战斗系统接入 (虚线表示未实现)
+    %% ============================================================
+    Combat["Combat System<br/>(未来实现)"] -.->|"Publish(MonsterKilled)"| Bus
+    Bus -.-> EvtMonster
+    EvtMonster -.->|"Subscribe"| QState
+    QState -.->|"AddProgress(idx, delta)"| QState
+
+    %% ============================================================
+    %% 数据源
+    %% ============================================================
+    QState -- "读 QuestDefine" --> DataMgr
+    QService -- "读 QuestDefine" --> DataMgr
+
+    %% ============================================================
+    %% 样式
+    %% ============================================================
+    classDef new fill:#c8e6c9,stroke:#2e7d32,color:#000
+    classDef existing fill:#fff9c4,stroke:#f57f17,color:#000
+    classDef event fill:#bbdefb,stroke:#1565c0,color:#000
+    classDef future fill:#f5f5f5,stroke:#9e9e9e,color:#000,stroke-dasharray: 5 5
+
+    class QLogic,QState,RService,QRepo,VM new
+    class QM,QSvc,UI,ItemMgr,GoldSetter,DBService,DataMgr,QService,NetClient existing
+    class Bus,EvtAccept,EvtProgress,EvtComplete event
+    class Combat,EvtMonster,EvtItem,EvtLevel,EvtNpc future
