@@ -111,8 +111,7 @@ public class GameObjectManager : MonoSingleton<GameObjectManager>
     private void InitGameObject(GameObject go, Character character)
     {
         // 2.给予GameObject名字 方便调试
-        // ============ 【Step 3】影子替换：Info.Name → Name ============
-        go.name = "Character_" + character.entityId + "_" + character.Name;
+            go.name = "Character_" + character.entityId + "_" + character.Name;
         // 3.给GameObject设置位置和方向
         go.transform.position = GameObjectTool.LogicToWorld(character.position);
         go.transform.forward = GameObjectTool.LogicToWorld(character.direction);

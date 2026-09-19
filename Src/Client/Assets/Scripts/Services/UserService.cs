@@ -11,6 +11,7 @@ using Models;
 using Assets.Scripts.Services;
 using Managers;
 using Assets.Scripts.Managers;
+using Entities;
 
 namespace Services
 {
@@ -221,19 +222,13 @@ namespace Services
         /// <param name="cls"></param>
         public void SendCharacterCreate(string name, CharacterClass cls)
         {
-            #region 在日志中打印角色创建信息
             Debug.LogFormat("UserCreateCharacterRequest::name :{0} class:{1}", name, cls);
-            #endregion
-
-            #region 封装发送给服务器的信息
             NetMessage message = new NetMessage();
             message.Request = new NetMessageRequest();
             message.Request.createChar = new UserCreateCharacterRequest();
             message.Request.createChar.Name = name;
             message.Request.createChar.Class = cls;
-            #endregion
 
-            #region 检查是否成功连接到服务器
             if (this.connected && NetClient.Instance.Connected)
             {
                 this.pendingMessage = null;
@@ -244,7 +239,6 @@ namespace Services
                 this.pendingMessage = message;
                 this.ConnectToServer();
             }
-            #endregion
         }
         void OnUserCreateCharacter(object sender, UserCreateCharacterResponse response)
         {
@@ -282,11 +276,21 @@ namespace Services
         void OnGameEnter(object sender, UserGameEnterResponse response)
         {
             Debug.LogFormat("OnGameEnter : Result:{0} Errormsg:{1}", response.Result, response.Errormsg);
-            // 如果受到了服务器成功进入游戏的请求
             if (response.Result == Result.Success)
             {
-                User.Instance.CurrentCharacter = response.Character;
                 NCharacterInfo Info = response.Character;
+                Character character = new Character(Info);
+                // 唯一入口赋值,带溯源 + null 保护
+                User.Instance.SetCurrentCharacter(character, "UserService.OnGameEnter");
+
+                // 加固:任何下游试图把 CurrentCharacter 变 null,马上能在 Console 看到崩溃栈
+                // 而不是延迟到 UIMain.UpdateAvatar() 才暴露问题
+                if (User.Instance.CurrentCharacter == null)
+                {
+                    Debug.LogError("[UserService.OnGameEnter] SetCurrentCharacter 后仍为 null! 检查 User.SetCurrentCharacter 的报错日志");
+                    return;
+                }
+
                 ItemManager.Instance.Init(Info.Items);
                 BagManager.Instance.Init(Info.Bag);
                 EquipManager.Instance.Init(Info.Equips);
@@ -294,14 +298,6 @@ namespace Services
                 FriendManager.Instance.Init(Info.Friends);
                 GuildManager.Instance.Init(Info.Guild);
                 ChatManager.Instance.Init();
-                #region 测试物品和背包的数据已经被传输过来了
-                //foreach (var item in ItemManager.Instance.Items)
-                //{
-                //    Debug.LogErrorFormat("Item ID : [ {0} ]  Count : [ {1} ]", item.Value.ItemID, item.Value.Count);
-                //}
-                //Debug.LogErrorFormat("BagUnlock : [ {0} ]", Info.Bag.Unlocked);
-                //Debug.LogErrorFormat("BagItemsCount : [ {0} ]", BagManager.Instance.bagItems.Length);
-                #endregion
             }
         }
 
@@ -320,7 +316,7 @@ namespace Services
         void OnGameLeave(object sender, UserGameLeaveResponse response)
         {
             Debug.LogFormat("OnGameLeave : {0} [{1}]", response.Result, response.Errormsg);
-            User.Instance.CurrentCharacter = null;
+            User.Instance.SetCurrentCharacter(null, "UserService.OnGameLeave", allowNull: true);
             MapService.Instance.CurrentMapId = 0;
         }
 

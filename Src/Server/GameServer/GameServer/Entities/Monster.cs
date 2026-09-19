@@ -1,4 +1,5 @@
 ﻿using GameServer.Core;
+using SkillBridge.Message;
 
 namespace GameServer.Entities
 {

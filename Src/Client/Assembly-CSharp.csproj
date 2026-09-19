@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\UI\UIChat\UIChat.cs" />
     <Compile Include="Assets\Scripts\UI\UIWordElement\UIWorldElementManager.cs" />
     <Compile Include="Assets\Scripts\GameObject\NPCController.cs" />
+    <Compile Include="Assets\Scripts\Entities\CharacterBase.cs" />
     <Compile Include="Assets\Scripts\Managers\GuildManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIWordElement\UIWorldElement.cs" />
     <Compile Include="Assets\Scripts\UI\UITest\UITest.cs" />

@@ -1,70 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SkillBridge.Message;
 using UnityEngine;
-using SkillBridge.Message;
 
 namespace Entities
 {
+    /// <summary>
+    /// 领域实体基类 — 持有纯物理属性（位置/方向/速度），零业务零网络包长期持有。
+    /// </summary>
     public class Entity
     {
-        //包含四个属性 ID 位置 方向 速度
-
-        // ID
         public int entityId;
-        // 位置
         public Vector3Int position;
-        // 方向
         public Vector3Int direction;
-        // 速度
         public int speed;
-        public NEntity EntityData
+
+        protected Entity(Vector3Int pos, Vector3Int dir)
         {
-            get
-            {
-                UpdateEntityDate();
-                return entityData;
-            }
-            set
-            {
-                entityData = value;
-                this.SetEntityData(value);
-            }
+            this.position = pos;
+            this.direction = dir;
+            this.speed = 0;
         }
-        private NEntity entityData;
-        public Entity(NEntity entity)
-        {
-            this.entityId = entity.Id;
-            this.entityData = entity;
-            this.SetEntityData(entity);
-        }
+
         public virtual void OnUpdate(float delta)
         {
             if (this.speed != 0)
             {
                 Vector3 dir = this.direction;
-                // 将浮点数转化为整形 因为游戏使用的是网格坐标系统
                 this.position += Vector3Int.RoundToInt(dir * speed * delta / 100f);
             }
-
-            // 将新的数据进行赋值
-            entityData.Position.FromVector3Int(this.position);
-            entityData.Direction.FromVector3Int(this.direction);
-            entityData.Speed = this.speed;
-        }
-        public void SetEntityData(NEntity entity)
-        {
-            this.position = this.position.FromNVector3(entity.Position);
-            this.direction = this.direction.FromNVector3(entity.Direction);
-            this.speed = entity.Speed;
-        }
-        private void UpdateEntityDate()
-        {
-            entityData.Position.FromVector3Int(this.position);
-            entityData.Direction.FromVector3Int(this.direction);
-            entityData.Speed = this.speed;
         }
 
+        public NEntity ToNEntity()
+        {
+            NEntity nEntity = new NEntity
+            {
+                Id = this.entityId,
+                Position = new NVector3 { X = position.x, Y = position.y, Z = position.z },
+                Direction = new NVector3 { X = direction.x, Y = direction.y, Z = direction.z },
+                Speed = this.speed
+            };
+            return nEntity;
+        }
     }
 }

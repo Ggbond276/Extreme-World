@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Managers
 {
@@ -36,24 +37,16 @@ namespace Managers
             entities[entity.entityId] = entity;
         }
 
-        /// <summary>
-        /// 移除Entity
-        /// </summary>
-        /// <param name="entity"></param>
-        public void RemoveEntity(NEntity entity)
+        public void RemoveEntity(int entityId)
         {
-            this.entities.Remove(entity.Id);
-            if(notifiers.ContainsKey(entity.Id))
+            this.entities.Remove(entityId);
+            if(notifiers.ContainsKey(entityId))
             {
-                notifiers[entity.Id].OnEntityRemoved();
-                notifiers.Remove(entity.Id);
+                notifiers[entityId].OnEntityRemoved();
+                notifiers.Remove(entityId);
             }
         }
 
-        /// <summary>
-        /// 移动同步信息
-        /// </summary>
-        /// <param name="data"></param>
         internal void OnEntitySync(NEntitySync data)
         {
             Entity entity = null;
@@ -61,7 +54,12 @@ namespace Managers
             if(entity != null)
             {
                 if (data.Entity != null)
-                    entity.EntityData = data.Entity;
+                {
+                    entity.entityId = data.Entity.Id;
+                    entity.position = new Vector3Int(data.Entity.Position.X, data.Entity.Position.Y, data.Entity.Position.Z);
+                    entity.direction = new Vector3Int(data.Entity.Direction.X, data.Entity.Direction.Y, data.Entity.Direction.Z);
+                    entity.speed = data.Entity.Speed;
+                }
                 if(notifiers.ContainsKey(data.Id))
                 {
                     notifiers[entity.entityId].OnEntityChanged(entity);

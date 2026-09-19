@@ -69,11 +69,18 @@ namespace Assets.Scripts.Managers
         }
 
         //OnMapCharacterLeave调用（参数 entityId 由服务端发来）
+        public Character GetCharacter(int entityId)
+        {
+            Character character = null;
+            this.Characters.TryGetValue(entityId, out character);
+            return character;
+        }
+
         public void RemoveCharacter(int entityId)
         {
             if (Characters.ContainsKey(entityId))
             {
-                EntityManager.Instance.RemoveEntity(this.Characters[entityId].EntityData);
+                EntityManager.Instance.RemoveEntity(entityId);
                 if (OnCharacterLeave != null)
                 {
                     this.OnCharacterLeave(Characters[entityId]);
