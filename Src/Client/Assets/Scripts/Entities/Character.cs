@@ -8,63 +8,61 @@ using UnityEngine;
 
 namespace Entities
 {
-    public class Character : Entity
+    public class Character : CharacterBase
     {
-        public NCharacterInfo Info;
+        public CharacterClass Class { get; set; }
+        public long Gold { get; set; }
+        public long Exp { get; set; }
 
-        public CharacterDefine Define;
-
-        public int Id
-        {
-            get { return this.Info.Id; }
-        }
-        public string Name
-        {
-            get
-            {
-                if (this.Info.Type == CharacterType.Player)
-                    return this.Info.Name;
-                else
-                    return this.Define.Name;
-            }
-        }
-        //判断是否是本人玩家
         public bool IsPlayer
         {
-            get { return this.Info.EntityId == Models.User.Instance.CurrentCharacter.EntityId; }
+            get { return Models.User.Instance.CurrentCharacter != null && this.entityId == Models.User.Instance.CurrentCharacter.entityId; }
         }
 
-        public Character(NCharacterInfo info) : base(info.Entity)
+        public Character(NCharacterInfo info) : base(
+            pos: new Vector3Int(info.Entity.Position.X, info.Entity.Position.Y, info.Entity.Position.Z),
+            dir: new Vector3Int(info.Entity.Direction.X, info.Entity.Direction.Y, info.Entity.Direction.Z))
         {
-            this.Info = info;
+            this.entityId = info.EntityId;
+
+            this.Id       = info.Id;
+            this.ConfigId = info.ConfigId;
+            this.Name     = info.Name;
+            this.Type     = info.Type;
+            this.Level    = info.Level;
+            this.MapId    = info.mapId;
+
+            this.Class = info.Class;
+            this.Gold  = info.Gold;
+            this.Exp   = info.Exp;
+
             this.Define = DataManager.Instance.Characters[info.ConfigId];
         }
 
-        //向前移动
         public void MoveForward()
         {
             Debug.LogFormat("MoveForward");
             this.speed = this.Define.Speed;
         }
-        //向后移动
+
         public void MoveBack()
         {
             Debug.LogFormat("MoveBack");
             this.speed = -this.Define.Speed;
         }
-        //停止
+
         public void Stop()
         {
             Debug.LogFormat("Stop");
             this.speed = 0;
         }
-        //设置方向
+
         public void SetDirection(Vector3Int direction)
         {
             Debug.LogFormat("SetDirection:{0}", direction);
             this.direction = direction;
         }
-        //设置位置
+
         public void SetPosition(Vector3Int position)
         {
             Debug.LogFormat("SetPosition:{0}", position);

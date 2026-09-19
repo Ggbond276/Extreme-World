@@ -11,10 +11,14 @@ using System.Threading.Tasks;
 
 namespace GameServer.Managers
 {
+    /// <summary>
+    /// 客户端道具管理器（Model / Manager层）。
+    /// 职责：负责在客户端内存中维护玩家拥有的所有道具数据，并监听服务器下发的道具状态同步指令（增加/扣除）。
+    /// </summary>
     class ItemManager
     {
         public Character Owner;
-        public Dictionary<int, Item> Items = new Dictionary<int, Item>();
+        public Dictionary<int, Item> Items = new Dictionary<int, Item>(); // 核心数据池：以道具ID为键，存放当前玩家拥有的所有道具实体
         public ItemManager(Character Owner)
         {
             this.Owner = Owner;

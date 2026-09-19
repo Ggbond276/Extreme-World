@@ -5,135 +5,111 @@ using GameServer.Managers;
 using GameServer.Models;
 using Network;
 using SkillBridge.Message;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-/* =============================================================================
- Character 终极全景属性字典 (拍扁后的伪代码，仅供编码参考) 
-=============================================================================
-class Character 
-{
-    // ---------------------------------------------------------
-    // 第一层：爷爷类 (Entity) 传下来的【纯物理属性】
-    // ---------------------------------------------------------
 
-    public int entityId  get { return this.entityData.Id; } 
-    
-
-    public NEntity EntityData { get; set; } 
-    
-    public Vector3Int Position { get; set; } // 绝对坐标 (修改它会自动同步到 EntityData)
-    public Vector3Int Direction { get; set; } // 朝向 (修改它会自动同步到 EntityData)
-    public int Speed { get; set; }           // 速度 (修改它会自动同步到 EntityData)
-
-    // ---------------------------------------------------------
-    //  第二层：父类 (CharacterBase) 传下来的【身份与逻辑属性】
-    // ---------------------------------------------------------
-    public int Id { get; set; } 
-    public NCharacterInfo Info; 
-    public CharacterDefine Define; 
-
-    // ---------------------------------------------------------
-    //  第三层：本类 (Character) 独有的【业务与数据大管家】
-    // ---------------------------------------------------------
-    public TCharacter Data; 
-    
-    public ItemManager ItemManager;     // 道具/背包管理
-    public StatusManager statusManager; // 状态(钱/经验)变动广播管理
-    public QuestManager questManager;   // 任务管理
-
-    public long Gold { get; set; } // set时会同步修改 Data.Gold 并触发 statusManager 广播
-    public long Exp { get; set; }  // set时会同步修改 Data.EXP 并触发 statusManager 广播
-}
-=============================================================================
-*/
 namespace GameServer.Entities
 {
-    class Character : CharacterBase, IPostResponser
+    /// <summary>
+    /// 玩家角色实体 — 业务最复杂的活跃实体。叠加业务大管家（背包/任务/好友等），处理数据库反序列化与状态广播。
+    /// </summary>
+    public class Character : CharacterBase, IPostResponser
     {
-        /// <summary>
-        /// 数据库数据
-        /// </summary>
-        public TCharacter Data;
-        /// <summary>
-        /// 物品管理器
-        /// </summary>
-        public ItemManager ItemManager;
-        /// <summary>
-        /// 状态管理器
-        /// </summary>
-        public StatusManager statusManager;
-        /// <summary>
-        /// 任务管理器
-        /// </summary>
-        public QuestManager questManager;
-        /// <summary>
-        /// 好友管理器
-        /// </summary>
-        public FriendManager friendManager;
-        /// <summary>
-        /// 队伍
-        /// </summary>
-        public Team team;
-        /// <summary>
-        /// 队伍信息的最后同步时间
-        /// </summary>
-        public float teamSyncTime = 0f;
-        /// <summary>
-        /// 
-        /// </summary>
-        public int GuildId { get; set; } = 0;
-        /// <summary>
-        /// 金币属性
-        /// </summary>
-        public long Gold
+        public TCharacter Data;                                  // 数据库实体引用 — 所有持久化字段的真理来源（来源：数据库 TCharacter）
+        public CharacterClass Class { get; set; }                // 职业类型（来源：构造期从数据库 TCharacter.Class 读取）
+        public long GoldSnapshot { get; set; }                   // 金币快照（影子字段，避免发包时读到陈旧值；来源：Gold setter 同步）
+        public long ExpSnapshot { get; set; }                    // 经验快照（影子字段；来源：Exp setter 同步）
+        internal StatusManager statusManager;                   // 状态管理器（记录金币/经验变动并触发广播）
+        internal ItemManager ItemManager;                       // 物品管理器（自维护 Items 字典）
+        private NBagInfo _bag;                                  // 背包容器
+        internal QuestManager questManager;                     // 任务管理器（自维护 Quests 字典）
+        internal FriendManager friendManager;                   // 好友管理器（自维护 friends 字典）
+        internal Team team;                                     // 当前队伍（运行时动态挂载；无队伍时为 null）
+        public int GuildId { get; set; } = 0;                    // 所属公会 ID（运行时动态变化）
+        public float teamSyncTime = 0f;                         // 队伍信息最后同步时间戳（用于 PostResponse 节流）
+
+
+        // ======================== 业务属性 ========================
+        public long Gold                                        // 金币（来源：Data.Gold；set 时同步影子 + 触发 statusManager 广播）
         {
             get { return this.Data.Gold; }
             set
             {
-                if (value == this.Data.Gold)
-                    return;
+                if (value == this.Data.Gold) return;
                 this.statusManager.AddGoldChange((int)(value - this.Data.Gold));
                 this.Data.Gold = value;
+                this.GoldSnapshot = value;
             }
         }
-        /// <summary>
-        /// 经验属性
-        /// </summary>
-        public long Exp
+        public long Exp                                         // 经验（来源：Data.EXP；set 时同步影子 + 触发 statusManager 广播）
         {
             get { return this.Data.EXP; }
             set
             {
-                if (Exp == value)
-                    return;
+                if (Exp == value) return;
                 this.statusManager.AddExpChange((int)(value - this.Data.EXP));
                 this.Data.EXP = value;
+                this.ExpSnapshot = value;
             }
         }
-        /// <summary>
-        /// 后处理器
-        /// </summary>
-        /// <param name="response"></param>
-        public void PostResponse(NetMessageResponse response)
+
+        // ======================== 构造与初始化 ========================
+        public Character(CharacterType type, TCharacter cha) : base(
+            id: cha.ID,
+            name: cha.Name,
+            type: type,
+            configId: cha.ConfigId,
+            level: cha.Level,
+            mapId: cha.MapID,
+            pos: new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ),
+            dir: new Core.Vector3Int(100, 0, 0))
         {
-            // 状态系统后处理
+            this.Data = cha;
+            this.Class = (CharacterClass)cha.Class;             // 本类独有字段：职业（数据库 TCharacter.Class）
+            this.GoldSnapshot = cha.Gold;
+            this.ExpSnapshot = cha.EXP;
+            this.GuildId = GuildManager.Instance.GetGuildIdByCharacter(this.Id);
+            this.statusManager = new StatusManager(this);       // 业务 Manager 容器（发包时实时拉取）
+            this.ItemManager = new ItemManager(this);
+            this.questManager = new QuestManager(this);
+            this.friendManager = new FriendManager(this);
+
+            // 静态网络快照缓存（构造期一次性写入，生命周期内不变）
+            this._bag = new NBagInfo();
+            this._bag.Items = this.Data.Bag.Items;
+            this._bag.Unlocked = this.Data.Bag.Unlocked;
+        }
+
+        // ======================== 网络数据映射 ========================
+        public override NCharacterInfo ToCharacterBaseInfo()            // 纯工厂：仅补全本类独有业务字段（父类身份字段已由 base.ToCharacterInfo() 完成）
+        {
+            NCharacterInfo info = base.ToCharacterBaseInfo();
+            info.Class = this.Class;
+            info.Gold = this.Gold;
+            info.Exp = this.Exp;
+            info.Equips = this.Data.Equips;
+            info.Bag = this._bag;
+            info.Guild = (this.GuildId > 0) ? GuildManager.Instance.GetGuild(this.GuildId)?.ToNGuildInfo() : null;
+            this.ItemManager.GetItemInfos(info.Items);
+            this.questManager.GetQuestInfo(info.Quests);
+            this.friendManager.GetFriendInfo(info.Friends);
+            return info;
+        }
+
+        // ======================== 响应后处理 ========================
+        public void PostResponse(NetMessageResponse response)      // 在主响应组装完成后追加增量广播（来源：各 Manager 缓冲的事件队列）
+        {
             statusManager.PostResponse(response);
-            // 好友系统后处理
             friendManager.PostResponse(response);
-            // 组队系统后处理
-            if(team != null)
+
+            if (team != null)
             {
-                if(this.teamSyncTime < this.team.timestamp)
+                if (this.teamSyncTime < this.team.timestamp)
                 {
                     response.teamInfo = new TeamInfoResponse();
                     response.teamInfo.Team = this.team.ToNTeamInfo();
                     this.teamSyncTime = this.team.timestamp;
-                } 
-               
-            } else
+                }
+            }
+            else
             {
                 if (this.teamSyncTime > 0)
                 {
@@ -143,83 +119,5 @@ namespace GameServer.Entities
                 }
             }
         }
-
-
-        /// <summary>
-        /// 构造方法
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="cha"></param>
-        public Character(CharacterType type,TCharacter cha): 
-            base(new Core.Vector3Int(cha.MapPosX, cha.MapPosY, cha.MapPosZ), new Core.Vector3Int(100,0,0))
-        {
-
-            // 数据库数据(子类数据)
-            this.Data = cha;
-            // Id
-            this.Id = cha.ID;
-
-            // 道具管理器初始化
-            this.ItemManager = new ItemManager(this);
-            // 任务管理器初始化
-            this.questManager = new QuestManager(this);
-            // 状态管理器初始化
-            this.statusManager = new StatusManager(this);
-            // 好友管理器初始化
-            this.friendManager = new FriendManager(this);
-            // 分配所属公会Id
-            this.GuildId = GuildManager.Instance.GetGuildIdByCharacter(Id);
-
-           
-
-            // 网络协议数据
-            this.Info = new NCharacterInfo();
-            // 基础数据填充
-            this.Info.Type = type;
-            this.Info.Id = cha.ID;
-            this.Info.ConfigId = cha.ConfigId;
-            this.Info.Name = cha.Name;
-            this.Info.Class = (CharacterClass)cha.Class;
-            this.Info.mapId = cha.MapID;
-            this.Info.Gold = cha.Gold;
-            this.Info.Equips = cha.Equips;
-            this.Info.Exp = cha.EXP;
-            this.Info.Level = 10;
-            this.Info.EntityId = this.entityId;
-            this.Info.Entity = this.EntityData;
-            // 背包数据填充
-            this.Info.Bag = new NBagInfo();
-            this.Info.Bag.Items = this.Data.Bag.Items;
-            this.Info.Bag.Unlocked = this.Data.Bag.Unlocked;
-            if (this.GuildId > 0)
-            {
-                Guild guild = GuildManager.Instance.GetGuild(this.GuildId);
-                if (guild != null)
-                {
-                    this.Info.Guild = guild.ToNGuildInfo();
-                }
-                else
-                {
-                    this.Info.Guild = null; // 或者按需处理
-                }
-            }
-            else
-            {
-                this.Info.Guild = null; // 没有公会，直接设为 null
-            }
-
-            // 物品数据填充
-            this.ItemManager.GetItemInfos(this.Info.Items);
-            // 任务数据填充
-            this.questManager.GetQuestInfo(this.Info.Quests);
-            // 好友数据填充
-            this.friendManager.GetFriendInfo(this.Info.Friends);
-            // 配置数据填充
-            this.Define = DataManager.Instance.Characters[this.Info.ConfigId];
-
-           
-        }
-
-        
     }
 }

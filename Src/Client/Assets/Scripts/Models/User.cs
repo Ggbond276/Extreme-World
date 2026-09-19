@@ -5,17 +5,22 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using SkillBridge.Message;
+using Entities;
 
 namespace Models
 {
-    //临时数据存储器用于存储用户信息 如果用户信息不改变就不用再向服务器拉取信息
-    //用于将服务器返回的用户信息记录到本地
     class User : Singleton<User>
     {
-        NUserInfo userInfo;
-        public NCharacterInfo CurrentCharacter { get; set; }
+        // 用户信息
+        private NUserInfo userInfo;
+        // 角色信息 —— 改成 private set,所有写入必须经过 SetCurrentCharacter,杜绝野指针
+        public Character CurrentCharacter { get; private set; }
+        // 角色实体信息
         public GameObject CurrentCharacterObject { get; set; }
+        // 当前地图配置信息
         public MapDefine CurrentMapData { get; set; }
+
+
         public NUserInfo Info
         {
             get { return userInfo; }
@@ -24,31 +29,55 @@ namespace Models
         {
             this.userInfo = info;
         }
-       
+
         /// <summary>
-        /// 注册这两个委托可以分别监听金币和经验的变化
+        /// 唯一入口:赋值 / 清空 CurrentCharacter。
+        /// 所有模块(UserService / MapService / 后续可能的 GM / 切换角色)都必须走这里,
+        /// 严禁直接 `User.Instance.CurrentCharacter = ...`。
         /// </summary>
+        /// <param name="character">要写入的角色实体;传 null 表示清空(必须显式 allowNull)</param>
+        /// <param name="source">调用方标签,用于 Console 溯源(例如 "UserService.OnGameEnter")</param>
+        /// <param name="allowNull">仅在明确要清空(如 OnGameLeave)时置 true</param>
+        public void SetCurrentCharacter(Character character, string source, bool allowNull = false)
+        {
+            if (character == null && !allowNull)
+            {
+                // 不允许变 null 时如果传 null:保留旧值并大声报错,这是典型的"被某条路径意外清空"事故信号
+                Debug.LogErrorFormat(
+                    "[User.SetCurrentCharacter] 拒绝把 CurrentCharacter 置空! source={0}, 旧值保留 EntityId={1} Name={2}",
+                    source,
+                    this.CurrentCharacter != null ? this.CurrentCharacter.entityId.ToString() : "null",
+                    this.CurrentCharacter != null ? this.CurrentCharacter.Name : "null");
+                return;
+            }
+
+            Character old = this.CurrentCharacter;
+            this.CurrentCharacter = character;
+
+            // 任何写入都打印来源 + 旧值/新值,出现"突然消失"时可以立刻在 Console 逆推上一条是谁写的
+            Debug.LogFormat(
+                "[User.SetCurrentCharacter] source={0} oldEntityId={1} -> newEntityId={2} newName={3}",
+                source,
+                old != null ? old.entityId.ToString() : "null",
+                character != null ? character.entityId.ToString() : "null",
+                character != null ? character.Name : "null");
+        }
+
         public static event Action<long> OnGoldChanged;
         public static event Action<long> OnExpChanged;
 
-        /// <summary>
-        /// 调用这个方法可以增加金币
-        /// </summary>
-        /// <param name="value"></param>
         internal void AddGold(int value)
         {
+            if (this.CurrentCharacter == null) return;
             this.CurrentCharacter.Gold += value;
-            OnGoldChanged?.Invoke(CurrentCharacter.Gold);
+            OnGoldChanged?.Invoke(this.CurrentCharacter.Gold);
         }
 
-        /// <summary>
-        /// 调用这个方法可以增加经验
-        /// </summary>
-        /// <param name="value"></param>
         internal void AddExp(int value)
         {
+            if (this.CurrentCharacter == null) return;
             this.CurrentCharacter.Exp += value;
-            OnExpChanged?.Invoke(CurrentCharacter.Exp);
+            OnExpChanged?.Invoke(this.CurrentCharacter.Exp);
         }
     }
 }

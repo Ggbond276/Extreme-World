@@ -33,7 +33,7 @@ namespace GameServer.Services
 
             msg.fromId = character.Id; 
             msg.fromName = character.Data.Name;
-            msg.fromClass = (int)character.Info.Class;
+            msg.fromClass = (int)character.Class;
             msg.Time = TimeUtil.timestamp;
 
             Log.InfoFormat("OnChat : 收到玩家聊天请求, CharacterId:{0}, Channel:{1}, Message:{2}", character.Id, msg.Channel, msg.Message);
@@ -94,7 +94,7 @@ namespace GameServer.Services
                         shouldSend = true;
                         break;
                     case ChatChannel.Local:
-                        if (target.Session.Character.Info.mapId == senderCharacter.Info.mapId) shouldSend = true;
+                        if (target.Session.Character.MapId == senderCharacter.MapId) shouldSend = true;
                         break;
                     case ChatChannel.Guild:
                         if (target.Session.Character.GuildId != 0 && senderCharacter.GuildId != 0 &&

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Entities;
 
 namespace Assets.Scripts.Services
 {
@@ -82,20 +83,32 @@ namespace Assets.Scripts.Services
         {
             Debug.LogFormat("OnMapCharacterEnter : MapID:{0} CharactersCount:{1}", response.mapId, response.Characters.Count);
 
-            // 第一阶段：将所有进入地图的实体（人/怪）加入逻辑层管理器
             foreach (var cha in response.Characters)
             {
-                // 如果进入的角色 ID 是我自己，更新本地 User 单例中的角色快照
-                if (User.Instance.CurrentCharacter == null || (cha.Type  == CharacterType.Player &&  User.Instance.CurrentCharacter.EntityId == cha.EntityId) )
+                if (cha.Type == CharacterType.Player
+                    && User.Instance.CurrentCharacter != null
+                    && User.Instance.CurrentCharacter.entityId == cha.EntityId)
                 {
-                    User.Instance.CurrentCharacter = cha;
+                    // 必须先 AddCharacter 把 cha 注册到字典里,再 GetCharacter 回查
+                    // 否则字典里查不到,会让 CurrentCharacter 变 null,引发 UIMain.UpdateAvatar() 空引用
+                    CharacterManager.Instance.AddCharacter(cha);
+                    Character newCurrent = CharacterManager.Instance.GetCharacter(cha.EntityId);
+                    if (newCurrent != null)
+                    {
+                        // 唯一入口赋值,带溯源 + null 保护
+                        User.Instance.SetCurrentCharacter(newCurrent, "MapService.OnMapCharacterEnter(player-self)");
+                    }
+                    else
+                    {
+                        // 容错:即使没查到也不能把已有 CurrentCharacter 覆盖成 null
+                        Debug.LogErrorFormat("OnMapCharacterEnter: AddCharacter 后 GetCharacter 仍返回 null,EntityId={0}", cha.EntityId);
+                    }
+                    continue;
                 }
 
-                // 触发 CharacterManager 的 AddCharacter，进而触发 GameObjectManager 的模型生成
                 CharacterManager.Instance.AddCharacter(cha);
             }
 
-            // 第二阶段：判断是否需要切换物理场景资源
             if (CurrentMapId != response.mapId)
             {
                 this.EnterMap(response.mapId);
@@ -103,24 +116,30 @@ namespace Assets.Scripts.Services
             }
         }
 
-        /// <summary>
-        /// 网络响应：处理服务器发来的“角色离开地图”消息。
-        /// 职责：如果是自己离开则清空全场，如果是别人离开则销毁特定模型。
-        /// </summary>
         private void OnMapCharacterLeave(object sender, MapCharacterLeaveResponse response)
         {
             Debug.LogFormat("OnMapCharacterLeave: {0}", response.characterId);
 
-            // 如果离开的 ID 不是我自己
-            if (response.characterId != User.Instance.CurrentCharacter.EntityId)
+            Character current = User.Instance.CurrentCharacter;
+
+            // 场景 1:玩家当前没有任何 Character 引用(异常态),无论谁离开都安全清场
+            // 场景 2:离开的角色就是玩家自己(回城 / 切场景) -> 清空整张地图的角色
+            if (current == null)
             {
-                // 从角色管理器中移除该实体的逻辑和表现模型
-                CharacterManager.Instance.RemoveCharacter(response.characterId);
+                Debug.LogWarningFormat("[MapService.OnMapCharacterLeave] CurrentCharacter 为空,直接 Clear。响应 characterId={0}", response.characterId);
+                CharacterManager.Instance.Clear();
+                return;
+            }
+
+            if (response.characterId == current.entityId)
+            {
+                Debug.LogFormat("[MapService.OnMapCharacterLeave] 玩家自己离开地图,Clear 全部角色");
+                CharacterManager.Instance.Clear();
             }
             else
             {
-                // 如果是我自己离开（如回城），清理当前场景所有角色缓冲
-                CharacterManager.Instance.Clear();
+                // 场景 3:别的角色离开 -> 只从管理器里移除这一条
+                CharacterManager.Instance.RemoveCharacter(response.characterId);
             }
         }
 

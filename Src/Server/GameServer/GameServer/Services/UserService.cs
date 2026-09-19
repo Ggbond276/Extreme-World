@@ -140,7 +140,6 @@ namespace GameServer.Services
                 MapPosX = 5000,
                 MapPosY = 4000,
                 MapPosZ = 820,
-                // 新手大礼包
                 Gold = 100000,
                 Equips = new byte[28],
             };
@@ -197,7 +196,7 @@ namespace GameServer.Services
             sender.Session.Response.gameEnter = new UserGameEnterResponse();
             sender.Session.Response.gameEnter.Result = Result.Success;
             sender.Session.Response.gameEnter.Errormsg = "None";
-            sender.Session.Response.gameEnter.Character = character.Info;
+            sender.Session.Response.gameEnter.Character = character.ToCharacterBaseInfo();
             sender.SendResponse();
 
             #region  测试当玩家进入游戏的时候有道具生成
@@ -227,7 +226,7 @@ namespace GameServer.Services
         private void OnGameLeave(NetConnection<NetSession> sender, UserGameLeaveRequest request)
         {
             Character character = sender.Session.Character;
-            Log.InfoFormat("OnGameLeave: characterID: {0} : {1} Map: {2}", character.entityId, character.Info.Name, character.Info.mapId);
+            Log.InfoFormat("OnGameLeave: characterID: {0} : {1} Map: {2}", character.entityId, character.Name, character.MapId);
 
             CharacterLeave(character);
 
@@ -250,7 +249,7 @@ namespace GameServer.Services
             CharacterInfoManager.Instance.SyncOfflineInfo(character);
 
             CharacterManager.Instance.RemoveCharacter(character.entityId);
-            MapManager.Instance[character.Info.mapId].CharacterLeave(character);
+            MapManager.Instance[character.MapId].CharacterLeave(character);
 
             // 在线通知
             character.friendManager.NotifyOnlineStatus(false);

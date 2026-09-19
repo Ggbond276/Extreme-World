@@ -35,7 +35,7 @@ namespace GameServer.Managers
             switch (message.Channel)
             {
                 case ChatChannel.Local:
-                    AddToList(this.Local, from.Info.mapId, message);
+                    AddToList(this.Local, from.MapId, message);
                     break;
                 case ChatChannel.World:
                     AddToList(this.World, message);

@@ -1,0 +1,102 @@
+%% ============================================================
+%% Quest System - 当前 vs 目标架构对比
+%% 来源:Doc/RefactorReview/QuestSystem_Refactor_Review_CN.md
+%% 性质:左右两栏对照图,展示重构前后的数据流向
+%% ============================================================
+
+graph LR
+    %% ============================================================
+    %% 左侧:当前架构 (CURRENT)
+    %% ============================================================
+    subgraph CURRENT["当前架构 (CURRENT)"]
+        direction TB
+        UIDialog["UIQuestDialog"]
+        UISystem["UIQuestSystem"]
+        QMClient["QuestManager<br/>(客户端)"]
+        QServiceClient["QuestService<br/>(客户端)"]
+
+        QMgrSrv["QuestManager<br/>(服务器)"]
+        QServiceSrv["QuestService<br/>(服务器)"]
+        ItemMgrSrv["ItemManager<br/>(具体类)"]
+        DBSvc["DBService<br/>(具体 EF6)"]
+        CharSrv["Character<br/>(Gold/Exp 直接 +="]
+        EventBus["❌ 无 Event Bus<br/>OnQuestStatusChanged<br/>无订阅者"]
+
+        UIDialog -- "AcceptQuest(quest)<br/>(直接调 Manager)" --> QMClient
+        UISystem -- "遍历 allQuests<br/>(直接读内部字典)" --> QMClient
+        QMClient -- "SendQuestAccept<br/>(直接调 Service)" --> QServiceClient
+        QServiceClient -- "NetMessage" --> QServiceSrv
+        QServiceSrv -- "直接调" --> QMgrSrv
+        QMgrSrv -- "直接 AddItem (具体类)" --> ItemMgrSrv
+        QMgrSrv -- "Gold += (直接改字段)" --> CharSrv
+        QMgrSrv -- "Exp += (直接改字段)" --> CharSrv
+        QMgrSrv -- "DBService.save() (具体 EF6)" --> DBSvc
+        ItemMgrSrv -- "再 save() 一次" --> DBSvc
+        QMgrSrv -. "应广播完成,实际没有" .-> EventBus
+    end
+
+    %% ============================================================
+    %% 中间分割线
+    %% ============================================================
+    Separate[" "]:::spacer
+
+    %% ============================================================
+    %% 右侧:目标架构 (TARGET)
+    %% ============================================================
+    subgraph TARGET["目标架构 (TARGET)"]
+        direction TB
+        UICmd["UIQuestDialog<br/>(Intent: RequestAccept)"]
+        UIVM["UIQuestSystem<br/>(订阅 OnQuestChanged,<br/>读 ViewModel)"]
+        VM["ViewModel<br/>(QuestListItem)"]
+        QMClient2["QuestManager<br/>(客户端)<br/>暴露 OnQuestChanged"]
+        QServiceClient2["QuestService<br/>(客户端)"]
+        QServiceSrv2["QuestService<br/>(服务器)"]
+        QLogic["QuestLogic<br/>(纯函数)"]
+        QState["QuestState<br/>(唯一修改入口)"]
+        RService["RewardService<br/>(唯一发奖入口)"]
+        QRepo["QuestRepository<br/>(EF6 包装)"]
+        Bus["✅ GameplayEventBus<br/>QuestAccepted<br/>QuestProgressChanged<br/>QuestCompleted<br/>+ MonsterKilled 等"]
+
+        UICmd -- "RequestAccept(questId)<br/>(Intent)" --> QMClient2
+        UIVM -- "订阅 OnQuestChanged" --> QMClient2
+        QMClient2 -- "读" --> VM
+        UIVM -- "读" --> VM
+        QMClient2 -- "SendQuestAccept" --> QServiceClient2
+        QServiceClient2 -- "NetMessage" --> QServiceSrv2
+        QServiceSrv2 -- "1. CanAccept? (纯判断)" --> QLogic
+        QLogic -- "true" --> QServiceSrv2
+        QServiceSrv2 -- "2. ApplyAccept (唯一入口)" --> QState
+        QState -- "读/写" --> QRepo
+        QRepo -- "SaveChanges" --> QServiceSrv2
+        QServiceSrv2 -- "3. Publish(QuestAccepted)" --> Bus
+        QState -- "OnQuestChanged" --> QMClient2
+        QMClient2 -- "OnQuestChanged" --> UIVM
+        UIVM -- "刷新" --> UICmd
+
+        QServiceSrv2 -. "提交时: CanSubmit?" .-> QLogic
+        QServiceSrv2 -. "ApplySubmit" .-> QState
+        QServiceSrv2 -. "4. Grant(reward)" .-> RService
+        RService -. "1 次 save" .-> QRepo
+        RService -. "Publish(QuestCompleted)" .-> Bus
+    end
+
+    %% ============================================================
+    %% 未来接入战斗系统 (在 TARGET 侧)
+    %% ============================================================
+    Combat["Combat System<br/>(未来)"] -. "Publish(MonsterKilled)" .-> Bus
+    Bus -. "Subscribe" .-> QLogic
+    QLogic -. "AddProgress" .-> QState
+
+    %% ============================================================
+    %% 样式
+    %% ============================================================
+    classDef badCurrent fill:#ffcdd2,stroke:#c62828,color:#000
+    classDef goodTarget fill:#c8e6c9,stroke:#2e7d32,color:#000
+    classDef eventBus fill:#bbdefb,stroke:#1565c0,color:#000
+    classDef future fill:#f5f5f5,stroke:#9e9e9e,color:#000,stroke-dasharray: 5 5
+    classDef spacer fill:none,stroke:none
+
+    class QMClient,QMgrSrv,ItemMgrSrv,DBSvc,CharSrv,EventBus badCurrent
+    class QLogic,QState,RService,QRepo,VM,UIVM,UICmd,QMClient2,Bus goodTarget
+    class Combat future
+    class Separate spacer

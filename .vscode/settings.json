@@ -1,0 +1,19 @@
+{
+    "files.exclude": {
+        "**/*.meta": true,
+        "Library/": true,
+        "Temp/": true,
+        "Obj/": true,
+        "Logs/": true,
+        "MemoryCaptures/": true,
+        "UserSettings/": true,
+        "**/*.unityproj": true,
+        "**/*.sln": true,
+        "**/*.csproj": true
+    },
+    "search.exclude": {
+        "**/*.meta": true,
+        "Library/": true,
+        "Temp/": true
+    }
+}
